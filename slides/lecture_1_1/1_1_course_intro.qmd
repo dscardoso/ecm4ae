@@ -1,0 +1,528 @@
+---
+title: "ACE 592 - Lecture 1.1"
+subtitle: "A course introduction"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+format:
+  revealjs: 
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+---
+
+```{julia}
+#| include: FALSE
+using Pkg
+Pkg.activate(".")
+Pkg.instantiate()
+Pkg.add("Statistics"); Pkg.add("Plots");
+using Statistics
+using Plots
+```
+
+
+
+# Welcome to ACE 592 - ECM!
+
+
+
+## What you will learn in this course
+
+
+1. How to setup and manage computational projects for your research
+
+. . .
+
+2. Understand why and when computational methods can help
+
+. . .
+
+3. How to apply many techniques to solve economic problems using your computer
+
+. . .
+
+4. Use computational methods and data to estimate (nonlinear) economic models
+
+
+
+## What we will cover
+
+We will first set up the stage with an introduction to scientific computing for applied economics
+
+**2 parts**
+
+I. Numerical methods to solve economic models
+
+. . .
+
+II. Structural estimation of (static, nonlinear) economic models
+
+
+
+## What we will cover: Introduction
+
+*First week or so*
+
+- Reproducibility
+- Version control (git) and project organization
+- Julia programming language
+
+
+## What we will cover: Part I
+
+*Weeks 2 to 10*
+
+- Fundamentals of numerical methods
+  - Numerical arithmetic
+  - Numerical differentiation and integration
+- Systems of equations
+  - Methods for linear and nonlinear systems
+  - Economic models and applications
+- Optimization
+  - Methods for constrained and unconstrained
+  - Economic models and applications
+- Function approximation
+  - Interpolation
+  - Functional equations
+
+
+## What we will cover: Part II
+
+*Weeks 11 to 16*
+
+- Introduction to structural estimation
+  - Structural vs. reduced-form
+  - Maximum Likelihood Estimation and applications
+  - Generalized Method of Moments and applications
+  - Simulation-based estimation and applications
+
+[*Dates are tentative: This is a "new" course. Your feedback and understanding are appreciated.*]{.blue}
+
+
+
+## What you need to succeed in this course
+
+- PhD Math Camp (or an equivalent graduate-level course in mathematics for economics)
+- ACE 501 and ACE 504 (or an equivalent graduate-level courses in microeconomic theory)
+- ECON 532 and ECON 535 (or equivalent graduate-level courses in econometrics)
+
+. . .
+
+- Previous coding experience or willingness to spend some time learning as you go
+- A laptop to use in class (come talk to me if you do not have one available)
+
+
+## What you have to do
+
+- Come to class (unless unable)
+- Try running code examples yourself
+- Solve 3 problem sets (in pairs)
+- Take periodic pop quizzes 
+- Do 2 mini-projects (in pairs)
+
+
+## Introductions! {background-color="orange"}
+
+Let's stop here for a while and introduce ourselves!
+
+
+## Course materials
+
+- Papers, articles, and tutorials 
+  - Links on *Canvas > Modules*
+- Lecture slides, coding examples 
+  - Hosted on the GitHub class repository (more details to come)
+  - Links on *Canvas > Modules*
+- Books
+  1. Miranda and Fackler (2002)
+  2. Judd (1998)
+  3. Nocedal and Wright (2006)
+  4. Cameron and Trivedi (2005)
+  5. Greene (2018)
+  
+
+## Syllabus review {background-color="orange"}
+
+- Let's take a look together
+
+
+
+# Why computational methods?
+
+
+
+## Why do we need computational methods?
+
+Everything you've done so far has likely been solvable analytically
+
+Including OLS: $\hat{\beta} = (X'X)^{-1}X'Y$
+
+. . .
+
+**Not all economic models have closed-form solutions, and others can't have closed-form solutions with losing important economic content**
+
+
+
+## What can we compute?
+
+We can use computation + theory to answer **quantitative** questions
+
+. . .
+
+Theory can't give us welfare in dollar terms
+
+Theory can't tell us the value of economic primitives
+
+
+
+
+## What can we compute?
+
+Theory often relies on strong assumptions like:
+
+. . .
+
+- log utility (income loss vs substitution)
+- no transaction costs (important friction)
+- strictly concave objectives (natural phenomena don't usually follow this)
+- static decision-making
+
+It can be unclear what the costs of these assumptions are
+
+
+
+# Some apparently simple questions
+
+
+## Example 1
+
+Suppose we have a constant elasticity demand function: 
+
+$$q(p) = p^{-0.2}$$
+
+In equilibrium, quantity demanded is $q^* = 2$
+
+**Q: What price clears the market in equilibrium?**
+
+
+
+## Example 1
+
+A: Just invert the demand function
+
+$$2 = p^{-0.2}$$
+
+. . .
+
+$$p^* = 2^{-5} \checkmark$$
+
+Your calculator can do the rest
+
+
+
+## Example 2
+
+Suppose the demand function is now
+
+$$q(p) = 0.5p^{-0.2} + 0.5p^{-0.5},$$
+
+a weighted average of two CE demand functions
+
+In equilibrium, quantity demanded is $q^* = 2$
+
+**Q: What price clears the market in equilibrium?**
+
+. . .
+
+First, does a solution exist?
+
+. . .
+
+Yes, why?
+
+
+
+## Example 2
+
+$q(p)$ is continuous and monotonically decreasing
+
+. . .
+
+$q(p)$ is greater than 2 at $p=0.1$ and less than 2 at $p=0.2$
+
+. . .
+
+$\Rightarrow$ by intermediate value theorem $q(p) = 2$ somewhere in $(0.1,0.2)$
+
+
+
+## Example 2
+
+```{julia}
+#| echo: TRUE
+#| label: example2_setup
+# We know solution is between .1 and .2
+x = collect(range(.1, stop = .2, length = 10)); # generate evenly spaced grid
+q_d = ones(size(x)).*2; # generate equal length vector of qd=2
+
+# Define price function
+price(p) = p.^(-0.2)/2 .+ p.^(-0.5)/2;
+
+# Get corresponding quantity values at these prices
+y = price(x);
+```
+
+Now plot $q_d$ and $q(p)$
+
+```julia
+using Plots;
+plot(x, [y q_d],
+    linestyle = [:solid :dot],
+    linewidth = [3 3],
+    linecolor = [:red :blue],
+    tickfontsize = 12,
+    grid = :no,
+    xlabel = "p",
+    ylabel = "q(p)",
+    label = ["q(p)" "Quantity Demanded"])
+```
+
+## Example 2
+
+```{julia}
+#| label: example2_plot
+#| fig-cap: "A solution exist!"
+using Plots;
+plot(x, [y q_d],
+    linestyle = [:solid :dot],
+    linewidth = [3 3],
+    linecolor = [:red :blue],
+    tickfontsize = 12,
+    grid = :no,
+    xlabel = "p",
+    ylabel = "q(p)",
+    label = ["q(p)" "Quantity Demanded"])
+```
+
+
+
+
+## Example 2
+
+Notice: if we let $t = p^{-0.1}$ then
+
+$$q(t) = 0.5t^2 + 0.5t^5$$
+
+. . .
+
+Can we solve for $t$ now?
+
+. . .
+
+No! Closed-form solutions to fifth order polynomials are not guaranteed to exist!
+
+. . .
+
+So how do we solve the problem?
+
+
+
+## Newton's method
+
+Iteratively do the following:
+
+1. Guess solution to: $q(p) - q^* = 0 \Rightarrow q(p) - 2 = 0$
+2. Approximate the function with local 2nd-order polynomial around guess
+3. Solve this easier equation
+4. Solution is the new guess
+5. Stop if previous guess and new guess are sufficiently close
+
+We will learn more about this and why it works in a later class
+
+
+
+## Coding Newton's method
+
+```{julia}
+#| echo: TRUE
+#| label: example2_function_def
+# Define demand functions
+demand(p) = p^(-0.2)/2 + p^(-0.5)/2 - 2;     # demanded quantity minus target
+demand_grad(p) = .1*p^(-1.2) + .25*p^(-1.5); # demand gradient
+```
+
+. . .
+
+```{julia}
+#| echo: TRUE
+#| label: example2_function_newton
+function find_root_newton(demand, demand_grad)
+    p = .3        # initial guess
+    deltap = 1e10 # initialize stepsize
+
+    while abs(deltap) > 1e-4
+        deltap = demand(p)/demand_grad(p)
+        p += deltap
+        println("Intermediate guess of p = $(round(p,digits=3)).")
+    end
+    println("The solution is p = $(round(p,digits=3)).")
+    return p
+end;
+```
+
+
+
+## Newton code
+
+```{julia}
+#| echo: TRUE
+#| label: example2_solution
+# Solve for price
+find_root_newton(demand, demand_grad)
+```
+
+
+
+## Example 3
+
+Consider a two period ag commodity market model
+
+- Period 1: Farmer makes acreage decisions for planting  
+- Period 2: Per-acre yield realizes, equilibrium crop price clears the market
+
+. . .
+
+The farmer's policy function is: 
+
+$$a(E[p]) = \frac{1}{2} + \frac{1}{2}E[p]$$
+
+
+
+## Example 3
+
+Yield $\hat{y}$ is stochastic and only realized after planting period. It follows $\hat{y} \sim \mathcal{N}(1, 0.1)$
+
+
+Crop production is 
+
+$$q = a\hat{y}$$
+
+. . .
+
+Demand is given by 
+
+$$p(q) = 3-2q$$
+
+. . .
+
+**Q: How many acres get planted?**
+
+
+
+## Example 3
+
+**Q: How many acres get planted?**
+
+A: We plug in the stochastic quantity and take expectations
+
+$p(\hat{y}) = 3-2a\hat{y}$
+
+. . .
+
+$a = \frac{1}{2} + \frac{1}{2}(3-2aE[\hat{y}])$
+
+. . .
+
+Rearrange and solve:
+
+$a^* = 1$
+
+
+
+## Example 3
+
+Now suppose the government implements a price floor such that $p \geq 1$. 
+
+We now have that 
+
+$$p(\hat{y}) = \max(1,3-2a\hat{y})$$
+
+**Q: How many acres get planted with a price floor?**
+
+
+
+## Example 3
+
+**Q: How many acres get planted with a price floor?**
+
+This is analytically intractable
+
+. . .
+
+The max operator is non-linear so we can't pass the expectation through
+
+$E[\max(1,3-2a\hat{y})] \neq \max(1,E[3-2a\hat{y}])$
+
+. . .
+
+**We need to solve this numerically**
+
+
+
+## Function iteration
+
+We can solve this using **Monte Carlo integration** and **function iteration**
+
+```{julia}
+#| echo: TRUE
+#| label: example3_root_finding
+using Statistics
+# Function iteration method to find a root
+function find_root_fi(mn, variance)
+
+    y = randn(1000)*sqrt(variance) .+ mn # draws of the random variable
+    a = 1.                               # initial guess
+    differ = 100.                        # initialize error
+    exp_price = 1.                       # initialize expected price
+
+    while differ > 1e-4
+        a_old = a                      # save old acreage
+        p = max.(1, 3 .- 2 .*a.*y)     # compute price at all distribution points
+        exp_price = mean(p)            # compute expected price
+        a = 1/2 + 1/2*exp_price        # get new acreage planted given new price
+        differ= abs(a - a_old)         # change in acreage planted
+        println("Intermediate acreage guess: $(round(a,digits=3))")
+    end
+
+    return a, exp_price
+end;
+```
+
+
+
+## Function iteration
+
+```{julia}
+#| echo: TRUE
+#| label: example3_solution
+acreage, expected_price = find_root_fi(1, 0.1);
+println("The optimal number of acres to plant is $(round(acreage, digits = 3)).\nThe expected price is $(round(expected_price, digits = 3)).")
+```
+
+
+
+## Don't leave just yet!
+
+**Things to do before next class**
+
+1. Read Gentzkow and Shapiro (2014) *Code and Data for the Social Sciences*
+   - Special attention to Chapters 2--4, 6, 7
+2. Watch the 5-minute video *What is version control?*
+   - [Links for both are on Canvas]{.small_text}
+3. Create a GitHub account with your Purdue email (or add it to your existing account) **and send me an email with your username**
+4. Install [GitHub Desktop](https://desktop.github.com/)
