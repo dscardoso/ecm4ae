@@ -524,5 +524,5 @@ println("The optimal number of acres to plant is $(round(acreage, digits = 3)).\
    - Special attention to Chapters 2--4, 6, 7
 2. Watch the 5-minute video *What is version control?*
    - [Links for both are on Canvas]{.small_text}
-3. Create a GitHub account with your Purdue email (or add it to your existing account) **and send me an email with your username**
+3. Create a GitHub account with your Illinois email (or add it to your existing account) **and send me an email with your username**
 4. Install [GitHub Desktop](https://desktop.github.com/)
