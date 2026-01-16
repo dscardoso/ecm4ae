@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Diego S. Cardoso">
+
+<title>ACE 592 - Lecture 1.2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="1_2_reproducibilidy_version_control_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/popper.min.js"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/anchor.min.js"></script>
+<link href="1_2_reproducibilidy_version_control_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1_2_reproducibilidy_version_control_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="1_2_reproducibilidy_version_control_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="1_2_reproducibilidy_version_control_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="1_2_reproducibilidy_version_control_files/libs/bootstrap/bootstrap-0e5f40ec6cc387305998617d35d5b2e2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-axe-checker-options" type="text/plain">eyJvdXRwdXQiOiJkb2N1bWVudCJ9</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ACE592_1_2_slides.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ACE 592 - Lecture 1.2</h1>
+<p class="subtitle lead">Best practices: reproducibility, organization &amp; version control</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Diego S. Cardoso </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Illinois Urbana-Champaign
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="course-roadmap" class="level2" data-background-color="orange" data-number="0.1">
+<h2 data-background-color="orange" data-number="0.1" class="anchored" data-anchor-id="course-roadmap"><span class="header-section-number">0.1</span> Course Roadmap</h2>
+<ol type="1">
+<li>Introduction to Scientific Computing
+<ol type="1">
+<li><span class="gray">Motivation</span></li>
+<li><strong>Best practices</strong></li>
+<li>Intro to programming</li>
+</ol></li>
+<li>Fundamentals of numerical methods</li>
+<li>Systems of equations</li>
+<li>Optimization</li>
+<li>Function approximation</li>
+<li>Structural estimation</li>
+</ol>
+</section>
+<section id="agenda" class="level2" data-background-color="orange" data-number="0.2">
+<h2 data-background-color="orange" data-number="0.2" class="anchored" data-anchor-id="agenda"><span class="header-section-number">0.2</span> Agenda</h2>
+<ul>
+<li>How to start and maintain computational research projects in a less “chaotic” way
+<ul>
+<li>Why? Because it saves time! For your future self and everyone else that needs to work with you now or in the future</li>
+</ul></li>
+<li>We’ll review best practices on Gentzkow &amp; Shapiro (2014)</li>
+</ul>
+</section>
+<section id="relevant-sources-for-this-lecture" class="level2" data-background-color="orange" data-number="0.3">
+<h2 data-background-color="orange" data-number="0.3" class="anchored" data-anchor-id="relevant-sources-for-this-lecture"><span class="header-section-number">0.3</span> Relevant sources for this lecture</h2>
+<ul>
+<li>Gentzkow &amp; Shapiro (2014)</li>
+<li>Lecture notes for Grant McDermott’s <em>Data Science for Economists</em> (Oregon) and Ivan Rudik’s <em>Dynamic Optimization</em> (Cornell)</li>
+</ul>
+</section>
+<section id="gentzkow-shapiros-code-and-data-for-the-social-sciences" class="level2" data-number="0.4">
+<h2 data-number="0.4" class="anchored" data-anchor-id="gentzkow-shapiros-code-and-data-for-the-social-sciences"><span class="header-section-number">0.4</span> Gentzkow &amp; Shapiro’s <em>“Code and Data for the Social Sciences”</em></h2>
+<ul>
+<li>Economists are not the first to deal with code, data, and a bunch of other stuff in complex projects
+<ul>
+<li>People in IT, Engineering, and “Hard Sciences” have learned their lessons. We can learn from them</li>
+</ul></li>
+<li>This guide is a great starting point to set you on a good path
+<ul>
+<li>But there’s a lot more to learn</li>
+<li>Some things you’ll learn by reading, others by observation, others only by trial-and-error</li>
+</ul></li>
+</ul>
+</section>
+<section id="gentzkow-shapiros-code-and-data-for-the-social-sciences-1" class="level2" data-number="0.5">
+<h2 data-number="0.5" class="anchored" data-anchor-id="gentzkow-shapiros-code-and-data-for-the-social-sciences-1"><span class="header-section-number">0.5</span> Gentzkow &amp; Shapiro’s <em>“Code and Data for the Social Sciences”</em></h2>
+<p>Four categories of advice</p>
+<ul>
+<li>A. Reproducibility
+<ul>
+<li><em>Automation</em> (section 2), <em>Documentation</em> (7)</li>
+</ul></li>
+<li>B. Organization
+<ul>
+<li><em>Directories</em> (4), <em>Keys</em> (5)</li>
+</ul></li>
+<li>C. Project management
+<ul>
+<li><em>Version Control</em> (3), <em>Management</em> (8)</li>
+</ul></li>
+<li>D. Coding
+<ul>
+<li><em>Abstraction</em> (6), <em>Documentation</em> (7), <em>Code Style</em> (appendix)</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<p><strong>We’ll go over A – C today</strong></p>
+</section>
+<section id="reproducibility" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Reproducibility</h1>
+<section id="why-am-i-doing-this-to-you" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="why-am-i-doing-this-to-you"><span class="header-section-number">1.1</span> Why am I doing this to you?</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>Reproducibility is increasingly important in the physical sciences
+<ul>
+<li>And Econ is catching up</li>
+</ul></li>
+<li>If you want to publish in AEA journals you need to have good practices
+<ul>
+<li>Other journals are doing the same</li>
+</ul></li>
+</ul>
+</div><div class="column">
+<p><img src="figures/AEA_data_webpage.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="reproducibility-1" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="reproducibility-1"><span class="header-section-number">1.2</span> Reproducibility</h2>
+<p><strong>Why should we care?</strong></p>
+<p>. . .</p>
+<ul>
+<li>Because journals are interested in that these days. Yes, but why?</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Because it is a <strong>fundamental principle of the scientific method</strong>
+<ul>
+<li>With enough instructions, someone else can <em>verify</em> your experimental results and claims</li>
+<li>It lends credibility to the scientific process</li>
+</ul></li>
+</ul>
+</section>
+<section id="reproducibility-2" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="reproducibility-2"><span class="header-section-number">1.3</span> Reproducibility</h2>
+<p>The term can have different meanings and (quasi) synonyms depending on the field</p>
+<p>We’ll borrow terminology from CS<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<ul>
+<li><strong>Repeatability</strong>: same team, same experimental setup</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Replicability</strong>: <em>different</em> team, same experimental setup</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Reproducibility</strong>: <em>different</em> team, <em>different</em> experimental setup</li>
+</ul>
+</section>
+<section id="reproducibility-3" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="reproducibility-3"><span class="header-section-number">1.4</span> Reproducibility</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>Reproducibility is the higher scientific goal</li>
+<li>For the projects we develop, we look for <strong>replicability</strong></li>
+<li>We make it easy for someone else to run our analysis and get the same results</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/AEA_data_webpage.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="automation" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="automation"><span class="header-section-number">1.5</span> Automation</h2>
+<p><strong>Automate everything that can be automated</strong></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/automation_graph.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="automation-1" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="automation-1"><span class="header-section-number">1.6</span> Automation</h2>
+<p><strong>Automate everything that can be automated</strong></p>
+<p>Scripts are great because they</p>
+<ul>
+<li>Save time for repeated tasks</li>
+<li>Document step by step what you are doing</li>
+<li>Can usually be reused/adapted for similar tasks in the same or other projects</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Manual tasks (with files or in Excel) are difficult to replicate unless you take detailed notes at every step</li>
+<li>Rule-of-thumb: <em>if you are doing a lot of clicking for repeated task, think about writing a script for that</em></li>
+</ul>
+</section>
+<section id="automation-2" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="automation-2"><span class="header-section-number">1.7</span> Automation</h2>
+<p><strong>Automate everything that can be automated</strong></p>
+<p>My advice: <em>get comfortable with the basics of UNIX shell</em></p>
+<ul>
+<li>You can do so much with basic shell scripting
+<ul>
+<li>You’ll most likely need it if your research needs High-Performance Computing (HPC)</li>
+</ul></li>
+<li>You can learn that in a couple of hours with <a href="https://swcarpentry.github.io/shell-novice">Software Carpentry lessons</a></li>
+<li>Works in any OS
+<ul>
+<li>Mac: shell environment built in</li>
+<li>Linux: you probably needed that already</li>
+<li>Windows: there’s WSL2 and it works great (really!)</li>
+</ul></li>
+</ul>
+</section>
+<section id="automation-3" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="automation-3"><span class="header-section-number">1.8</span> Automation</h2>
+<p><strong>Write a single script that executes all code from beginning to end</strong></p>
+<ul>
+<li>It’s the ideal goal for <em>replication packages</em></li>
+<li>Have a script like this from the beginning of the project and increment it as you go</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>But don’t obsess over it. Sometimes it can’t be done
+<ul>
+<li>E.g.: you are running part of your code on an external server</li>
+</ul></li>
+</ul>
+</section>
+<section id="automation-replicability" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="automation-replicability"><span class="header-section-number">1.9</span> Automation + replicability</h2>
+<p>An extra rule: <strong>Keep track of your dependencies</strong></p>
+<ul>
+<li>We often use many external packages</li>
+<li>Popular packages get updated often. Sometimes it breaks things…
+<ul>
+<li>The syntax you used doesn’t work anymore</li>
+<li>The function you called doesn’t exist anymore</li>
+</ul></li>
+<li>Keep note (and backups) of the versions you use</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>There are many tools to help you with that
+<ul>
+<li>Some are simpler and just track that info for you (e.g.: Julia project, R renv)</li>
+<li>Others create a stand-alone environment with everything you need to run (e.g.: Docker)</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="organization" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Organization</h1>
+<section id="directories" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="directories"><span class="header-section-number">2.1</span> Directories</h2>
+<p><strong>Separate directories by function</strong></p>
+<p><strong>Separate files into inputs and outputs</strong></p>
+<ul>
+<li>These are quite intuitive: they make it easy for you (your code) and anyone else to find things</li>
+<li>Separating inputs, intermediate outputs (temp), and final outputs is crucial for storing the right things
+<ul>
+<li>We normally don’t use version control for intermediate calculations</li>
+</ul></li>
+</ul>
+</section>
+<section id="directories-1" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="directories-1"><span class="header-section-number">2.2</span> Directories</h2>
+<div class="columns">
+<div class="column">
+<p>Have separate folders for</p>
+<ul>
+<li>Code</li>
+<li>Data</li>
+<li>Output
+<ul>
+<li>I also use separate sub-folders for tables, figures, &amp; maps</li>
+</ul></li>
+<li>Text (e.g.&nbsp;LaTeX files)</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/jmp_folder.png" class="img-fluid"> <span class="small_text"><span class="math inline">\(\uparrow\)</span> <em>This is from a working paper</em></span></p>
+</div>
+</div>
+</section>
+<section id="directories-2" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="directories-2"><span class="header-section-number">2.3</span> Directories</h2>
+<p>For long scripts that do many steps in sequence, like building a data set, it is also a good practice to number your scripts</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/file_numbering.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="directories-3" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="directories-3"><span class="header-section-number">2.4</span> Directories</h2>
+<p><strong>Make directories portable</strong></p>
+<p>In other words: <strong>use relative paths</strong>. Or don’t hard-code your paths</p>
+<p>Instead of</p>
+<pre><code>C:/User/me/my_research/data/my_data_file.csv</code></pre>
+<p>use a relative path like this</p>
+<pre><code>data/my_data_file.csv</code></pre>
+</section>
+<section id="directories-4" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="directories-4"><span class="header-section-number">2.5</span> Directories</h2>
+<div class="columns">
+<div class="column">
+<p>It’s not always possible to have relative paths everywhere</p>
+<p>In that case, you can define all the paths in one single place and read it from there every time</p>
+<p>But there are many packages to care of that for you (e.g., package <code>here</code> for R)</p>
+</div><div class="column">
+<p><img src="figures/paths_example.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="project-management" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Project management</h1>
+<section id="before-we-continue" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="before-we-continue"><span class="header-section-number">3.1</span> Before we continue…</h2>
+<p>By now you hopefully have</p>
+<ol type="1">
+<li>GitHub Desktop installed on your laptop</li>
+<li>A GitHub account (and sent me your username)</li>
+</ol>
+<p>After class, please:</p>
+<ul>
+<li>Watch out for an invitation for our GitHub Classroom repository</li>
+<li>Accept the invitation</li>
+</ul>
+</section>
+<section id="version-control-why-bother" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="version-control-why-bother"><span class="header-section-number">3.2</span> Version Control: why bother?</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/phd_comics.gif" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="git" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="git"><span class="header-section-number">3.3</span> Git</h2>
+<ul>
+<li>Git is a <em>distributed version control system</em>
+<ul>
+<li>Imagine if Dropbox and the “Track changes” feature in MS Word had a baby. Git would be that baby</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>In fact, it’s even better than that because Git is optimized for the things that economists spend a lot of time working on (e.g.&nbsp;code)</li>
+<li>It gives you an easy way to test experimental changes (e.g.&nbsp;new specifications, additional model states) and not have them mess with your main code</li>
+</ul>
+</section>
+<section id="github" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="github"><span class="header-section-number">3.4</span> GitHub</h2>
+<p><strong>Git</strong> <span class="math inline">\(\neq\)</span> <strong>GitHub</strong></p>
+<p>. . .</p>
+<ul>
+<li>GitHub hosts a bunch of online services we want when using Git
+<ul>
+<li>Hosts a copy of your repository online</li>
+<li>Allows for people to suggest changes to your project</li>
+<li>Keeps track of team communication on tasks</li>
+<li>And even let’s you host some related content (like these slides!)</li>
+<li>You can even program and run your code on GitHub Codespaces</li>
+</ul></li>
+<li>It’s also the main location for non-base Julia (and R) packages to be stored and developed</li>
+</ul>
+</section>
+<section id="the-differences" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="the-differences"><span class="header-section-number">3.5</span> The differences</h2>
+<p><strong>Git</strong> is the software infrastructure for versioning and merging files</p>
+<p>. . .</p>
+<p><strong>GitHub</strong> provides an online service to coordinate working with Git repositories</p>
+<ul>
+<li>And adds some additional features for managing projects
+<ul>
+<li>Stores the project on the cloud, allows for task management, creation of groups, etc</li>
+</ul></li>
+</ul>
+</section>
+<section id="why-github" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="why-github"><span class="header-section-number">3.6</span> Why Git(Hub)?</h2>
+<p><strong>Selfish reasons</strong></p>
+<p>. . .</p>
+<ul>
+<li>The private benefits of having well-versioned code in case you need to go back to previous stages</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Your directories will be super clean</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Makes it <strong>MUCH</strong> easier to collaborate on projects</li>
+</ul>
+</section>
+<section id="why-github-1" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="why-github-1"><span class="header-section-number">3.7</span> Why Git(Hub)?</h2>
+<p><strong>Semi-altruistic reasons</strong></p>
+<p>. . .</p>
+<ul>
+<li>The external benefits of open science, collaboration, etc</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>These external benefits also generate some downstream private reputational benefits
+<ul>
+<li>You must be confident in your code to make it public</li>
+</ul></li>
+<li>Can improve future social efficiency
+<ul>
+<li>You commit to post future code (if you don’t, it’ll look shady)</li>
+</ul></li>
+</ul>
+</section>
+<section id="git-basics" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="git-basics"><span class="header-section-number">3.8</span> Git basics</h2>
+<p>Everything on Git is stored in something called a <strong>repository</strong> or <em>repo</em> for short. This is the directory for a project</p>
+<p>. . .</p>
+<ul>
+<li><strong>Local</strong>: a directory with a <code>.git</code> subdirectory that stores the history of changes to the repository</li>
+<li><strong>Remote</strong>: a website, e.g.&nbsp;see the GitHub repo for the <a href="https://github.com/JuliaNLSolvers/Optim.jl">Optim</a> package in Julia</li>
+</ul>
+</section>
+<section id="git-basics-1" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="git-basics-1"><span class="header-section-number">3.9</span> Git basics</h2>
+<p><img src="figures/repo_example.png" class="img-fluid"></p>
+</section>
+<section id="creating-a-new-repo-on-github" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="creating-a-new-repo-on-github"><span class="header-section-number">3.10</span> Creating a new repo on GitHub</h2>
+<section id="lets-create-a-new-repo" class="level4" data-number="3.10.0.1">
+<h4 data-number="3.10.0.1" class="anchored" data-anchor-id="lets-create-a-new-repo"><span class="header-section-number">3.10.0.1</span> Let’s create a new repo</h4>
+<p>Easy from GitHub website: just click on that green <code>New</code> button from the launch page</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/new_repo.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="creating-a-new-repo-on-github-1" class="level2" data-number="3.11">
+<h2 data-number="3.11" class="anchored" data-anchor-id="creating-a-new-repo-on-github-1"><span class="header-section-number">3.11</span> Creating a new repo on GitHub</h2>
+<p>Next steps:</p>
+<ol type="1">
+<li>Choose a name</li>
+<li>Choose a description</li>
+<li>Choose whether the repo is public or private</li>
+<li>Choose whether you want to add a <code>README.md</code> (yes), or a <code>.gitignore</code> or a <code>LICENSE.md</code> file (more next slide)</li>
+</ol>
+</section>
+<section id="creating-a-new-repo-on-github-2" class="level2" data-number="3.12">
+<h2 data-number="3.12" class="anchored" data-anchor-id="creating-a-new-repo-on-github-2"><span class="header-section-number">3.12</span> Creating a new repo on GitHub</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/new_repo_2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="creating-a-new-repo-on-github-3" class="level2" data-number="3.13">
+<h2 data-number="3.13" class="anchored" data-anchor-id="creating-a-new-repo-on-github-3"><span class="header-section-number">3.13</span> Creating a new repo on GitHub</h2>
+<p>Repos come with some common files in them</p>
+<ul>
+<li><code>.gitignore</code>: lists files/directories/extensions that Git shouldnt track (raw data, restricted data, those weird LaTeX by-product files). This is usually a good idea</li>
+<li><code>README.md</code>: a Markdown file that is basically the welcome content on repo’s GitHub website. You should generally initialize a repo with one of these</li>
+<li><code>LICENSE.md</code>: describes the license agreement for the repository</li>
+</ul>
+</section>
+<section id="repo-of-optim.jl-again" class="level2" data-number="3.14">
+<h2 data-number="3.14" class="anchored" data-anchor-id="repo-of-optim.jl-again"><span class="header-section-number">3.14</span> Repo of Optim.jl again</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/repo_example.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="creating-a-new-repo-on-github-4" class="level2" data-number="3.15">
+<h2 data-number="3.15" class="anchored" data-anchor-id="creating-a-new-repo-on-github-4"><span class="header-section-number">3.15</span> Creating a new repo on GitHub</h2>
+<p>You can find the repo at <a href="https://github.com/dscardoso/ace592_example_repo">https://github.com/dscardoso/ace592_example_repo</a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/new_repo_3.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="how-do-i-get-a-repo-on-github-onto-on-my-computer" class="level2" data-number="3.16">
+<h2 data-number="3.16" class="anchored" data-anchor-id="how-do-i-get-a-repo-on-github-onto-on-my-computer"><span class="header-section-number">3.16</span> How do I get a repo on GitHub onto on my computer?</h2>
+<p><strong><code>Clone</code></strong></p>
+<p>To get the repository on your local machine you need to <strong>clone</strong> the repo</p>
+<p>. . .</p>
+<p>Key thing: this will <strong>link</strong> your local repository to the remote</p>
+<ul>
+<li>You’ll be able to update your local when the remote is changed</li>
+</ul>
+</section>
+<section id="cloning" class="level2" data-number="3.17">
+<h2 data-number="3.17" class="anchored" data-anchor-id="cloning"><span class="header-section-number">3.17</span> Cloning</h2>
+<div class="columns">
+<div class="column">
+<p>Click on</p>
+<ul>
+<li><code>Code</code> &gt; <code>Open with GitHub Desktop</code></li>
+</ul>
+<p>You can also use git command line for that (we won’t cover it here)</p>
+</div><div class="column">
+<p>1<a href="figures/clone.png"></a></p>
+</div>
+</div>
+</section>
+<section id="your-turn" class="level2" data-background-color="orange" data-number="3.18">
+<h2 data-background-color="orange" data-number="3.18" class="anchored" data-anchor-id="your-turn"><span class="header-section-number">3.18</span> Your turn!</h2>
+<p>Create and clone your own repository on GitHub and initialize it with a <code>README.md</code> file</p>
+</section>
+<section id="git-workflow" class="level2" data-number="3.19">
+<h2 data-number="3.19" class="anchored" data-anchor-id="git-workflow"><span class="header-section-number">3.19</span> Git workflow</h2>
+<ul>
+<li><strong>Workspace</strong>: actual files on your computer<br>
+</li>
+<li><strong>Repository/local</strong>: your saved local history of changes to the files in the repository<br>
+</li>
+<li><strong>Remote/origin</strong>: remote repository on GitHub that allows for sharing across collaborators</li>
+</ul>
+<p><img src="figures/git_flow.png" class="img-fluid"></p>
+</section>
+<section id="using-git" class="level2" data-number="3.20">
+<h2 data-number="3.20" class="anchored" data-anchor-id="using-git"><span class="header-section-number">3.20</span> Using Git</h2>
+<p>There are only a few basic Git operations you need to know for versioning solo economics research efficiently</p>
+<p>. . .</p>
+<p><strong>Add/Stage</strong>: Add files &amp; modifications to the index</p>
+<ul>
+<li>Take a snapshot of the changes you want updated/saved in your local repository (i.e.&nbsp;your computer)</li>
+</ul>
+<p>. . .</p>
+<p><strong>Commit</strong>: Record the changes to your local repository</p>
+<ul>
+<li>This requires a short message to record what was done or changed</li>
+</ul>
+</section>
+<section id="using-git-1" class="level2" data-number="3.21">
+<h2 data-number="3.21" class="anchored" data-anchor-id="using-git-1"><span class="header-section-number">3.21</span> Using Git</h2>
+<p><strong>Push</strong>: Send the changes you committed in the local repository to the remote repository (i.e.&nbsp;GitHub)</p>
+<p>. . .</p>
+<p><strong>Pull</strong>: Take changes on the remote and integrate them with the local repository - Technically two operations: <code>fetch</code> and <code>merge</code></p>
+</section>
+<section id="git-workflow-a-sequence" class="level2" data-number="3.22">
+<h2 data-number="3.22" class="anchored" data-anchor-id="git-workflow-a-sequence"><span class="header-section-number">3.22</span> Git workflow: a sequence</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/git_workflow_2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="your-turn-1" class="level2" data-background-color="orange" data-number="3.23">
+<h2 data-background-color="orange" data-number="3.23" class="anchored" data-anchor-id="your-turn-1"><span class="header-section-number">3.23</span> Your turn!</h2>
+<p>In your own repository do the following:</p>
+<ol type="1">
+<li>Open <code>README.md</code> in some text editor and insert the following code: <code># Hello World!</code></li>
+<li>Save <code>README.md</code></li>
+<li>Add the changes to <code>README.md</code> to the index</li>
+<li>Commit the changes to your local repo with the message: “First README.md edit.”</li>
+<li>Push the changes to your remote</li>
+</ol>
+<p>. . .</p>
+<p>Did the changes show up your repo’s GitHub page?</p>
+</section>
+<section id="using-git-branching" class="level2" data-number="3.24">
+<h2 data-number="3.24" class="anchored" data-anchor-id="using-git-branching"><span class="header-section-number">3.24</span> Using Git: branching</h2>
+<p>Some more (but not very) advanced operations relate to <strong>branching</strong> and <strong>pull requests</strong></p>
+<p>Branching creates different, but parallel, versions of your code</p>
+<ul>
+<li>If you want to test out a new feature of your model but don’t want to contaminate your <code>main</code> branch, create a new branch and add the feature there</li>
+<li>If it works out, you can bring the changes back into <code>main</code></li>
+<li>If it doesn’t, just delete it</li>
+</ul>
+</section>
+<section id="using-git-branching-1" class="level2" data-number="3.25">
+<h2 data-number="3.25" class="anchored" data-anchor-id="using-git-branching-1"><span class="header-section-number">3.25</span> Using Git: branching</h2>
+<p>It is easy to create a branch on GitHub Desktop</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/branch_1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="using-git-branching-2" class="level2" data-number="3.26">
+<h2 data-number="3.26" class="anchored" data-anchor-id="using-git-branching-2"><span class="header-section-number">3.26</span> Using Git: branching</h2>
+<p>It is easy to create a branch on GitHub Desktop</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/branch_2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="using-git-branching-3" class="level2" data-number="3.27">
+<h2 data-number="3.27" class="anchored" data-anchor-id="using-git-branching-3"><span class="header-section-number">3.27</span> Using Git: branching</h2>
+<p>And also to switch and merge your branch into the <code>main</code></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/branch_3.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="your-turn-2" class="level2" data-background-color="orange" data-number="3.28">
+<h2 data-background-color="orange" data-number="3.28" class="anchored" data-anchor-id="your-turn-2"><span class="header-section-number">3.28</span> Your turn!</h2>
+<p>In your own repository do the following:</p>
+<ol type="1">
+<li>Create a new branch called <code>test-branch</code></li>
+<li>Edit <code>README.md</code> and add the following code: <code>## your_name_here</code></li>
+<li>Save <code>README.md</code></li>
+<li>Add the changes to <code>README.md</code> to the index</li>
+<li>Commit and push the changes with the message: “Test change to README.md.”</li>
+<li>Switch to the <code>main</code> branch</li>
+<li>Choose your <code>test-branch</code> to merge into the <code>main</code> branch</li>
+<li>Push the changes to your remote</li>
+<li>Check your repo’s GitHub page</li>
+</ol>
+</section>
+<section id="pull-requests" class="level2" data-number="3.29">
+<h2 data-number="3.29" class="anchored" data-anchor-id="pull-requests"><span class="header-section-number">3.29</span> Pull requests</h2>
+<ul>
+<li>The branch + merge we just did is the standard workflow if you are working alone</li>
+<li>When you are working with collaborators, before merging it is <em>best to announce first</em> that you have finished the branch or completed a new feature</li>
+<li>This is done with a <strong>pull request</strong></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>In practice, this is also a way to group a bunch of commits into a single new feature and let others know about it</li>
+</ul>
+</section>
+<section id="pull-requests-1" class="level2" data-number="3.30">
+<h2 data-number="3.30" class="anchored" data-anchor-id="pull-requests-1"><span class="header-section-number">3.30</span> Pull requests</h2>
+<p>Once you have committed and pushed changes to a branch, you create a new pull request on GitHub Desktop…</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/pull_request_1a.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="pull-requests-2" class="level2" data-number="3.31">
+<h2 data-number="3.31" class="anchored" data-anchor-id="pull-requests-2"><span class="header-section-number">3.31</span> Pull requests</h2>
+<p>…or on the GitHub website</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/pull_request_1b.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="pull-requests-3" class="level2" data-number="3.32">
+<h2 data-number="3.32" class="anchored" data-anchor-id="pull-requests-3"><span class="header-section-number">3.32</span> Pull requests</h2>
+<p>Enter a description and assign any reviewers</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/pull_request_2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="pull-requests-4" class="level2" data-number="3.33">
+<h2 data-number="3.33" class="anchored" data-anchor-id="pull-requests-4"><span class="header-section-number">3.33</span> Pull requests</h2>
+<p>Once you and your collaborators are happy with it, just go ahead and <code>merge pull request</code></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/pull_request_3.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="pull-requests-5" class="level2" data-number="3.34">
+<h2 data-number="3.34" class="anchored" data-anchor-id="pull-requests-5"><span class="header-section-number">3.34</span> Pull requests</h2>
+<p>And you’re done!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/pull_request_4.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="your-turn-3" class="level2" data-background-color="orange" data-number="3.35">
+<h2 data-background-color="orange" data-number="3.35" class="anchored" data-anchor-id="your-turn-3"><span class="header-section-number">3.35</span> Your turn!</h2>
+<p>In your own repository do the following:</p>
+<ol type="1">
+<li>Switch back to <code>test-branch</code></li>
+<li>Create a new file called <code>new_feature.jl</code> and write anything in it</li>
+<li>Commit and push the changes with the message “Adding new feature”</li>
+<li>Create a pull request and add “New feature” as a description</li>
+</ol>
+<ul>
+<li>(Here is where you and collaborators would discuss/agree)</li>
+</ul>
+<ol start="5" type="1">
+<li>Go ahead and “Merge pull request”</li>
+</ol>
+</section>
+<section id="team-up" class="level2" data-number="3.36">
+<h2 data-number="3.36" class="anchored" data-anchor-id="team-up"><span class="header-section-number">3.36</span> Team up!</h2>
+<ol type="1">
+<li>Find a partner for this next piece</li>
+<li>One of you invites the other to collaborate on the project: GitHub repo &gt; Settings &gt; Collaborators &gt; Add people</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/manage_access.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="team-up-1" class="level2" data-number="3.37">
+<h2 data-number="3.37" class="anchored" data-anchor-id="team-up-1"><span class="header-section-number">3.37</span> Team up!</h2>
+<p>If you were the one being invited, accept the invite, and clone the repo to your local</p>
+<p>. . .</p>
+<p>Now do the following:</p>
+<ol type="1">
+<li>Each of you edit the <code># Hello World!</code> line of code to be something else and different from each other</li>
+<li>Commit the changes to your local</li>
+<li>Have the repo creator push their changes</li>
+<li>Have the collaborator push their changes</li>
+</ol>
+</section>
+<section id="cant-push-changes-when-you-arent-updated" class="level2" data-number="3.38">
+<h2 data-number="3.38" class="anchored" data-anchor-id="cant-push-changes-when-you-arent-updated"><span class="header-section-number">3.38</span> Can’t push changes when you aren’t updated</h2>
+<p>It turns out that the second person can’t push their local changes to the remote</p>
+<p>The second person is pushing their history of changes</p>
+<p>But the remote is already one commit ahead because of the first person, so the second person’s changes can’t be pushed</p>
+</section>
+<section id="update-by-pulling-after-you-commit-local-changes" class="level2" data-number="3.39">
+<h2 data-number="3.39" class="anchored" data-anchor-id="update-by-pulling-after-you-commit-local-changes"><span class="header-section-number">3.39</span> Update by pulling after you commit local changes</h2>
+<p>You need to pull the remote changes first. But then you try to pull your commit and you get a <strong>merge conflict</strong> in <code>README.md</code></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/conflict_1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="merge-conflicts" class="level2" data-number="3.40">
+<h2 data-number="3.40" class="anchored" data-anchor-id="merge-conflicts"><span class="header-section-number">3.40</span> Merge conflicts</h2>
+<p>This means there were differences between the remote and your local that conflicted</p>
+<p>. . .</p>
+<p>Sometimes there will be conflicts between two separate histories</p>
+<ul>
+<li>E.g. if you and your collaborator edited the same chunk of code separately on your local repos</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>When you try to merge these histories by pushing to the remote, Git will throw a <strong>merge conflict</strong></li>
+</ul>
+</section>
+<section id="merge-conflicts-1" class="level2" data-number="3.41">
+<h2 data-number="3.41" class="anchored" data-anchor-id="merge-conflicts-1"><span class="header-section-number">3.41</span> Merge conflicts</h2>
+<p>Good code editors (like Visual Studio Code) “understand” git and will show you nicely where the conflict is</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/conflict_2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="solving-merge-conflicts" class="level2" data-number="3.42">
+<h2 data-number="3.42" class="anchored" data-anchor-id="solving-merge-conflicts"><span class="header-section-number">3.42</span> Solving merge conflicts</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span> HEAD</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Indicates the start of the conflicted code</p>
+<p>. . .</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">=======</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Separates the two different conflicting histories</p>
+<p>. . .</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span> lots <span class="ex">of</span> numbers and letters</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Indicates the end of the conflicted code and the hash (don’t worry about it) for the specific commit</p>
+</section>
+<section id="fixing-a-merge-conflict" class="level2" data-number="3.43">
+<h2 data-number="3.43" class="anchored" data-anchor-id="fixing-a-merge-conflict"><span class="header-section-number">3.43</span> Fixing a merge conflict</h2>
+<p>Merge conflicts can be fixed by directly editing the file. Then <code>Continue merge</code> on GitHub Desktop. Fixed!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/conflict_3.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="back-to-gentzkow-and-shapiros-rules" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Back to Gentzkow and Shapiro’s rules</h1>
+<section id="version-control" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="version-control"><span class="header-section-number">4.1</span> Version control</h2>
+<p><strong>Store code and data under version control</strong></p>
+<ul>
+<li>Now you know how to do that with Git(Hub)</li>
+<li>But I don’t recommend using it for large data sets
+<ul>
+<li>Might actually be impossible because GitHub sets a strict size limit of 100 MB per file</li>
+<li>For large data, use Dropbox/OneDrive/Box</li>
+<li>For restricted/confidential data: DEFINITELY don’t use any of the above</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<p><strong>Run the whole directory before checking it back in</strong></p>
+<ul>
+<li>In other words: <em>avoid committing a version with bugs or that breaks other code in your project</em></li>
+</ul>
+</section>
+<section id="management" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="management"><span class="header-section-number">4.2</span> Management</h2>
+<p><strong>Manage tasks with a task management system</strong></p>
+<p><strong>E-mail is not a task management system</strong></p>
+<ul>
+<li>You can do that in GitHub!
+<ul>
+<li>With the added benefit that you can easily link changes to tasks (we’ll see that in a bit)</li>
+</ul></li>
+<li>But there are many other tools
+<ul>
+<li>Some examples: Asana, Trello, Notion, and even Outlook tasks</li>
+</ul></li>
+</ul>
+</section>
+<section id="managing-tasks-and-workflow-with-github" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="managing-tasks-and-workflow-with-github"><span class="header-section-number">4.3</span> Managing tasks and workflow with GitHub</h2>
+<p>GitHub is also very useful for task management in solo or group projects using <strong>issues</strong> and <strong>pull requests</strong></p>
+<p><strong>Issues</strong>: task management for you and your collaborators</p>
+<ul>
+<li>It should be able to completely replace email
+<ul>
+<li>With the added benefit of organizing your discussions and decisions by topic</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<p>Let’s look at the issues for the <code>Optim</code> package in Julia</p>
+</section>
+<section id="issues" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="issues"><span class="header-section-number">4.4</span> Issues</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>The issues tab reports a list of 56 open issues (286 closed, i.e., task or problem has been solved)</li>
+<li>Each issue has its own title</li>
+<li>Let’s one example of issue</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/issues_1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="issues-1" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="issues-1"><span class="header-section-number">4.5</span> Issues</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>One person reported issues with the documentation of a function, which does not match the actual function</li>
+<li>Someone else responded with some feedback</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/issues_2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="issues-2" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="issues-2"><span class="header-section-number">4.6</span> Issues</h2>
+<p>It is easy to creat a new task or <em>issue</em>: from the issues tab, click the green <strong>new issue</strong> button which takes you here</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/issues_3.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="issues-3" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="issues-3"><span class="header-section-number">4.7</span> Issues</h2>
+<div class="columns">
+<div class="column">
+<p>Then you can</p>
+<ul>
+<li>Add a title</li>
+<li>Add a description</li>
+<li>Assign the task to a collaborator</li>
+<li>Add labels/tags</li>
+</ul>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/issues_4.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="issues-4" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="issues-4"><span class="header-section-number">4.8</span> Issues</h2>
+<p>The issue keeps track of the history of everything that’s happened to it</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/issues_5.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="issues-5" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="issues-5"><span class="header-section-number">4.9</span> Issues</h2>
+<p>You can reference people with <code>@</code> which brings up a dropdown menu of all collaborators on the project</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/issues_6.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="issues-6" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="issues-6"><span class="header-section-number">4.10</span> Issues</h2>
+<p>You can also reference <em>other issues</em> if they’re related by using <code>#</code> which brings up a dropdown of all issues for your repository</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/issues_7.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="issues-7" class="level2" data-number="4.11">
+<h2 data-number="4.11" class="anchored" data-anchor-id="issues-7"><span class="header-section-number">4.11</span> Issues</h2>
+<p>Issues can also be referenced in your commits to your project by adding <code>#issue_number_here</code> to the commit message</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/issues_8.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="issues-8" class="level2" data-number="4.12">
+<h2 data-number="4.12" class="anchored" data-anchor-id="issues-8"><span class="header-section-number">4.12</span> Issues</h2>
+<p>Then those commits show up in your issue so you have a history of what code changes have been made</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/issues_9.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="issues-9" class="level2" data-number="4.13">
+<h2 data-number="4.13" class="anchored" data-anchor-id="issues-9"><span class="header-section-number">4.13</span> Issues</h2>
+<p>If you click on the commit, it takes you to the <code>git diff</code> which shows you any changes to files made in that commit</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/issues_10.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="other-stuff-on-github" class="level2" data-number="4.14">
+<h2 data-number="4.14" class="anchored" data-anchor-id="other-stuff-on-github"><span class="header-section-number">4.14</span> Other stuff on GitHub</h2>
+<ul>
+<li>GitHub keeps adding new features for project management</li>
+<li>Three of the newest additions are
+<ul>
+<li><strong>Discussions</strong>: basically a messaging board for your repo. Threads can be created independent of issues</li>
+<li><strong>Projects</strong>: let you create organization spaces with Kanban boards (To do/Doing/Done columns)</li>
+<li><strong>Codespaces</strong>: let you create virtual machines with all your software that you can program and run from a browser
+<ul>
+<li>They give you free computing hours per month, but you gotta pay for more time or better computers</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="git-faq" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Git FAQ</h1>
+<section id="faq" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="faq"><span class="header-section-number">5.1</span> FAQ</h2>
+<p><strong>Q: When should I commit (and push) changes?</strong></p>
+<p><em>A: Early and often</em></p>
+<ul>
+<li>It’s not quite as important as saving your work regularly, but it’s a close second</li>
+<li>You should certainly push everything that you want your collaborators to see</li>
+</ul>
+</section>
+<section id="faq-1" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="faq-1"><span class="header-section-number">5.2</span> FAQ</h2>
+<p><strong>Q: Do I need branches if I am working on a solo project?</strong></p>
+<p><em>A: You don’t really need them, but they offer big advantages in maintaining a sane workflow</em></p>
+<ul>
+<li>Experiment without any risk to the main project!</li>
+</ul>
+</section>
+<section id="faq-2" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="faq-2"><span class="header-section-number">5.3</span> FAQ</h2>
+<p><strong>Q: What’s the difference between cloning and forking a repo?</strong></p>
+<p><em>A: Cloning directly ties your local version to the original repo, while forking creates a copy on your GitHub (which you can then clone)</em></p>
+<ul>
+<li><a href="http://happygitwithr.com/clone.html">Cloning</a> makes it easier to fetch updates (and is often the best choice for new GitHub users), but <a href="http://happygitwithr.com/fork.html">forking</a> has advantages too.</li>
+</ul>
+</section>
+<section id="faq-3" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="faq-3"><span class="header-section-number">5.4</span> FAQ</h2>
+<p><strong>Q: What happens when something goes wrong?</strong></p>
+<p><em>A: Look for help</em></p>
+<ul>
+<li>Command line-based fixes: <a href="http://ohshitgit.com">ohshitgit.com</a></li>
+<li>Also, search on <a href="https://stackexchange.com">Stack Exchange</a></li>
+</ul>
+</section>
+<section id="faq-4" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="faq-4"><span class="header-section-number">5.5</span> FAQ</h2>
+<p><strong>Q: What happens when something goes <i>horribly</i> wrong?</strong></p>
+<p><em>A: Burn it down and start again:</em> <a href="http://happygitwithr.com/burn.html">http://happygitwithr.com/burn.html</a></p>
+<div class="columns">
+<div class="column">
+<ul>
+<li>This is a great advantage of Git’s distributed nature:
+<ul>
+<li>If something goes horribly wrong, there’s usually an intact version somewhere else</li>
+</ul></li>
+</ul>
+</div><div class="column">
+<p><img src="figures/xkcd_git.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="appendix" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Appendix</h1>
+<p><em>Submitting your work with GitHub Classroom</em></p>
+<section id="submitting-your-work" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="submitting-your-work"><span class="header-section-number">6.1</span> Submitting your work</h2>
+<ul>
+<li>To help you get familiarized with GitHub workflow, all your submitted work will be done on a repository</li>
+<li>After you accept an invitation from GitHub Classroom, it will create a new private repository
+<ul>
+<li>Only you(r team) and Diego will be able to see its content</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>GitHub will automatically create a <em>pull request</em> called <strong>Feedback</strong>
+<ul>
+<li>This is where I’ll write any feedback I might have for your files</li>
+<li><strong>Please do not close or merge this pull request. Leave it open for the rest of the semester</strong></li>
+</ul></li>
+</ul>
+</section>
+<section id="submitting-your-work-1" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="submitting-your-work-1"><span class="header-section-number">6.2</span> Submitting your work</h2>
+<ul>
+<li>Follow the link you received in a Canvas announcement. It’s an invitation to create a tutorial repository</li>
+<li>This repository only has a README file with a summary of how GitHub works</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Typically, problem sets will include a README file with the instructions to solve the problem
+<ul>
+<li>When applicable, it will also include starter scripts to set up the problem environment</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>You can (and probably should) make as many commits as you want in that repository</li>
+<li>I will grade the latest comit before the deadline
+<ul>
+<li>I will appreciate it if you do not commit changes after the deadline. If you need an extension, please send me an email</li>
+</ul></li>
+</ul>
+</section>
+<section id="submitting-your-work-2" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="submitting-your-work-2"><span class="header-section-number">6.3</span> Submitting your work</h2>
+<p>Your <strong>Feedback</strong> pull request page will something like this after your first commit</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/test_ps_3.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="next-class" class="level2" data-background-color="orange" data-number="6.4">
+<h2 data-background-color="orange" data-number="6.4" class="anchored" data-anchor-id="next-class"><span class="header-section-number">6.4</span> Next class</h2>
+<p>We’ll start programming in Julia language</p>
+<p><strong>Before next class, please:</strong> follow <a href="https://www.julia-vscode.org/docs/dev/gettingstarted/">these instructions</a> to install Julia and Visual Studio (VS) code on your laptop</p>
+<p>If you plan to use a different programming language (Python, R, or Matlab), <strong>this is the time to let me know</strong>!</p>
+<p>. . .</p>
+<ul>
+<li>We won’t cover it, but you might also be interested in learning more about <em>Quarto</em> and <em>Jupyter</em> for programming using code notebooks
+<ul>
+<li>They allow you to write formatted text along with code blocks and render graphics in the same document</li>
+<li>You can learn more about <em>Quarto</em> <a href="https://quarto.org/">here</a></li>
+<li>You can learn more about <em>Jupyter</em> <a href="https://julia.quantecon.org/getting_started_julia/getting_started.html">here</a></li>
+</ul></li>
+</ul>
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Association for Computing Machinery (2021). <em>Artifact Review and Badging – Version 2.0</em><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

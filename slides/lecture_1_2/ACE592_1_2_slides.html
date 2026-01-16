@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="1_2_reproducibilidy_version_control_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/tabby.min.js"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/popper.min.js"></script>
+<script src="1_2_reproducibilidy_version_control_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="1_2_reproducibilidy_version_control_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1_2_reproducibilidy_version_control_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="1_2_reproducibilidy_version_control_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Diego S. Cardoso">
+  <title>ACE 592 - Lecture 1.2</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="1_2_reproducibilidy_version_control_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="1_2_reproducibilidy_version_control_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="1_2_reproducibilidy_version_control_files/libs/revealjs/dist/theme/quarto-7ed0139e1fda49eecd9b2d5bc445076f.css">
+  <link href="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">ACE 592 - Lecture 1.2</h1>
+  <p class="subtitle">Best practices: reproducibility, organization &amp; version control</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Diego S. Cardoso 
+</div>
+        <p class="quarto-title-affiliation">
+            University of Illinois Urbana-Champaign
+          </p>
+    </div>
+</div>
+
+</section>
+<section id="course-roadmap" class="slide level2" data-background-color="orange">
+<h2>Course Roadmap</h2>
+<ol type="1">
+<li>Introduction to Scientific Computing
+<ol type="1">
+<li><span class="gray">Motivation</span></li>
+<li><strong>Best practices</strong></li>
+<li>Intro to programming</li>
+</ol></li>
+<li>Fundamentals of numerical methods</li>
+<li>Systems of equations</li>
+<li>Optimization</li>
+<li>Function approximation</li>
+<li>Structural estimation</li>
+</ol>
+</section>
+<section id="agenda" class="slide level2" data-background-color="orange">
+<h2>Agenda</h2>
+<ul>
+<li>How to start and maintain computational research projects in a less “chaotic” way
+<ul>
+<li>Why? Because it saves time! For your future self and everyone else that needs to work with you now or in the future</li>
+</ul></li>
+<li>We’ll review best practices on Gentzkow &amp; Shapiro (2014)</li>
+</ul>
+</section>
+<section id="relevant-sources-for-this-lecture" class="slide level2" data-background-color="orange">
+<h2>Relevant sources for this lecture</h2>
+<ul>
+<li>Gentzkow &amp; Shapiro (2014)</li>
+<li>Lecture notes for Grant McDermott’s <em>Data Science for Economists</em> (Oregon) and Ivan Rudik’s <em>Dynamic Optimization</em> (Cornell)</li>
+</ul>
+</section>
+<section id="gentzkow-shapiros-code-and-data-for-the-social-sciences" class="slide level2">
+<h2>Gentzkow &amp; Shapiro’s <em>“Code and Data for the Social Sciences”</em></h2>
+<ul>
+<li>Economists are not the first to deal with code, data, and a bunch of other stuff in complex projects
+<ul>
+<li>People in IT, Engineering, and “Hard Sciences” have learned their lessons. We can learn from them</li>
+</ul></li>
+<li>This guide is a great starting point to set you on a good path
+<ul>
+<li>But there’s a lot more to learn</li>
+<li>Some things you’ll learn by reading, others by observation, others only by trial-and-error</li>
+</ul></li>
+</ul>
+</section>
+<section id="gentzkow-shapiros-code-and-data-for-the-social-sciences-1" class="slide level2">
+<h2>Gentzkow &amp; Shapiro’s <em>“Code and Data for the Social Sciences”</em></h2>
+<p>Four categories of advice</p>
+<ul>
+<li>A. Reproducibility
+<ul>
+<li><em>Automation</em> (section 2), <em>Documentation</em> (7)</li>
+</ul></li>
+<li>B. Organization
+<ul>
+<li><em>Directories</em> (4), <em>Keys</em> (5)</li>
+</ul></li>
+<li>C. Project management
+<ul>
+<li><em>Version Control</em> (3), <em>Management</em> (8)</li>
+</ul></li>
+<li>D. Coding
+<ul>
+<li><em>Abstraction</em> (6), <em>Documentation</em> (7), <em>Code Style</em> (appendix)</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<p><strong>We’ll go over A – C today</strong></p>
+</div>
+</section>
+<section>
+<section id="reproducibility" class="title-slide slide level1 center">
+<h1>Reproducibility</h1>
+
+</section>
+<section id="why-am-i-doing-this-to-you" class="slide level2">
+<h2>Why am I doing this to you?</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>Reproducibility is increasingly important in the physical sciences
+<ul>
+<li>And Econ is catching up</li>
+</ul></li>
+<li>If you want to publish in AEA journals you need to have good practices
+<ul>
+<li>Other journals are doing the same</li>
+</ul></li>
+</ul>
+</div><div class="column">
+<p><img data-src="figures/AEA_data_webpage.png"></p>
+</div></div>
+</section>
+<section id="reproducibility-1" class="slide level2">
+<h2>Reproducibility</h2>
+<p><strong>Why should we care?</strong></p>
+<div class="fragment">
+<ul>
+<li>Because journals are interested in that these days. Yes, but why?</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Because it is a <strong>fundamental principle of the scientific method</strong>
+<ul>
+<li>With enough instructions, someone else can <em>verify</em> your experimental results and claims</li>
+<li>It lends credibility to the scientific process</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="reproducibility-2" class="slide level2">
+<h2>Reproducibility</h2>
+<p>The term can have different meanings and (quasi) synonyms depending on the field</p>
+<p>We’ll borrow terminology from CS<sup>1</sup></p>
+<ul>
+<li><strong>Repeatability</strong>: same team, same experimental setup</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><strong>Replicability</strong>: <em>different</em> team, same experimental setup</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Reproducibility</strong>: <em>different</em> team, <em>different</em> experimental setup</li>
+</ul>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>Association for Computing Machinery (2021). <em>Artifact Review and Badging – Version 2.0</em></p></li></ol></aside></section>
+<section id="reproducibility-3" class="slide level2">
+<h2>Reproducibility</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>Reproducibility is the higher scientific goal</li>
+<li>For the projects we develop, we look for <strong>replicability</strong></li>
+<li>We make it easy for someone else to run our analysis and get the same results</li>
+</ul>
+</div><div class="column">
+<p><img data-src="figures/AEA_data_webpage.png"></p>
+</div></div>
+</section>
+<section id="automation" class="slide level2">
+<h2>Automation</h2>
+<p><strong>Automate everything that can be automated</strong></p>
+
+<img data-src="figures/automation_graph.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="automation-1" class="slide level2">
+<h2>Automation</h2>
+<p><strong>Automate everything that can be automated</strong></p>
+<p>Scripts are great because they</p>
+<ul>
+<li>Save time for repeated tasks</li>
+<li>Document step by step what you are doing</li>
+<li>Can usually be reused/adapted for similar tasks in the same or other projects</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Manual tasks (with files or in Excel) are difficult to replicate unless you take detailed notes at every step</li>
+<li>Rule-of-thumb: <em>if you are doing a lot of clicking for repeated task, think about writing a script for that</em></li>
+</ul>
+</div>
+</section>
+<section id="automation-2" class="slide level2">
+<h2>Automation</h2>
+<p><strong>Automate everything that can be automated</strong></p>
+<p>My advice: <em>get comfortable with the basics of UNIX shell</em></p>
+<ul>
+<li>You can do so much with basic shell scripting
+<ul>
+<li>You’ll most likely need it if your research needs High-Performance Computing (HPC)</li>
+</ul></li>
+<li>You can learn that in a couple of hours with <a href="https://swcarpentry.github.io/shell-novice">Software Carpentry lessons</a></li>
+<li>Works in any OS
+<ul>
+<li>Mac: shell environment built in</li>
+<li>Linux: you probably needed that already</li>
+<li>Windows: there’s WSL2 and it works great (really!)</li>
+</ul></li>
+</ul>
+</section>
+<section id="automation-3" class="slide level2">
+<h2>Automation</h2>
+<p><strong>Write a single script that executes all code from beginning to end</strong></p>
+<ul>
+<li>It’s the ideal goal for <em>replication packages</em></li>
+<li>Have a script like this from the beginning of the project and increment it as you go</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>But don’t obsess over it. Sometimes it can’t be done
+<ul>
+<li>E.g.: you are running part of your code on an external server</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="automation-replicability" class="slide level2">
+<h2>Automation + replicability</h2>
+<p>An extra rule: <strong>Keep track of your dependencies</strong></p>
+<ul>
+<li>We often use many external packages</li>
+<li>Popular packages get updated often. Sometimes it breaks things…
+<ul>
+<li>The syntax you used doesn’t work anymore</li>
+<li>The function you called doesn’t exist anymore</li>
+</ul></li>
+<li>Keep note (and backups) of the versions you use</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>There are many tools to help you with that
+<ul>
+<li>Some are simpler and just track that info for you (e.g.: Julia project, R renv)</li>
+<li>Others create a stand-alone environment with everything you need to run (e.g.: Docker)</li>
+</ul></li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="organization" class="title-slide slide level1 center">
+<h1>Organization</h1>
+
+</section>
+<section id="directories" class="slide level2">
+<h2>Directories</h2>
+<p><strong>Separate directories by function</strong></p>
+<p><strong>Separate files into inputs and outputs</strong></p>
+<ul>
+<li>These are quite intuitive: they make it easy for you (your code) and anyone else to find things</li>
+<li>Separating inputs, intermediate outputs (temp), and final outputs is crucial for storing the right things
+<ul>
+<li>We normally don’t use version control for intermediate calculations</li>
+</ul></li>
+</ul>
+</section>
+<section id="directories-1" class="slide level2">
+<h2>Directories</h2>
+<div class="columns">
+<div class="column">
+<p>Have separate folders for</p>
+<ul>
+<li>Code</li>
+<li>Data</li>
+<li>Output
+<ul>
+<li>I also use separate sub-folders for tables, figures, &amp; maps</li>
+</ul></li>
+<li>Text (e.g.&nbsp;LaTeX files)</li>
+</ul>
+</div><div class="column">
+<p><img data-src="figures/jmp_folder.png"> <span class="small_text"><span class="math inline">\(\uparrow\)</span> <em>This is from a working paper</em></span></p>
+</div></div>
+</section>
+<section id="directories-2" class="slide level2">
+<h2>Directories</h2>
+<p>For long scripts that do many steps in sequence, like building a data set, it is also a good practice to number your scripts</p>
+
+<img data-src="figures/file_numbering.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="directories-3" class="slide level2">
+<h2>Directories</h2>
+<p><strong>Make directories portable</strong></p>
+<p>In other words: <strong>use relative paths</strong>. Or don’t hard-code your paths</p>
+<p>Instead of</p>
+<pre><code>C:/User/me/my_research/data/my_data_file.csv</code></pre>
+<p>use a relative path like this</p>
+<pre><code>data/my_data_file.csv</code></pre>
+</section>
+<section id="directories-4" class="slide level2">
+<h2>Directories</h2>
+<div class="columns">
+<div class="column">
+<p>It’s not always possible to have relative paths everywhere</p>
+<p>In that case, you can define all the paths in one single place and read it from there every time</p>
+<p>But there are many packages to care of that for you (e.g., package <code>here</code> for R)</p>
+</div><div class="column">
+<p><img data-src="figures/paths_example.png"></p>
+</div></div>
+</section></section>
+<section>
+<section id="project-management" class="title-slide slide level1 center">
+<h1>Project management</h1>
+
+</section>
+<section id="before-we-continue" class="slide level2">
+<h2>Before we continue…</h2>
+<p>By now you hopefully have</p>
+<ol type="1">
+<li>GitHub Desktop installed on your laptop</li>
+<li>A GitHub account (and sent me your username)</li>
+</ol>
+<p>After class, please:</p>
+<ul>
+<li>Watch out for an invitation for our GitHub Classroom repository</li>
+<li>Accept the invitation</li>
+</ul>
+</section>
+<section id="version-control-why-bother" class="slide level2">
+<h2>Version Control: why bother?</h2>
+
+<img data-src="figures/phd_comics.gif" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="git" class="slide level2">
+<h2>Git</h2>
+<ul>
+<li>Git is a <em>distributed version control system</em>
+<ul>
+<li>Imagine if Dropbox and the “Track changes” feature in MS Word had a baby. Git would be that baby</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>In fact, it’s even better than that because Git is optimized for the things that economists spend a lot of time working on (e.g.&nbsp;code)</li>
+<li>It gives you an easy way to test experimental changes (e.g.&nbsp;new specifications, additional model states) and not have them mess with your main code</li>
+</ul>
+</div>
+</section>
+<section id="github" class="slide level2">
+<h2>GitHub</h2>
+<p><strong>Git</strong> <span class="math inline">\(\neq\)</span> <strong>GitHub</strong></p>
+<div class="fragment">
+<ul>
+<li>GitHub hosts a bunch of online services we want when using Git
+<ul>
+<li>Hosts a copy of your repository online</li>
+<li>Allows for people to suggest changes to your project</li>
+<li>Keeps track of team communication on tasks</li>
+<li>And even let’s you host some related content (like these slides!)</li>
+<li>You can even program and run your code on GitHub Codespaces</li>
+</ul></li>
+<li>It’s also the main location for non-base Julia (and R) packages to be stored and developed</li>
+</ul>
+</div>
+</section>
+<section id="the-differences" class="slide level2">
+<h2>The differences</h2>
+<p><strong>Git</strong> is the software infrastructure for versioning and merging files</p>
+<div class="fragment">
+<p><strong>GitHub</strong> provides an online service to coordinate working with Git repositories</p>
+<ul>
+<li>And adds some additional features for managing projects
+<ul>
+<li>Stores the project on the cloud, allows for task management, creation of groups, etc</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="why-github" class="slide level2">
+<h2>Why Git(Hub)?</h2>
+<p><strong>Selfish reasons</strong></p>
+<div class="fragment">
+<ul>
+<li>The private benefits of having well-versioned code in case you need to go back to previous stages</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Your directories will be super clean</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Makes it <strong>MUCH</strong> easier to collaborate on projects</li>
+</ul>
+</div>
+</section>
+<section id="why-github-1" class="slide level2">
+<h2>Why Git(Hub)?</h2>
+<p><strong>Semi-altruistic reasons</strong></p>
+<div class="fragment">
+<ul>
+<li>The external benefits of open science, collaboration, etc</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>These external benefits also generate some downstream private reputational benefits
+<ul>
+<li>You must be confident in your code to make it public</li>
+</ul></li>
+<li>Can improve future social efficiency
+<ul>
+<li>You commit to post future code (if you don’t, it’ll look shady)</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="git-basics" class="slide level2">
+<h2>Git basics</h2>
+<p>Everything on Git is stored in something called a <strong>repository</strong> or <em>repo</em> for short. This is the directory for a project</p>
+<div class="fragment">
+<ul>
+<li><strong>Local</strong>: a directory with a <code>.git</code> subdirectory that stores the history of changes to the repository</li>
+<li><strong>Remote</strong>: a website, e.g.&nbsp;see the GitHub repo for the <a href="https://github.com/JuliaNLSolvers/Optim.jl">Optim</a> package in Julia</li>
+</ul>
+</div>
+</section>
+<section id="git-basics-1" class="slide level2">
+<h2>Git basics</h2>
+
+<img data-src="figures/repo_example.png" class="r-stretch"></section>
+<section id="creating-a-new-repo-on-github" class="slide level2">
+<h2>Creating a new repo on GitHub</h2>
+<h4 id="lets-create-a-new-repo">Let’s create a new repo</h4>
+<p>Easy from GitHub website: just click on that green <code>New</code> button from the launch page</p>
+
+<img data-src="figures/new_repo.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="creating-a-new-repo-on-github-1" class="slide level2">
+<h2>Creating a new repo on GitHub</h2>
+<p>Next steps:</p>
+<ol type="1">
+<li>Choose a name</li>
+<li>Choose a description</li>
+<li>Choose whether the repo is public or private</li>
+<li>Choose whether you want to add a <code>README.md</code> (yes), or a <code>.gitignore</code> or a <code>LICENSE.md</code> file (more next slide)</li>
+</ol>
+</section>
+<section id="creating-a-new-repo-on-github-2" class="slide level2">
+<h2>Creating a new repo on GitHub</h2>
+
+<img data-src="figures/new_repo_2.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="creating-a-new-repo-on-github-3" class="slide level2">
+<h2>Creating a new repo on GitHub</h2>
+<p>Repos come with some common files in them</p>
+<ul>
+<li><code>.gitignore</code>: lists files/directories/extensions that Git shouldnt track (raw data, restricted data, those weird LaTeX by-product files). This is usually a good idea</li>
+<li><code>README.md</code>: a Markdown file that is basically the welcome content on repo’s GitHub website. You should generally initialize a repo with one of these</li>
+<li><code>LICENSE.md</code>: describes the license agreement for the repository</li>
+</ul>
+</section>
+<section id="repo-of-optim.jl-again" class="slide level2">
+<h2>Repo of Optim.jl again</h2>
+
+<img data-src="figures/repo_example.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="creating-a-new-repo-on-github-4" class="slide level2">
+<h2>Creating a new repo on GitHub</h2>
+<p>You can find the repo at <a href="https://github.com/dscardoso/ace592_example_repo">https://github.com/dscardoso/ace592_example_repo</a></p>
+
+<img data-src="figures/new_repo_3.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="how-do-i-get-a-repo-on-github-onto-on-my-computer" class="slide level2">
+<h2>How do I get a repo on GitHub onto on my computer?</h2>
+<p><strong><code>Clone</code></strong></p>
+<p>To get the repository on your local machine you need to <strong>clone</strong> the repo</p>
+<div class="fragment">
+<p>Key thing: this will <strong>link</strong> your local repository to the remote</p>
+<ul>
+<li>You’ll be able to update your local when the remote is changed</li>
+</ul>
+</div>
+</section>
+<section id="cloning" class="slide level2">
+<h2>Cloning</h2>
+<div class="columns">
+<div class="column">
+<p>Click on</p>
+<ul>
+<li><code>Code</code> &gt; <code>Open with GitHub Desktop</code></li>
+</ul>
+<p>You can also use git command line for that (we won’t cover it here)</p>
+</div><div class="column">
+<p>1<a href="figures/clone.png"></a></p>
+</div></div>
+</section>
+<section id="your-turn" class="slide level2" data-background-color="orange">
+<h2>Your turn!</h2>
+<p>Create and clone your own repository on GitHub and initialize it with a <code>README.md</code> file</p>
+</section>
+<section id="git-workflow" class="slide level2">
+<h2>Git workflow</h2>
+<ul>
+<li><strong>Workspace</strong>: actual files on your computer<br>
+</li>
+<li><strong>Repository/local</strong>: your saved local history of changes to the files in the repository<br>
+</li>
+<li><strong>Remote/origin</strong>: remote repository on GitHub that allows for sharing across collaborators</li>
+</ul>
+
+<img data-src="figures/git_flow.png" class="r-stretch"></section>
+<section id="using-git" class="slide level2">
+<h2>Using Git</h2>
+<p>There are only a few basic Git operations you need to know for versioning solo economics research efficiently</p>
+<div class="fragment">
+<p><strong>Add/Stage</strong>: Add files &amp; modifications to the index</p>
+<ul>
+<li>Take a snapshot of the changes you want updated/saved in your local repository (i.e.&nbsp;your computer)</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Commit</strong>: Record the changes to your local repository</p>
+<ul>
+<li>This requires a short message to record what was done or changed</li>
+</ul>
+</div>
+</section>
+<section id="using-git-1" class="slide level2">
+<h2>Using Git</h2>
+<p><strong>Push</strong>: Send the changes you committed in the local repository to the remote repository (i.e.&nbsp;GitHub)</p>
+<div class="fragment">
+<p><strong>Pull</strong>: Take changes on the remote and integrate them with the local repository - Technically two operations: <code>fetch</code> and <code>merge</code></p>
+</div>
+</section>
+<section id="git-workflow-a-sequence" class="slide level2">
+<h2>Git workflow: a sequence</h2>
+
+<img data-src="figures/git_workflow_2.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="your-turn-1" class="slide level2" data-background-color="orange">
+<h2>Your turn!</h2>
+<p>In your own repository do the following:</p>
+<ol type="1">
+<li>Open <code>README.md</code> in some text editor and insert the following code: <code># Hello World!</code></li>
+<li>Save <code>README.md</code></li>
+<li>Add the changes to <code>README.md</code> to the index</li>
+<li>Commit the changes to your local repo with the message: “First README.md edit.”</li>
+<li>Push the changes to your remote</li>
+</ol>
+<div class="fragment">
+<p>Did the changes show up your repo’s GitHub page?</p>
+</div>
+</section>
+<section id="using-git-branching" class="slide level2">
+<h2>Using Git: branching</h2>
+<p>Some more (but not very) advanced operations relate to <strong>branching</strong> and <strong>pull requests</strong></p>
+<p>Branching creates different, but parallel, versions of your code</p>
+<ul>
+<li>If you want to test out a new feature of your model but don’t want to contaminate your <code>main</code> branch, create a new branch and add the feature there</li>
+<li>If it works out, you can bring the changes back into <code>main</code></li>
+<li>If it doesn’t, just delete it</li>
+</ul>
+</section>
+<section id="using-git-branching-1" class="slide level2">
+<h2>Using Git: branching</h2>
+<p>It is easy to create a branch on GitHub Desktop</p>
+
+<img data-src="figures/branch_1.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="using-git-branching-2" class="slide level2">
+<h2>Using Git: branching</h2>
+<p>It is easy to create a branch on GitHub Desktop</p>
+
+<img data-src="figures/branch_2.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="using-git-branching-3" class="slide level2">
+<h2>Using Git: branching</h2>
+<p>And also to switch and merge your branch into the <code>main</code></p>
+
+<img data-src="figures/branch_3.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="your-turn-2" class="slide level2" data-background-color="orange">
+<h2>Your turn!</h2>
+<p>In your own repository do the following:</p>
+<ol type="1">
+<li>Create a new branch called <code>test-branch</code></li>
+<li>Edit <code>README.md</code> and add the following code: <code>## your_name_here</code></li>
+<li>Save <code>README.md</code></li>
+<li>Add the changes to <code>README.md</code> to the index</li>
+<li>Commit and push the changes with the message: “Test change to README.md.”</li>
+<li>Switch to the <code>main</code> branch</li>
+<li>Choose your <code>test-branch</code> to merge into the <code>main</code> branch</li>
+<li>Push the changes to your remote</li>
+<li>Check your repo’s GitHub page</li>
+</ol>
+</section>
+<section id="pull-requests" class="slide level2">
+<h2>Pull requests</h2>
+<ul>
+<li>The branch + merge we just did is the standard workflow if you are working alone</li>
+<li>When you are working with collaborators, before merging it is <em>best to announce first</em> that you have finished the branch or completed a new feature</li>
+<li>This is done with a <strong>pull request</strong></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>In practice, this is also a way to group a bunch of commits into a single new feature and let others know about it</li>
+</ul>
+</div>
+</section>
+<section id="pull-requests-1" class="slide level2">
+<h2>Pull requests</h2>
+<p>Once you have committed and pushed changes to a branch, you create a new pull request on GitHub Desktop…</p>
+
+<img data-src="figures/pull_request_1a.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="pull-requests-2" class="slide level2">
+<h2>Pull requests</h2>
+<p>…or on the GitHub website</p>
+
+<img data-src="figures/pull_request_1b.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="pull-requests-3" class="slide level2">
+<h2>Pull requests</h2>
+<p>Enter a description and assign any reviewers</p>
+
+<img data-src="figures/pull_request_2.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="pull-requests-4" class="slide level2">
+<h2>Pull requests</h2>
+<p>Once you and your collaborators are happy with it, just go ahead and <code>merge pull request</code></p>
+
+<img data-src="figures/pull_request_3.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="pull-requests-5" class="slide level2">
+<h2>Pull requests</h2>
+<p>And you’re done!</p>
+
+<img data-src="figures/pull_request_4.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="your-turn-3" class="slide level2" data-background-color="orange">
+<h2>Your turn!</h2>
+<p>In your own repository do the following:</p>
+<ol type="1">
+<li>Switch back to <code>test-branch</code></li>
+<li>Create a new file called <code>new_feature.jl</code> and write anything in it</li>
+<li>Commit and push the changes with the message “Adding new feature”</li>
+<li>Create a pull request and add “New feature” as a description</li>
+</ol>
+<ul>
+<li>(Here is where you and collaborators would discuss/agree)</li>
+</ul>
+<ol start="5" type="1">
+<li>Go ahead and “Merge pull request”</li>
+</ol>
+</section>
+<section id="team-up" class="slide level2">
+<h2>Team up!</h2>
+<ol type="1">
+<li>Find a partner for this next piece</li>
+<li>One of you invites the other to collaborate on the project: GitHub repo &gt; Settings &gt; Collaborators &gt; Add people</li>
+</ol>
+
+<img data-src="figures/manage_access.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="team-up-1" class="slide level2">
+<h2>Team up!</h2>
+<p>If you were the one being invited, accept the invite, and clone the repo to your local</p>
+<div class="fragment">
+<p>Now do the following:</p>
+<ol type="1">
+<li>Each of you edit the <code># Hello World!</code> line of code to be something else and different from each other</li>
+<li>Commit the changes to your local</li>
+<li>Have the repo creator push their changes</li>
+<li>Have the collaborator push their changes</li>
+</ol>
+</div>
+</section>
+<section id="cant-push-changes-when-you-arent-updated" class="slide level2">
+<h2>Can’t push changes when you aren’t updated</h2>
+<p>It turns out that the second person can’t push their local changes to the remote</p>
+<p>The second person is pushing their history of changes</p>
+<p>But the remote is already one commit ahead because of the first person, so the second person’s changes can’t be pushed</p>
+</section>
+<section id="update-by-pulling-after-you-commit-local-changes" class="slide level2">
+<h2>Update by pulling after you commit local changes</h2>
+<p>You need to pull the remote changes first. But then you try to pull your commit and you get a <strong>merge conflict</strong> in <code>README.md</code></p>
+
+<img data-src="figures/conflict_1.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="merge-conflicts" class="slide level2">
+<h2>Merge conflicts</h2>
+<p>This means there were differences between the remote and your local that conflicted</p>
+<div class="fragment">
+<p>Sometimes there will be conflicts between two separate histories</p>
+<ul>
+<li>E.g. if you and your collaborator edited the same chunk of code separately on your local repos</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>When you try to merge these histories by pushing to the remote, Git will throw a <strong>merge conflict</strong></li>
+</ul>
+</div>
+</section>
+<section id="merge-conflicts-1" class="slide level2">
+<h2>Merge conflicts</h2>
+<p>Good code editors (like Visual Studio Code) “understand” git and will show you nicely where the conflict is</p>
+
+<img data-src="figures/conflict_2.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="solving-merge-conflicts" class="slide level2">
+<h2>Solving merge conflicts</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href=""></a><span class="op">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span> HEAD</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Indicates the start of the conflicted code</p>
+<div class="fragment">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href=""></a><span class="ex">=======</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Separates the two different conflicting histories</p>
+</div>
+<div class="fragment">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href=""></a><span class="op">&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span> lots <span class="ex">of</span> numbers and letters</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Indicates the end of the conflicted code and the hash (don’t worry about it) for the specific commit</p>
+</div>
+</section>
+<section id="fixing-a-merge-conflict" class="slide level2">
+<h2>Fixing a merge conflict</h2>
+<p>Merge conflicts can be fixed by directly editing the file. Then <code>Continue merge</code> on GitHub Desktop. Fixed!</p>
+
+<img data-src="figures/conflict_3.png" class="quarto-figure quarto-figure-center r-stretch"></section></section>
+<section>
+<section id="back-to-gentzkow-and-shapiros-rules" class="title-slide slide level1 center">
+<h1>Back to Gentzkow and Shapiro’s rules</h1>
+
+</section>
+<section id="version-control" class="slide level2">
+<h2>Version control</h2>
+<p><strong>Store code and data under version control</strong></p>
+<ul>
+<li>Now you know how to do that with Git(Hub)</li>
+<li>But I don’t recommend using it for large data sets
+<ul>
+<li>Might actually be impossible because GitHub sets a strict size limit of 100 MB per file</li>
+<li>For large data, use Dropbox/OneDrive/Box</li>
+<li>For restricted/confidential data: DEFINITELY don’t use any of the above</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<p><strong>Run the whole directory before checking it back in</strong></p>
+<ul>
+<li>In other words: <em>avoid committing a version with bugs or that breaks other code in your project</em></li>
+</ul>
+</div>
+</section>
+<section id="management" class="slide level2">
+<h2>Management</h2>
+<p><strong>Manage tasks with a task management system</strong></p>
+<p><strong>E-mail is not a task management system</strong></p>
+<ul>
+<li>You can do that in GitHub!
+<ul>
+<li>With the added benefit that you can easily link changes to tasks (we’ll see that in a bit)</li>
+</ul></li>
+<li>But there are many other tools
+<ul>
+<li>Some examples: Asana, Trello, Notion, and even Outlook tasks</li>
+</ul></li>
+</ul>
+</section>
+<section id="managing-tasks-and-workflow-with-github" class="slide level2">
+<h2>Managing tasks and workflow with GitHub</h2>
+<p>GitHub is also very useful for task management in solo or group projects using <strong>issues</strong> and <strong>pull requests</strong></p>
+<p><strong>Issues</strong>: task management for you and your collaborators</p>
+<ul>
+<li>It should be able to completely replace email
+<ul>
+<li>With the added benefit of organizing your discussions and decisions by topic</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<p>Let’s look at the issues for the <code>Optim</code> package in Julia</p>
+</div>
+</section>
+<section id="issues" class="slide level2">
+<h2>Issues</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>The issues tab reports a list of 56 open issues (286 closed, i.e., task or problem has been solved)</li>
+<li>Each issue has its own title</li>
+<li>Let’s one example of issue</li>
+</ul>
+</div><div class="column">
+<p><img data-src="figures/issues_1.png"></p>
+</div></div>
+</section>
+<section id="issues-1" class="slide level2">
+<h2>Issues</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>One person reported issues with the documentation of a function, which does not match the actual function</li>
+<li>Someone else responded with some feedback</li>
+</ul>
+</div><div class="column">
+<p><img data-src="figures/issues_2.png"></p>
+</div></div>
+</section>
+<section id="issues-2" class="slide level2">
+<h2>Issues</h2>
+<p>It is easy to creat a new task or <em>issue</em>: from the issues tab, click the green <strong>new issue</strong> button which takes you here</p>
+
+<img data-src="figures/issues_3.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="issues-3" class="slide level2">
+<h2>Issues</h2>
+<div class="columns">
+<div class="column">
+<p>Then you can</p>
+<ul>
+<li>Add a title</li>
+<li>Add a description</li>
+<li>Assign the task to a collaborator</li>
+<li>Add labels/tags</li>
+</ul>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figures/issues_4.png" class="quarto-figure quarto-figure-center"></p>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="issues-4" class="slide level2">
+<h2>Issues</h2>
+<p>The issue keeps track of the history of everything that’s happened to it</p>
+
+<img data-src="figures/issues_5.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="issues-5" class="slide level2">
+<h2>Issues</h2>
+<p>You can reference people with <code>@</code> which brings up a dropdown menu of all collaborators on the project</p>
+
+<img data-src="figures/issues_6.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="issues-6" class="slide level2">
+<h2>Issues</h2>
+<p>You can also reference <em>other issues</em> if they’re related by using <code>#</code> which brings up a dropdown of all issues for your repository</p>
+
+<img data-src="figures/issues_7.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="issues-7" class="slide level2">
+<h2>Issues</h2>
+<p>Issues can also be referenced in your commits to your project by adding <code>#issue_number_here</code> to the commit message</p>
+
+<img data-src="figures/issues_8.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="issues-8" class="slide level2">
+<h2>Issues</h2>
+<p>Then those commits show up in your issue so you have a history of what code changes have been made</p>
+
+<img data-src="figures/issues_9.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="issues-9" class="slide level2">
+<h2>Issues</h2>
+<p>If you click on the commit, it takes you to the <code>git diff</code> which shows you any changes to files made in that commit</p>
+
+<img data-src="figures/issues_10.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="other-stuff-on-github" class="slide level2">
+<h2>Other stuff on GitHub</h2>
+<ul>
+<li>GitHub keeps adding new features for project management</li>
+<li>Three of the newest additions are
+<ul>
+<li><strong>Discussions</strong>: basically a messaging board for your repo. Threads can be created independent of issues</li>
+<li><strong>Projects</strong>: let you create organization spaces with Kanban boards (To do/Doing/Done columns)</li>
+<li><strong>Codespaces</strong>: let you create virtual machines with all your software that you can program and run from a browser
+<ul>
+<li>They give you free computing hours per month, but you gotta pay for more time or better computers</li>
+</ul></li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="git-faq" class="title-slide slide level1 center">
+<h1>Git FAQ</h1>
+
+</section>
+<section id="faq" class="slide level2">
+<h2>FAQ</h2>
+<p><strong>Q: When should I commit (and push) changes?</strong></p>
+<p><em>A: Early and often</em></p>
+<ul>
+<li>It’s not quite as important as saving your work regularly, but it’s a close second</li>
+<li>You should certainly push everything that you want your collaborators to see</li>
+</ul>
+</section>
+<section id="faq-1" class="slide level2">
+<h2>FAQ</h2>
+<p><strong>Q: Do I need branches if I am working on a solo project?</strong></p>
+<p><em>A: You don’t really need them, but they offer big advantages in maintaining a sane workflow</em></p>
+<ul>
+<li>Experiment without any risk to the main project!</li>
+</ul>
+</section>
+<section id="faq-2" class="slide level2">
+<h2>FAQ</h2>
+<p><strong>Q: What’s the difference between cloning and forking a repo?</strong></p>
+<p><em>A: Cloning directly ties your local version to the original repo, while forking creates a copy on your GitHub (which you can then clone)</em></p>
+<ul>
+<li><a href="http://happygitwithr.com/clone.html">Cloning</a> makes it easier to fetch updates (and is often the best choice for new GitHub users), but <a href="http://happygitwithr.com/fork.html">forking</a> has advantages too.</li>
+</ul>
+</section>
+<section id="faq-3" class="slide level2">
+<h2>FAQ</h2>
+<p><strong>Q: What happens when something goes wrong?</strong></p>
+<p><em>A: Look for help</em></p>
+<ul>
+<li>Command line-based fixes: <a href="http://ohshitgit.com">ohshitgit.com</a></li>
+<li>Also, search on <a href="https://stackexchange.com">Stack Exchange</a></li>
+</ul>
+</section>
+<section id="faq-4" class="slide level2">
+<h2>FAQ</h2>
+<p><strong>Q: What happens when something goes <i>horribly</i> wrong?</strong></p>
+<p><em>A: Burn it down and start again:</em> <a href="http://happygitwithr.com/burn.html">http://happygitwithr.com/burn.html</a></p>
+<div class="columns">
+<div class="column">
+<ul>
+<li>This is a great advantage of Git’s distributed nature:
+<ul>
+<li>If something goes horribly wrong, there’s usually an intact version somewhere else</li>
+</ul></li>
+</ul>
+</div><div class="column">
+<p><img data-src="figures/xkcd_git.png"></p>
+</div></div>
+</section></section>
+<section>
+<section id="appendix" class="title-slide slide level1 center">
+<h1>Appendix</h1>
+<p><em>Submitting your work with GitHub Classroom</em></p>
+</section>
+<section id="submitting-your-work" class="slide level2">
+<h2>Submitting your work</h2>
+<ul>
+<li>To help you get familiarized with GitHub workflow, all your submitted work will be done on a repository</li>
+<li>After you accept an invitation from GitHub Classroom, it will create a new private repository
+<ul>
+<li>Only you(r team) and Diego will be able to see its content</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>GitHub will automatically create a <em>pull request</em> called <strong>Feedback</strong>
+<ul>
+<li>This is where I’ll write any feedback I might have for your files</li>
+<li><strong>Please do not close or merge this pull request. Leave it open for the rest of the semester</strong></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="submitting-your-work-1" class="slide level2">
+<h2>Submitting your work</h2>
+<ul>
+<li>Follow the link you received in a Canvas announcement. It’s an invitation to create a tutorial repository</li>
+<li>This repository only has a README file with a summary of how GitHub works</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Typically, problem sets will include a README file with the instructions to solve the problem
+<ul>
+<li>When applicable, it will also include starter scripts to set up the problem environment</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>You can (and probably should) make as many commits as you want in that repository</li>
+<li>I will grade the latest comit before the deadline
+<ul>
+<li>I will appreciate it if you do not commit changes after the deadline. If you need an extension, please send me an email</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="submitting-your-work-2" class="slide level2">
+<h2>Submitting your work</h2>
+<p>Your <strong>Feedback</strong> pull request page will something like this after your first commit</p>
+
+<img data-src="figures/test_ps_3.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="next-class" class="slide level2" data-background-color="orange">
+<h2>Next class</h2>
+<p>We’ll start programming in Julia language</p>
+<p><strong>Before next class, please:</strong> follow <a href="https://www.julia-vscode.org/docs/dev/gettingstarted/">these instructions</a> to install Julia and Visual Studio (VS) code on your laptop</p>
+<p>If you plan to use a different programming language (Python, R, or Matlab), <strong>this is the time to let me know</strong>!</p>
+<div class="fragment">
+<ul>
+<li>We won’t cover it, but you might also be interested in learning more about <em>Quarto</em> and <em>Jupyter</em> for programming using code notebooks
+<ul>
+<li>They allow you to write formatted text along with code blocks and render graphics in the same document</li>
+<li>You can learn more about <em>Quarto</em> <a href="https://quarto.org/">here</a></li>
+<li>You can learn more about <em>Jupyter</em> <a href="https://julia.quantecon.org/getting_started_julia/getting_started.html">here</a></li>
+</ul></li>
+</ul>
+
+</div>
+</section></section>
+
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="1_2_reproducibilidy_version_control_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true,"theme":"whiteboard","chalkEffect":0.1},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
