@@ -1439,7 +1439,7 @@ Why?
   - Before you use it accurately, you need to be familiar enough with programming logic and the language you are using to know when things are wrong
 - These tools are improving fast, but they will always be imperfect
   - There is an inherent limitation in translating ambiguous (natural) languages to non-ambiguous (formal) languages
-- You need to treat it like a very smart intern
+- Treat it like a very smart intern who can do well-defined tasks very quickly
   - But, to correctly supervise an intern, you need to know the job well yourself!
 
 
@@ -1461,7 +1461,7 @@ Why?
 
 *Here is my personal advice to you focusing on your the medium/long-term career as a researcher*
 
-2) **Do use AI assistants to explain code to you or generate examples**
+2) **Use AI assistants to explain code to you or generate examples**
 - Throughout the semester, you will see many examples of algorithms
 - AI can offer *tremendous* help explaining the inner workings of algorithms
 
