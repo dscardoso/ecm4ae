@@ -2,7 +2,7 @@
 
 **ACE 592 (ECM) Spring 2026**
 
-_Instructor: Diego S. Cardoso_
+_Instructor: [Diego S. Cardoso](http://www.diegoscardoso.com)_
 
 _Department of Agricultural and Consumer Economics, University of Illinois Urbana-Champaign_
 
