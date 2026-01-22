@@ -11,7 +11,8 @@ _Department of Agricultural and Consumer Economics, University of Illinois Urban
 _(Tip: If you want to export as PDF, open the slide deck on your browser and press the_ `e` _key. It will re-render for export; you may need to refresh the page if math expressions render incorrectly. Then, print the page as a PDF)_.
 
 - Unit 1 - Introduction to Scientific Computing
-  - Lecture 1.1 - Course introduction: [[slides]](https://rawcdn.githack.com/dscardoso/ecm4ae/1dd6500c52ed2268b4dc625b8a507d15e69300ae/slides/lecture_1_1/ACE592_1_1_slides.html) [[notes]](https://rawcdn.githack.com/dscardoso/ecm4ae/1dd6500c52ed2268b4dc625b8a507d15e69300ae/slides/lecture_1_1/ACE592_1_1_notes.html)
+  - Lecture 1.1 - Course introduction: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_1/ACE592_1_1_notes.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_1/ACE592_1_1_notes.html)
+  - Lecture 1.2 - Best practices: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_2/ACE592_1_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_2/ACE592_1_2_notes.html)
 
 
 ## Recommended additional resources

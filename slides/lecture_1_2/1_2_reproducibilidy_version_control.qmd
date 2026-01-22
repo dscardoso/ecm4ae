@@ -462,7 +462,7 @@ Next steps:
 
 Repos come with some common files in them
 
-- `.gitignore`: lists files/directories/extensions that Git shouldnt track (raw data, restricted data, those weird LaTeX by-product files). This is usually a good idea
+- `.gitignore`: lists files/directories/extensions that Git shouldn't track (raw data, restricted data, those weird LaTeX by-product files). This is usually a good idea
 - `README.md`: a Markdown file that is basically the welcome content on repo's GitHub website. You should generally initialize a repo with one of these
 - `LICENSE.md`: describes the license agreement for the repository
 
@@ -509,7 +509,7 @@ You can also use git command line for that (we won't cover it here)
 
 :::
 ::: {.column}
-1[](figures/clone.png)
+![](figures/clone.png)
 :::
 :::
 
@@ -819,7 +819,7 @@ Merge conflicts can be fixed by directly editing the file. Then `Continue merge`
 - Now you know how to do that with Git(Hub)
 - But I don't recommend using it for large data sets
   - Might actually be impossible because GitHub sets a strict size limit of 100 MB per file
-  - For large data, use Dropbox/OneDrive/Box
+  - For large data, use Dropbox/OneDrive/Box (and symbolic links if you collaborate on them!)
   - For restricted/confidential data: DEFINITELY don't use any of the above
 
 . . .
