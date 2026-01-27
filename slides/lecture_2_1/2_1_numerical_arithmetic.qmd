@@ -1,0 +1,577 @@
+---
+title: "ACE 592 - Lecture 2.1"
+subtitle: "Numerical arithmetic"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_2_1_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_2_1_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+```{julia}
+#| echo: false
+using Pkg
+#Pkg.activate(".")
+#Pkg.instantiate()
+Pkg.add("BenchmarkTools")
+```
+
+
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  **Fundamentals of numerical methods**
+    1.  **Numerical arithmetic**
+    2.  Numerical differentiation
+    3.  Numerical integration
+3.  Systems of equations
+4.  Optimization
+5.  Function approximation
+6.  Structural estimation
+
+## Agenda {background-color="orange"}
+
+- Today we will understand how computers perform mathematical operations
+- And, most importantly, why they have an inherent limitation that we must always have in mind
+
+
+## Main references for today {background-color="orange"}
+
+-   Miranda & Fackler (2002), Ch. 2
+-   Judd (1998), Ch. 2 
+-   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell) 
+
+
+# Briefest review of Computer Systems
+
+*(or How do computers work?)*
+
+
+## Why bother?
+
+Knowing the basics of how computers perform the instructions we give them is essential to
+
+- Understand why we write code in certain ways
+- Why your program fails or takes forever to run
+- Write more efficient routines
+- *Understand the limits of computational methods in quantitative research*
+
+
+## What happens when we run a program?
+
+```{julia}
+function hello()
+  print("hello, world\n")
+end;
+
+hello()
+```
+
+
+
+## What happens when we run a program?
+
+1) Our function `hello` is compiled: another program will read our human language and convert it to *machine language* (instructions)
+  
+- I.e., our code goes from a sequence of bits (`0`s and `1`s) that can be represented as characters in a display to another sequence of bits that represents instructions which the **CPU** can understand
+
+. . .
+
+2) The compiled function is placed into the **main memory**
+  
+- Compiled code can also be stored in permanent memory (hard drives, SSD, disks). Those are the *executable* files. But before they are executed, they must be loaded into the main memory anyway
+
+
+
+## What happens when we run a program?
+
+3) We type `hello()` in Julia REPL. Our **input** prompts Julia and the Operating System (OS) to prepare those instructions for execution
+
+. . .
+
+4) The **CPU** executes those instructions and **outputs** the results back in the command line, which is then converted into image by a graphics adapter and our display
+
+. . .
+
+**Moral of the story: the computer spends A LOT of time just moving information around and very little time actually doing "real work!"**
+
+
+
+## Running fast
+
+**The computer spends A LOT of time just moving information around and very little time actually doing "real work!"** What to do?
+
+. . .
+
+Efficient computation needs to
+
+1. Minimize the need to pass information around
+
+. . .
+   
+- This is what we do, for example, when we preallocate variables, avoid temporary allocations, vectorize
+
+. . .
+
+2. Make information travel faster
+
+. . .
+  
+- Faster hardware (not always affordable/available)
+- **Cache memory**!
+
+
+## Cache memory
+
+Physics law: bigger memory = slower memory
+
+- Your hard disk can be $1,000\times$ larger than the main memory but it might take $10,000,000\times$ longer for the processor to read
+
+But the main memory is too big/slow. The CPU actually has its own internal layers of fast memory with different sizes
+
+- Modern processors have registers + 3 levels of cache memory
+
+
+
+## Writing cache-friendly code
+
+Now that you knowing about the memory hierarchy, you can use that knowledge to write *more efficient, cache-friendly code*. That means:
+
+- Making the common case go fast
+  - Programs often spend most of the time in a few loops. So, **focus on the inner loops of your core functions**
+
+. . .
+
+- Minimize the chances of needing to bring variables from slow memory
+  - Reference local variables
+  - If you need to reference the same variable in multiple iterations, think about a way order your loops in a way that you make those **repeated references in sequence**
+
+
+
+# Numerical Arithmetic
+
+## Why bother?
+
+Simple arithmetic: $(10^{-20} + 1) - 1 = 10^{-20} + (1 - 1)$, right?
+
+. . .
+
+Let's check:
+
+```{julia}
+x = (1e-20 + 1) - 1;
+y = (1e-20) + (1 - 1);
+x == y
+```
+
+- Go ahead, try it!
+
+**What happened?!**
+
+
+
+## Why bother?
+
+Welcome to the world of **finite precision**
+
+```{julia}
+x
+```
+```{julia}
+y
+```
+
+. . .
+
+Numbers are an ideal/abstract concept that works perfectly in analytic operations
+
+Computers are a physical machine with limited resources: they can't have infinite precision
+
+. . .
+
+**Understanding this limitation is crucial in numerical analysis**
+
+
+
+
+## Number storage
+
+**Q: How are numbers physically represented by a computer?**
+
+. . .
+
+*A: In a binary (or Base 2) system. This means each digit can only take on 0 or 1*
+
+. . .
+
+The system we're most used to is Base 10: each digit can take on 0-9
+
+. . .
+
+**Q: So which numbers can be represented by a computer?**
+
+. . .
+
+*A: A* **subset** *of the rational numbers*
+
+. . .
+
+But computers have *finite* memory and hard disk space, there are *infinite* rational numbers
+
+. . .
+
+This imposes a strict limitation on the storage of numbers
+
+
+
+## Number storage
+
+Numbers are stored as: $\pm mb^{\pm n}$
+
+- $m$ is the *significand*
+- $b$ is the *base*,
+- $n$ is the *exponent*
+
+All three are integers
+
+. . .
+
+- The *significand* typically gives the significant digits
+- The *exponent* scales the number up or down in magnitude
+
+
+
+## Number storage
+
+The size of numbers a computer can represent is limited by how much space is allocated for a number
+
+. . .
+
+Space allocations are usually 64 bits: 53 for $m$ and 11 for $n$
+
+. . .
+
+We've seen these types before
+
+```{julia}
+println(typeof(5.0))
+println(typeof(5))
+```
+
+
+
+## Number storage
+
+- `Int64` means it is an **integer** with 64 bits of storage
+
+- `Float64` means it is a **floating point number** with 64 bits of storage
+
+  - Floating point just means $b^{\pm n}$ can move the decimal point around in the significand
+
+These two types take the same space in memory (64 bits) but are interpreted differently by the processor 
+
+
+
+## The limits of computers
+
+Limitations on storage suggest three facts
+
+. . .
+
+**Fact 1**: There exists a **machine epsilon**: the smallest relative quantity representable by a computer
+
+. . .
+
+**Machine epsilon** is the smallest $\epsilon$ such that
+a machine can always distinguish $$N+\epsilon > N > N-\epsilon$$
+
+
+
+## The limits of computers
+
+
+```{julia}
+println("Machine epsilon ϵ is $(eps(Float64))")
+println("Is 1 + ϵ/2 > 1? $(1.0 + eps(Float64)/2 > 1.0)")
+```
+
+The function `eps` gives the distance between 1.0 and the next representable `Float64`
+
+
+
+## The limits of computers
+
+```{julia}
+println("The smallest representable number larger than 1.0 is $(nextfloat(1.0))")
+println("The largest representable number smaller than 1.0 is $(prevfloat(1.0))")
+```
+
+
+
+## The limits of computers
+
+The machine epsilon changes depending on the amount of storage allocated
+
+. . .
+
+```{julia}
+println("32 bit machine epsilon is $(eps(Float32))")
+println("Is 1 + ϵ/2 > 1? $(Float32(1) + eps(Float32)/2 > 1)")
+```
+
+. . .
+
+**There is a trade-off between precision and storage requirements**  
+
+- This matters for low-memory systems like GPUs
+
+
+
+## The limits of computers
+
+**Fact 2**: There is a **smallest representable number**
+
+```{julia}
+println("64 bit smallest float is $(floatmin(Float64))")
+println("32 bit smallest float is $(floatmin(Float32))")
+println("16 bit smallest float is $(floatmin(Float16))")
+```
+
+
+
+## The limits of computers
+
+**Fact 3**: There is a **largest representable number**
+
+```{julia}
+println("64 bit largest float is $(floatmax(Float64))")
+println("32 bit largest float is $(floatmax(Float32))")
+println("16 bit largest float is $(floatmax(Float16))")
+```
+
+
+
+## The limits of computers: time is a flat circle
+
+```{julia}
+println("The largest 64 bit integer is $(typemax(Int64))")
+println("Add one to it and we get: $(typemax(Int64)+1)")
+println("It loops us around the number line: $(typemin(Int64))")
+```
+
+
+
+## The limits of computers
+
+**The scale of your problem matters**
+
+. . .
+
+If a parameter or variable is $>$ `floatmax` or $<$ `floatmin`, you will have a very bad time
+
+. . .
+
+Scale numbers appropriately (e.g. millions of dollars, not millionths of cents)
+
+
+
+## Error
+
+We can only represent a finite number of numbers
+
+. . .
+
+This means we will have error in our computations
+
+. . .
+
+Error comes in two major forms:
+
+1. Rounding
+2. Truncation
+
+
+
+## Rounding
+
+We will always need to round numbers to the nearest computer representable number. This introduces error
+
+```{julia}
+println("Half of π is: $(π/2)")
+```
+
+. . .
+
+The computer gave us a rational number, but $\pi/2$ should be irrational
+
+
+
+## Truncation
+
+Lots of important numbers are defined by infinite sums
+$e^x = \sum_{n=0}^\infty \frac{x^n}{n!}$
+
+. . .
+
+It turns out that computers can't add up infinitely many terms because there is finite space $\rightarrow$ we need to truncate the sum
+
+
+
+## Why does this matter?
+
+**Errors are small, who cares?**
+
+. . .
+
+**You should!**
+
+Because errors can propagate and grow as you keep applying an algorithm (e.g. function iteration)
+
+
+
+## Error example 1
+
+Let's get back to the example we saw earlier 
+
+```{julia}
+x = (1e-20 + 1) - 1   
+y = 1e-20 + (1 - 1)   
+
+println("The difference is: $(x-y).")
+```
+
+
+
+## Error example 1
+
+**Why did we get** $y > x$ **?**
+
+. . .
+
+- For $(10^{-20} + 1) - 1$: when we added $10^{-20}$ to $1$, it got rounded away
+- For $10^{-20} + (1 - 1)$: here $1-1$ was evaluated first and return $0$, as we would expect
+
+. . .
+
+**Adding numbers of greatly different magnitudes does not always works like you would want**
+
+
+
+
+## Error example 2
+
+Consider a simple quadratic eq. $x^2-26x+1=0$ with solution $x = 13-\sqrt{168}$
+
+. . .
+
+```{julia}
+println("64 bit: 13 - √168 = $(13-sqrt(168))")
+```
+```{julia}
+println("32 bit: 13 - √168 = $(convert(Float32,13-sqrt(168)))")
+```
+```{julia}
+println("16 bit: 13 - √168 = $(convert(Float16,13-sqrt(168)))")
+```
+
+
+
+## Error example 2
+
+Let's check whether they solve the equation 
+
+. . .
+
+```{julia}
+x64 = 13-sqrt(168); x32 = convert(Float32,13-sqrt(168)); x16 = convert(Float16,13-sqrt(168));
+f(x) = x^2 - 26x + 1;
+println("64 bit: $(f(x64))")
+println("32 bit: $(f(x32))")
+println("16 bit: $(f(x16))")
+```
+
+
+
+## Error example 3
+
+Let's just subtract two numbers: `100000.2 - 100000.1`
+
+We know the answer is `0.1`
+
+[Try it!]{.blue}
+
+1. Calculate the difference between `100000.2 - 100000.1`
+2. Test (with an `if` clause) if this difference is equal to `0.1`
+
+
+
+## Error example 3
+
+```{julia}
+println("100000.2 - 100000.1 is: $(100000.2 - 100000.1)")
+if (100000.2 - 100000.1) == 0.1
+    println("and it is equal to 0.1")
+else
+    println("and it is not equal to 0.1")
+end
+```
+
+
+
+## Error example 3
+
+Why do we get this error?
+
+. . .
+
+Neither of the two numbers can be precisely represented by the machine!
+
+$100000.1 \approx 8589935450993459\times 2^{-33} = 100000.0999999999767169356346130$
+$100000.2 \approx 8589936309986918\times 2^{-33} = 100000.1999999999534338712692261$
+
+So their difference won't necessarily be 0.1
+
+
+
+## Error example 3
+
+There are tools for approximate equality. Remember the `\approx` operator we saw last lecture? You can use it
+
+```{julia}
+(100000.2 - 100000.1) ≈ 0.1 # You type \approx then hit TAB
+```
+
+This is equivalent to:
+```{julia}
+isapprox(100000.2 - 100000.1, 0.1)
+```
+
+
+**This matters, particularly when you're trying to evaluate logical expressions of equality**
+

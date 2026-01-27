@@ -1,0 +1,660 @@
+---
+title: "AGEC 652 - Lecture 2.3"
+subtitle: "Numerical integration"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_2_3_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_2_3_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+```{julia}
+#| echo: false
+using Pkg
+#Pkg.activate(".")
+#Pkg.instantiate()
+#Pkg.add("Distributions"); Pkg.add("QuantEcon")
+```
+
+
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  **Fundamentals of numerical methods**
+    1.  [Numerical arithmetic]{.gray}
+    2.  [Numerical differentiation]{.gray}
+    3.  **Numerical integration**
+3.  Systems of equations
+4.  Optimization
+5.  Function approximation
+6.  Structural estimation
+
+## Agenda {background-color="orange"}
+
+- Today we will learn how to calculate integrals
+- Just like derivatives, integrals rely on infinitesimal concepts that the computer cannot represent, so approximations will be required
+- We will also rely on packages to help us automate the difficult parts
+
+
+## Main references for today {background-color="orange"}
+
+-   Miranda & Fackler (2002), Ch. 5
+-   Judd (1998), Ch. 7
+-   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell) 
+
+
+
+## Numerical integration
+
+First thing: integration is trickier than differentiation
+
+. . .
+
+We need to do integration for many things in economics
+
+. . .
+
+- Calculating expectations 
+  - $E[g(x)] = \int_S g(x)dP(x), \; g: S \rightarrow \mathbb{R}, \; P$ is the probability measure on measurable space $S$
+
+. . .
+
+- Adding up a continuous measure of things
+  - $\int_D f(x) dx, \; f:\mathbb{R}^n \rightarrow \mathbb{R}, \; D\subset\mathcal{R}^n$ 
+
+
+
+## How to think about integrals
+
+Integrals are effectively infinite sums
+
+. . .
+
+1-dimensional example:
+
+$$\lim_{dx_i\rightarrow0}\sum_{i=0}^{(a-b)/dx_i} f(x_i) dx_i$$
+
+where
+
+- $dx_i$ is the lenght of some subset of $[a,b]$
+- $x_i$ is some evaluation point (e.g. midpoint of $dx_i$)
+
+
+
+## Infinite limits strike again
+
+Just like derivatives, we face an infinite limit because as ${dx_i} \rightarrow 0$, $\frac{(a-b)}{dx_i} \rightarrow \infty$
+
+. . .
+
+We avoid this issue in the same way as derivatives: **we replace the infinite sum with something we can handle**
+
+. . .
+
+We will see two types of methods:
+
+1. Stochastic approximation with Monte Carlo
+2. Quadrature
+
+
+
+## Monte Carlo integration
+
+It's probably the most commonly used form in empirical economics
+
+. . .
+
+**Key idea**: *approximate an integral by relying on LLN and "randomly"* **sampling the integration domain**
+
+. . .
+
+- Can be effective for very-high-dimensional integrals
+- Very simple and intuitive
+- But produces a *random approximation*
+
+
+
+## Monte Carlo integration
+
+We integrate 
+$$
+\xi = \int_0^1 f(x) dx
+$$
+
+by drawing $N$ uniform samples, $x_1,\dots,x_N$ over interval $[0,1]$
+
+. . .
+
+- $\xi$ is equivalent to $E[f(x)]$ with respect to a uniform distribution, so estimating the integral is the same as estimating the expected value of $f(x)$
+
+. . .
+
+- In general we have that $\hat{\xi} = V\frac{1}{N}\sum_{i=1}^N f(x_i)$, where $V$ is the volume over which we are integrating
+
+. . .
+
+- LLN gives us that the $plim_{N\rightarrow\infty} \hat{\xi} = \xi$
+
+
+
+## Monte Carlo integration
+
+The variance of $\hat{\xi}$ is $$\sigma^2_{\hat{\xi}} = Var(\frac{V}{N}\sum_{i=1}^N f(x_i)) = \frac{V^2}{N^2} \sum_{i=1}^N Var(f(X)) = \frac{V^2}{N}\sigma^2_{f(X)}$$
+
+. . .
+
+So average error is $\frac{V}{\sqrt{N}}\sigma_{f(X)}$. This gives us its rate of convergence: $O(1/\sqrt{N})$
+
+Notes:
+
+1. The rate of convergence is independent of the dimension of x
+2. Quasi-Monte Carlo methods can get you $O(1/N)$
+   - These methods have a smarter approach to sampling 
+   - They use nonrandom sequences like so they cover the support in more efficient ways (see details on Ch 5.4 of Miranda and Fackler)
+
+
+
+## Monte Carlo integration
+
+Suppose we want to integrate $x^2$ from 0 to 10, we know this is $10^3/3 = 333.333$
+
+```{julia}
+# Package for drawing random numbers
+using Distributions
+# Define a function to do the integration for an arbitrary function
+function integrate_mc(f, lower, upper, num_draws)
+  # Draw from a uniform distribution
+  xs = rand(Uniform(lower, upper), num_draws)
+  # Expectation = mean(x)*volume
+  expectation = mean(f(xs))*(upper - lower)
+end
+```
+
+
+
+## Monte Carlo integration
+
+Suppose we want to integrate $x^2$ from 0 to 10, we know this is $10^3/3 = 333.333$
+
+```{julia}
+f(x) = x.^2;
+integrate_mc(f, 0, 10, 1000)
+```
+
+Quite close for a random process!
+
+
+
+## Quadrature rules
+
+We can also approximate integrals using a technique called **quadrature**
+
+. . .
+
+With quadrature we effectively take weighted sums to approximate integrals
+
+. . .
+
+We will focus on two classes of quadrature for now:
+
+1. Newton-Cotes (the kind you've seen before)
+2. Gaussian (probably new)
+
+
+
+## Newton-Cotes quadrature rules
+
+Suppose we want to integrate a one dimensional function $f(x)$ over $[a,b]$
+
+How would you do it?
+
+. . .
+
+One answer is to replace the function with something easier to integrate: **a piece-wise polynomial**
+
+. . .
+
+Key things to define up front:
+
+- $x_i = a + (i-1)/h$ for $i=1,2,...,n$ where $h = \frac{b-a}{n-1}$
+  - $x_i$s are the **quadrature nodes** of the approximation scheme and divide the interval into $n-1$ evenly spaced subintervals of length $h$
+
+
+
+## Midpoint rule
+
+Most basic Newton-Cotes method:
+
+1. Split $[a,b]$ into intervals
+2. Approximate the function in each subinterval by a constant equal to the function at the midpoint of the subinterval
+
+
+. . .
+
+$$\int_{x_i}^{x_{i+1}} f(x) dx \approx hf(\frac{1}{2}(x_{i+1}+x_i))$$
+
+. . .
+
+Approximates $f$ by a step function
+
+
+
+## Midpoint rule
+
+
+![](figures/midpoint.drawio.svg){fig-align="center"}
+
+
+
+
+## Midpoint rule: let's code it up
+
+Let's integrate $x^2$ again from $0$ to $100$ (the answer is 333.33...)
+
+```{julia}
+# Generic function to integrate with midpoint
+function integrate_midpoint(f, a, b, N)
+    # Calculate h given the interval [a,b] and N nodes
+    h = (b-a)/(N-1)
+    
+    # Calculate the nodes starting from a+h/2 til b-h/2
+    x = collect(a+h/2:h:b-h/2)
+    
+    # Calculate the expectation    
+    expectation = sum(h*f(x))
+end;
+```
+
+
+
+
+## Midpoint rule: let's code it up
+
+```{julia}
+f(x) = x.^2;
+
+println("Integrating with 5 nodes:$(integrate_midpoint(f, 0, 10, 5))")
+println("Integrating with 50 nodes:$(integrate_midpoint(f, 0, 10, 50))")
+println("Integrating with 100 nodes:$(integrate_midpoint(f, 0, 10, 100))")
+```
+
+. . .
+
+Decent approximation with only 5 nodes. We get pretty close to the answer once we move up to 100 nodes.
+
+
+
+## Trapezoid rule
+
+Increase complexity by 1 degree:
+
+1. Split $[a,b]$ into intervals
+2. Approximate the function in each subinterval by a linear interpolation passing through $(x_i,f(x_i))$ and $(x_{i+1},f(x_{i+1}))$
+
+. . .
+
+$\int_{x_i}^{x_{i+1}} f(x) dx \approx \frac{h}{2}[f(x_i) + f(x_{i+1})]$
+
+. . .
+
+We can aggregate this up to
+
+$$\int_{a}^{b} f(x) dx \approx \sum_{i=1}^n w_i f(x_i)$$
+
+where $w_1=w_n = h/2$ and $w_i = h$ otherwise
+
+
+## Trapezoid rule
+
+
+![](figures/trapezoid.drawio.svg){fig-align="center"}
+
+
+
+## How accurate is this rule?
+
+Trapezoid rule is $O(h^2)$ and **first-order exact**: it can integrate any linear function exactly!
+
+
+
+## Simpson's rule
+
+Increase complexity by 1 degree:
+
+Let $n$ be odd then approximate the function across a *pair of subintervals* by a quadratic interpolation passing through
+
+- $(x_{i-1},f(x_{i-1}))$
+- $(x_{i},f(x_{i}))$ and
+- $(x_{i+1},f(x_{i+1}))$
+
+. . .
+
+$$
+\int_{x_{i-1}}^{x_{i+1}} f(x) dx \approx \frac{h}{3}[f(x_{i-1}) + 4f(x_{i}) + f(x_{i+1})]
+$$
+
+
+
+## Simpson's rule
+
+$\int_{x_{i-1}}^{x_{i+1}} f(x) dx \approx \frac{h}{3}[f(x_{i-1}) + 4f(x_{i}) + f(x_{i+1})]$
+
+We can aggregate this by summing over *every two subintervals*
+
+$$\int_{a}^{b} f(x) dx \approx \sum_{i=1}^n w_i f(x_i)$$
+
+where $w_1=w_n = h/3$, otherwise and $w_i = 4h/3$ if $i$ is even and $w_i = 2h/3$ if $i$ is odd
+
+
+
+## Simpson's rule
+
+
+![](figures/simpson.png){fig-align="center"}
+
+
+## How accurate is this rule?
+
+Simpson's rule is $O(h^4)$ and **third-order exact**: it can integrate any cubic function exactly
+
+. . .
+
+That's weird! Why do we gain 2 orders of accuracy when increasing one order of approximation complexity?
+
+. . .
+
+1. The approximating piecewise quadratic is exact at the end points and midpoint of the conjoined two subintervals
+
+. . .
+
+2. The difference between a cubic $f(x)$ and the quadratic approximation in $[x_{2i-1},x_{2i+1}]$ is another cubic function
+
+. . .
+
+3. This cubic function is *odd* with respect to the midpoint $\rightarrow$ integrating over the first subinterval cancels integrating over the second subinterval
+
+
+
+## Note on accuracy
+
+The derivation of the order of error terms is similar to what we did for forward differences: we use Taylor expansions
+
+But there are some extra steps because we have to bring the integral in. We're going to skip these derivations
+
+**BUT** it is important to know that these derivations *assume smooth functions*. That might not be the case in economic models because corner solutions might exist!
+
+- Simpson's is more accurate than the trapezoid rule for smooth functions
+- But for functions with kinks/discontinuities in the 1st derivative, the trapezoid rule is often more accurate than Simpson's
+
+
+
+
+## Higher order integration
+
+We can generalize the unidimensional Newton-Cotes quadrature with tensor products
+
+. . .
+
+Suppose we want to integrate over a rectangle 
+
+$$
+\{(x_1, x_2) | a_1 \leq x_1 \leq b_1, a_2 \leq x_2 \leq b_2\} \in \mathbb{R}^2
+$$
+
+. . .
+
+We compute separately the $n_1$ nodes and weights $(x_{1i}, w_{1i})$ and $n_2$ for $(x_{2j}, w_{2j})$. The tensor product will give us a grid with $n = n_1 n_2$ points
+
+. . .
+
+$$
+\int_{a_1}^{b_1} \int_{a_2}^{b_2} f(x_1, x_2) dx_2 dx_1  \approx \sum_{i=1}^{n_1} \sum_{j=1}^{n_2} w_{1i} w_{2j} f(x_{1i}, x_{2j})
+$$
+
+. . .
+
+We can use the same idea for 3+ dimensions. But the number of points increases very quickly: **curse of dimensionality**
+
+
+
+
+
+## Gaussian quadrature rules
+
+How did we pick the $x_i$ quadrature nodes for Newton-Cotes rules?
+
+. . .
+
+Evenly spaced, but no particular reason for doing so...
+
+. . .
+
+Gaussian quadrature selects these nodes more efficiently and relies on **weight functions** $w(x)$
+
+
+
+## Gaussian quadrature rules
+
+Gaussian rules try to **exactly integrate** some finite dimensional collection of functions (i.e. polynomials up to some degree)
+
+. . .
+
+For a given order of approximation $n$, the weights $w_1,...,w_n$ and nodes $x_1,...,x_n$ are chosen to satisfy $2n$ **moment matching conditions**:
+
+. . .
+
+$$
+\int_I x^kw(x)dx = \sum_{i=1}^n w_i x^k_i, \;\text{for}\; k=0,...,2n-1
+$$
+
+where $I$ is the interval over which we are integrating and $w(x)$ is a given weight function
+
+
+
+## Gaussian quadrature improves accuracy
+
+The moment matching conditions pin down $w_i$s and $x_i$s so we can approximate an integral by a weighted sum of the function at the prescribed nodes
+
+. . .
+
+$$
+\int_i f(x) w(x)dx \approx \sum_{i=1}^n w_i f(x_i)
+$$
+
+. . .
+
+Gaussian rules are $2n-1$ order exact: we can exactly compute the integral of any polynomial order $2n-1$
+
+
+
+## Gaussian quadrature takeaways
+
+Gaussian quadrature effectively discretizes some distribution $p(x)$
+into mass points (nodes) and probabilities (weights) for some other discrete distribution $\bar{p}(x)$
+
+. . .
+
+- Given an approximation with $n$ mass points, $X$ and $\bar{X}$ have identical moments up to order $2n$
+- As $n\rightarrow\infty$ we have a continuum of mass points and recover the continuous pdf
+
+. . .
+
+But what do we pick for the weighting function $w(x)$?
+
+
+
+## Gauss-Legendre
+
+We can start out with a simple $w(x) = 1$: this gives us **Gauss-Legendre** quadrature
+
+This can approximate the integral of any function arbitrarily well by increasing $n$
+
+
+
+## Gauss-Laguerre
+
+Sometimes we want to compute exponentially discounted sums like
+
+$$
+\int_I f(x) e^{-x} dx
+$$
+
+The weighting function $e^{-x}$ is **Gauss-Laguerre quadrature**
+
+. . .
+
+- In economics, this method is particularly suited for applications with continuous-time discounting
+
+
+
+## Gauss-Hermite
+
+Sometimes we want to take expectations of functions of normally distributed variables
+
+$$
+\int_I f(x) e^{-x^2} dx
+$$
+
+. . .
+
+- Other methods exist for specialized functional forms/distributions: gamma, beta, chi-square, etc 
+
+
+## Gaussian quadrature nodes and weights
+
+*OK, Gaussian quadrature sounds nice. But how do we actually find the nodes and weights?*
+
+. . .
+
+It's a non-trivial task: we have to solve $2n$ nonlinear equations to get $n$ pairs $(x_i, w_n)$
+
+
+We'll use a package for that: `QuantEcon.jl`
+
+- *(QuantEcon functions are also implemented in Python: [QuantEconPy](https://quantecon.org/quantecon-py/))*
+- Another package `FastGaussQuadrature.jl` does a better job with high-order integrals or weights with singularities 
+- `QuadGK` has methods to improve precision further with adaptive subdomains
+
+
+
+
+## `QuantEcon.jl`: Gaussian quadrature
+
+Let's go back to our previous example and integrate $x^2$ from $0$ to $10$ again (the answer is 333.333...)
+
+```{julia}
+using QuantEcon;
+# Our generic function to integrate with Gaussian quadrature
+function integrate_gauss(f, a, b, N)
+    # This function get nodes and weights for Gauss-Legendre quadrature
+    x, w = qnwlege(N, a, b)
+
+    # Calculate expectation
+    expectation = sum(w .* f(x))
+end;
+```
+
+
+
+
+## `QuantEcon.jl`: Gaussian quadrature
+
+
+```{julia}
+f(x) = x.^2;
+println("Integrating with 1 node:$(integrate_gauss(f, 0, 10, 1))")
+println("Integrating with 2 nodes:$(integrate_gauss(f, 0, 10, 2))")
+```
+
+. . .
+
+All we needed was 2 nodes!
+
+- We need 1000 draws with Monte Carlo and 100 nodes with midpoint to get limited approximations
+
+
+
+## `QuantEcon.jl`: Other quadratures
+
+`QuantEcon.jl` has a lot more to offer^[Check out the [documentation](http://quantecon.github.io/QuantEcon.jl/latest/api/QuantEcon.html)]
+
+- Trapezoid (`qnwtrap`) and Simpson's (`qnwsimp`) rule
+- Gauss-Hermite (`qnwnorm`) or Gaussian with any continuous distribution (`qnwdist`)
+- Generic quadrature integration (`quadrect`)
+
+
+## Practice integration with `QuantEcon.jl`
+
+Let's integrate $f(x) = \frac{1}{x^2 + 1}$ from 0 to 1
+
+Tip: Type `?` in the REPL and the name of the function to read its documentation and learn how to call it
+
+
+1. Use `quadrect` to integrate using Monte Carlo
+  - You will need to code your function `f` to accept an array (`.` syntax)
+2. Use `qnwtrap` to integrate using the Trapezoid rule quadrature
+3. Use `qnwlege` to integrate using Gaussian quadrature
+
+. . .
+
+Do we know what is the analytic solution to this integral?
+
+
+## Practice integration with `QuantEcon.jl`
+
+
+```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
+f(x) = 1.0./(x.^2 .+ 1.0);
+# 1. Use `quadrect` to integrate using Monte Carlo with 1000 nodes
+quadrect(f, 1000, 0.0, 1.0, "R")
+```
+```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
+# 2. Use `qnwtrap` to integrate using the Trapezoid rule quadrature with 7 nodes
+x, w = qnwtrap(7, 0.0, 1.0);
+# Perform quadrature approximation
+sum(w .* f(x))
+```
+```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
+# 3. Use `qnwlege` to integrate using Gaussian quadrature with 7 nodes
+x, w = qnwlege(7, 0.0, 1.0);
+# Perform quadrature approximation
+sum(w .* f(x))
+```
+
+. . .
+
+By the way, $\int^1_0 1/(x^2 + 1) = \arctan(1) = \pi/4$
+```{julia}
+π/4
+```
