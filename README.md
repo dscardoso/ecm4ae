@@ -13,6 +13,8 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
 - Unit 1 - Introduction to Scientific Computing
   - Lecture 1.1 - Course introduction: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_1/ACE592_1_1_notes.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_1/ACE592_1_1_notes.html)
   - Lecture 1.2 - Best practices: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_2/ACE592_1_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_2/ACE592_1_2_notes.html)
+  - Lecture 1.3 - Intro to Julia: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_3/ACE592_1_3_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_3/ACE592_1_3_notes.html)
+
 
 
 ## Recommended additional resources
