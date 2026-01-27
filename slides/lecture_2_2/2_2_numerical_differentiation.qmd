@@ -37,9 +37,9 @@ format:
 ```{julia}
 #| echo: false
 using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
-Pkg.add("ForwardDiff"); Pkg.add("FiniteDifferences"); Pkg.add("Symbolics"); Pkg.add("Latexify")
+#Pkg.activate(".")
+#Pkg.instantiate()
+#Pkg.add("ForwardDiff"); Pkg.add("FiniteDifferences"); Pkg.add("Symbolics"); Pkg.add("Latexify")
 ```
 
 
