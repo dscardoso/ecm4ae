@@ -1,0 +1,1118 @@
+---
+title: "AGEC 652 - Lecture 2.2"
+subtitle: "Numerical differentiation"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_2_2_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_2_2_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+
+```{julia}
+#| echo: false
+using Pkg
+Pkg.activate(".")
+Pkg.instantiate()
+Pkg.add("ForwardDiff"); Pkg.add("FiniteDifferences"); Pkg.add("Symbolics"); Pkg.add("Latexify")
+```
+
+
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  **Fundamentals of numerical methods**
+    1.  [Numerical arithmetic]{.gray}
+    2.  **Numerical differentiation**
+    3.  Numerical integration
+3.  Systems of equations
+4.  Optimization
+5.  Function approximation
+6.  Structural estimation
+
+## Agenda {background-color="orange"}
+
+- Today we will learn how to take derivatives using the computer
+- Precision plays a big role in this type of processing, so we will start by reviewing a mathematical concept to express orders of magnitude
+- Then, we will move to methods to calculate derivatives
+- And end with packages to help us calculate numerical (and even analytical) derivatives
+
+
+
+## Main references for today {background-color="orange"}
+
+-   Miranda & Fackler (2002), Ch. 5
+-   Judd (1998), Ch. 7
+-   Nocedal & Wright (2006), Ch. 8 
+-   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell) 
+
+
+# Big O notation
+
+*A useful way to represent limiting behavior*
+
+## Big O notation
+
+How do we quantify **speed** and **accuracy** of computational algorithms?
+
+. . .
+
+The usual way is to use **Big O (or order) notation**
+
+. . .
+
+- General mathematical definition: describes the *limiting behavior of a function* when the argument tends towards a particular value or infinity
+  - You've seen this before in the expression of Taylor series' errors
+
+. . .
+
+- Programming context: describes the limiting behavior of algorithms in terms of run time/memory/accuracy as input size grows
+
+
+## Big O notation
+
+Written as: $O(f(x))$
+
+Formally, for two real-valued functions $f(x)$ and $g(x)$ we say
+
+$$g(x) = O(f(x))$$
+
+if there $\exists$ a positive $C$ such that 
+
+$$|g(x)| \leq C |f(x)|, \text{as}\; x \rightarrow a$$
+
+. . .
+
+So $g$ is bounded by $f$ up to a scalar. Another way of saying it (if $g$ is non-zero): $\lim_{x \rightarrow a} \frac{|g(x)|}{|f(x)|} < \infty$
+
+Intuitively, $g$ never gets "too far away" from $f$ as $x \rightarrow a$
+
+
+
+## Big O notation
+
+Here is how to think about it:
+
+$\mathbf{O(x)}$: **linear**
+
+- Time to solve increases linearly in input x
+- Accuracy changes linearly in input x
+
+. . .
+
+*Any Examples?*
+
+. . .
+
+- Time to find a particular value in an unsorted array
+  - For each element, check whether it is the value we want
+
+
+
+## Big O notation
+
+$\mathbf{O(c^x)}:$ **exponential**
+
+- Time to solve increases exponentially in input x
+- Accuracy changes exponentially in input x
+
+. . .
+
+*Any examples?*
+
+. . .
+
+- Time to solve a standard dynamic program, e.g. traveling salesman
+  - For each city $i=1,...,n$, solve a Bellman equation as a function of all other cities
+
+
+
+## Big O notation
+
+$\mathbf{O(n!)}$: factorial
+
+- Time to solve increases factorially in input x
+- Accuracy changes factorially in input x
+
+. . .
+
+*Any examples?*
+
+. . .
+
+- Solving traveling salesman by brute force
+  - Obtain travel time for all possible combinations of intermediate cities
+
+
+
+## Big O notation: accuracy example
+
+This is how you have probably seen Big O used before:
+
+. . .
+
+Taylor series for $sin(x)$ around zero:
+
+$sin(x) = x - x^3/3! + x^5/5! + O(x^7)$
+
+What does $O(x^7)$ mean here?
+
+
+
+## Big O notation: accuracy example
+
+$sin(x) = x - x^3/3! + x^5/5! + O(x^7)$
+
+. . .
+
+As we move away from $0$ to some $x$, the upper bound of the growth rate in the error of our approximation to $sin(x)$ is $x^7$
+
+If we are approximating about zero so $x$ is small: $x^n$ is decreasing in $n$
+
+. . .
+
+For small $x$, higher order polynomials mean the error will grow slower and we have a better local approximation
+
+
+
+## Taylor expansions
+
+```{julia, results = 'hide'}
+# fifth and third order Taylor approximations
+sin_error_5(x) = sin(x) - (x - x^3/6 + x^5/120)
+sin_error_3(x) = sin(x) - (x - x^3/6)
+```
+
+. . .
+
+```{julia, echo = TRUE}
+println("Error of fifth-order approximation at x = .001 is: $(sin_error_5(.001))
+Error of third-order approximation at x = .001 is: $(sin_error_3(.001))
+Error of fifth-order approximation at x = .01 is: $(sin_error_5(.01))
+Error of third-order approximation at x = .01 is: $(sin_error_3(.01))
+Error of fifth-order approximation at x = .1 is: $(sin_error_5(.1))
+Error of third-order approximation at x = .1 is: $(sin_error_3(.1))")
+```
+
+
+
+## Big O notation: speed examples
+
+Here are a few examples for fundamental computational methods
+
+
+## Big O notation: speed examples
+
+$\mathbf{O(1)}$: algorithm executes in **constant time**
+
+The size of the input does not affect execution speed
+
+. . .
+
+Example: 
+
+. . .
+
+- Accessing a specific location in an array: `x[10]`
+
+
+
+## Big O notation: speed examples
+
+$\mathbf{O(x)}$: algorithm executes in **linear time**
+
+Execution speed grows linearly in input size
+
+Example:
+
+. . .
+
+- Inserting an element into an arbitrary location in a 1 dimensional array
+  - Bigger array $\rightarrow$ need to shift around more elements in memory to accommodate the new element
+
+
+
+## Big O notation: speed examples
+
+$\mathbf{O(x^2):}$ algorithm executes in **quadratic time**
+
+- More generally called **polynomial time** for $O(x^n)$
+
+Execution speed grows quadratically in input size
+
+Example: 
+
+. . .
+
+- *Bubble sort*: step through a list, compare adjacent elements, swap if in the wrong order
+
+
+# Numerical differentiation
+
+## Differentiation
+
+Derivatives are obviously important in economics for finding optimal allocations, etc
+
+The formal definition of a derivative is:
+
+. . .
+
+$$\frac{d f(x)}{dx} = \lim_{h\rightarrow 0} \frac{f(x+h)-f(x)}{h}$$
+
+. . .
+
+But we can let $t = 1/h$ and reframe this as an infinite limit
+
+. . .
+
+$$\frac{d f(x)}{dx} = \lim_{t\rightarrow \infty} \frac{f(x+1/t)-f(x)}{1/t}$$
+
+which we know a computer can't handle because of finite space to store $t$
+
+
+
+## Computer differentiation
+
+How do we perform derivatives on computers if we can't take the limit?
+
+. . .
+
+**Finite difference methods**
+
+Idea: Approximate the limit by letting $h$ be a small number
+
+. . .
+
+What does a finite difference approximation look like?
+
+
+
+## Forward difference
+
+The forward difference looks exactly like the formal definition without the limit: $$\frac{d f(x)}{dx} \approx \frac{f(x+h)-f(x)}{h}$$
+
+. . .
+
+It works the same for partial derivatives: 
+
+$$\frac{\partial g(x,y)}{\partial x} \approx \frac{g(x+h,y)-g(x,y)}{h}$$
+
+
+## [Try it: Forward difference]{.blue}
+
+Let's see how it works in practice by calculating derivatives of $x^2$ at $x=2$
+
+1. Write a function `deriv_x_squared(h,x)` that returns the forward difference approximation to the derivative of $x^2$ around with step size $h$
+2. Then, evaluate the function for `x=2` and 3 values of `h`
+  1. `h = 1e-1`
+  2. `h = 1e-12`
+  3. `h = 1e-30`
+
+
+## Forward difference: example
+
+
+```{julia, results = 'hide'}
+#| code-fold: true
+#| code-summary: "Show the code"
+deriv_x_squared(h,x) = ((x+h)^2 - x^2)/h # derivative function
+```
+
+```{julia}
+println("
+        The derivative with h=1e-1  is: $(deriv_x_squared(1e-1 ,2.))
+        The derivative with h=1e-12 is: $(deriv_x_squared(1e-12,2.))
+        The derivative with h=1e-30 is: $(deriv_x_squared(1e-30,2.))")
+```
+
+
+## Error, it's there
+
+None of the values we chose for $h$ were perfect, but clearly some were better than others
+
+. . .
+
+Why?
+
+. . .
+
+We face two opposing forces:
+
+- We want $h$ to be as small as possible so that we can approximate the limit as well as we possibly can, *BUT*
+
+. . .
+
+- If $h$ is small then $f(x+h)$ is close to $f(x)$, we can run into rounding issues like we saw for $h=10^{-30}$
+
+
+
+## Error, it's there
+
+We can select $h$ in an optimal fashion: $h = \max\{|x|,1\}\sqrt{\epsilon}$
+
+. . .
+
+There's proofs for why this is the case but generally testing out different $h$'s works fine
+
+
+
+## How much error is in a finite difference?
+
+Can we measure the error growth rate in $h$ (i.e. Big O notation)?
+
+. . .
+
+Perform a first-order Taylor expansion of $f(x)$ around $x$:
+
+. . .
+
+$$f(x+h) = f(x) + f'(x)h + O(h^2)$$
+
+Recall that $O(h^2)$ means the error in our approximation grows quadratically in $h$, though we only did a linear approximation
+
+. . .
+
+How can we use this to understand the error in our finite difference approximation?
+
+
+
+## How much error is in a finite difference?
+
+Rearrange to obtain: $f'(x) = \frac{f(x+h) - f(x)}{h} + O(h^2)/h$
+
+. . .
+
+$\Rightarrow f'(x) = \frac{f(x+h) - f(x)}{h} + O(h)$ because $O(h^2)/h = O(h)$
+
+. . .
+
+**Forward differences have linearly growing errors**
+
+. . .
+
+If we halve $h$, we halve the error in our approximation (ignoring rounding/truncation issues)
+
+
+
+## Improvements on the forward difference
+
+How can we improve the accuracy of the forward difference?
+
+. . .
+
+First, *why* do we have error?
+
+. . .
+
+- Because we are approximating the slope of a tangent curve at $x$ by a secant curve passing through $(x,x+h)$
+  - The secant curve has the average slope of $f(x)$ on $[x,x+h]$
+
+. . .
+
+- We want the derivative at $x$, which is on the edge of $[x,x+h]$
+
+*How about we center* $x$?
+
+
+
+## Central differences
+
+We can approximate $f'(x)$ in a slightly different way: $$f'(x) \approx \frac{f(x+h)-f(x-h)}{2h}$$
+
+. . .
+
+- This leaves $x$ in the middle of the interval over which we are averaging the slope of $f(x)$
+
+. . .
+
+*Is this an improvement on forward differences?*
+
+
+
+## How much error is in a central finite difference?
+
+Lets do two second-order Taylor expansions:
+
+- $f(x+h) = f(x) + hf'(x) + h^2/2! f''(x) + O(h^3)$
+- $f(x-h) = f(x) - hf'(x) + (-h)^2/2! f''(x) + O(h^3)$
+
+. . .
+
+Subtract the two expressions (note that $O(h^3) - O(h^3) = O(h^3)$) and then divide by $2h$ to get
+
+. . .
+
+$$f'(x) = \frac{f(x+h)-f(x-h)}{2h} + O(h^2)$$
+
+
+## How much error is in a central finite difference?
+
+$$f'(x) = \frac{f(x+h)-f(x-h)}{2h} + O(h^2)$$
+
+. . .
+
+Error is quadratic in $h$: if we halve $h$ we reduce error by 75%
+
+
+
+## Higher-order approximations
+
+- So central differencing sounds like a good idea: add one more point to improve accuracy!
+- Can we keep doing that? Using more points around $x$?
+
+. . .
+
+- Yes! Let's add two more points, one on each side of $x$: $x-2h$ and $x+2h$
+  - Let's do a fourth-order Taylor expansion this time
+
+. . .
+
+- $f(x+h) = f(x) + 2hf'(x)  +   (h)^2/2!  f''(x)   + (h)^3/3! f'''(x) +   (h)^4/4! f''''(x) + O(h^5)$
+- $f(x-h) = f(x) - 2hf'(x)  +  (-h)^2/2!  f''(x)  + (-h)^3/3! f'''(x) +  (-h)^4/4! f''''(x) + O(h^5)$
+- $f(x+2h) = f(x) + 2hf'(x) +  (2h)^2/2!  f''(x)  + (2h)^3/3! f'''(x) +  (2h)^4/4! f''''(x) + O(h^5)$
+- $f(x-2h) = f(x) - 2hf'(x) + (-2h)^2/2!  f''(x) + (-2h)^3/3! f'''(x) + (-2h)^4/4! f''''(x) + O(h^5)$
+
+
+## Higher-order approximations
+
+We are looking for a combination of coefficients $a, b, c, d$ in 
+
+$$af(x+h) + bf(x-h) + cf(x+2h) + df(x-2h)$$
+
+such that we can cleverly cancel out higher order (2nd, 3rd, and 4th) terms
+
+. . .
+
+If you do the math, you'll find that with $a = -1/12, b = 2/3, c = -2/3, d = 12$ we get
+
+$$f'(x) = \frac{-f(x+2h)+8f(x+h)-8f(x-h)+f(x-2h)}{12h} + O(h^4)$$
+
+**By adding yet another two points, we quadrupled the accuracy**: if we halve $h$ we reduce error by 93.75%!
+
+. . .
+
+- You can keep doing this to improve accuracy, but the math gets complicated pretty quickly. And there's gotta be a trade-off, right?
+
+
+## Why use anything but central differences?
+
+Suppose we're computing a Jacobian of a multidimensional function. Why would we ever use forward differences instead of central differences?
+
+. . .
+
+- For each central difference, we need to compute $g(x_1-h,x_2,...)$ and $g(x_1+h,x_2,...)$ for each $x_i$
+
+. . .
+
+- But for a forward difference we only need to compute $g(x_1,x_2,...)$ once and then $g(x_1+h,x_2,...)$ for each $x_i$
+
+. . .
+
+Forward differences saves on the *number of operations at the expense of accuracy*
+
+- For high dimensional functions it may be worth the trade-off
+
+
+
+## Higher order finite differences
+
+We can use these techniques to approximate higher order derivatives
+
+. . .
+
+For example, take two third order Taylor expansions
+
+. . .
+
+- $f(x+h) = f(x) + f'(x)h + f''(x)h^2/2! + f'''(x)h^3/3! + O(h^4)$
+- $f(x-h) = f(x) + f'(x)(-h) + f''(x)(-h)^2/2! + f'''(x)(-h)^3/3! + O(h^4)$
+
+. . .
+
+Add the two expressions and then divide by $h^2$ to get
+
+. . .
+
+$$f''(x) = \frac{f(x+h) - 2f(x) + f(x-h)}{h^2} + O(h^2)$$
+
+. . .
+
+Second derivatives are important for calculating Hessians and checking maxima or minima
+
+
+## Packages for finite differencing 
+
+- We learned how to program simple derivatives using the principles of finite differencing. But there's a lot to figure out:
+  - Can we pick an optimal $h$ depending on the function?
+  - What if we want to use more than two points in central differencing? It's gotta be pretty complicated to program
+  - And higher-order derivaties seem a pain to program too...
+
+. . .
+
+**Despair not!** That's what (reliable) packages are for. *And we thank the good souls who programmed those tools for free so we can focus on solving our research questions*
+
+- For finite differencing, we will pick package `FiniteDifferences.jl` in Julia
+  - (If you are working in Python, a good option is package [`numdifftools`](https://pypi.org/project/numdifftools/))
+  
+
+## Using `FiniteDifferences.jl`: basics
+
+- This package gives us the tools to create our customized **differentiation functions**
+  - It means that it will return a function itself that will perform finite differentiation based on the method and parameters we specify
+
+Let's start with the scalar (univariate) case
+
+- There are three types of methods: 
+  - `forward_fdm(p, q)`: forward finite differences method
+  - `backward_fdm(p, q)`: backward finite differences method
+  - `central_fdm(p, q)`: central finite differences method
+- Each of these functions take as minimum arguments
+  - $p$: The order of approximation (number of points you want to use)  
+  - $q$: The order of the derivative (e.g., `1` for first-order )
+- *Note that, by default, you don't need to specify* $h$: *it figures out the optimal one based on an adaptative algorithm*
+
+## Using `FiniteDifferences.jl`: scalars
+
+Let's create an operator for 1st-order differentation with each type using the simplest case with 2 points
+
+```{julia}
+using FiniteDifferences; # Import package
+my_forward_diff  = forward_fdm(2, 1) # Forward difference operator
+```
+```{julia}
+my_central_diff  = central_fdm(2, 1) # Central difference operator
+```
+
+```{julia}
+f(x) = x^2;
+my_forward_diff(f, 10.0)
+```
+
+```{julia}
+my_central_diff(f, 10.0)
+```
+
+
+## Using `FiniteDifferences.jl`: scalars
+
+As expected, increasing the number of points (order of method) will increase precision
+
+```{julia}
+my_forward_diff_6pts  = forward_fdm(6, 1) # Forward difference operator with 6 points
+```
+```{julia}
+my_central_diff_6pts  = central_fdm(6, 1) # Central difference operator with 6 points
+```
+
+```{julia}
+my_forward_diff_6pts(f, 10.0)
+```
+
+```{julia}
+my_central_diff_6pts(f, 10.0)
+```
+
+
+## Using `FiniteDifferences.jl`: higher orders
+
+Higher-order derivatives are also easy!
+
+```{julia}
+my_central_diff_2nd_order  = central_fdm(3, 2) # Central difference operator for 2nd order derivative
+```
+
+```{julia}
+my_central_diff(cos, 0.0)
+```
+
+```{julia}
+my_central_diff_2nd_order(cos, 0.0)
+```
+
+
+## Using `FiniteDifferences.jl`: gradients 
+
+We can also use this package to calculate derivatives of functions of vectors (multivariate functions). To do so, we use function `grad` and pass our `fdm` operator first
+
+Let's see an example for function $g(x_1, x_2) = x_1^2 + 2x_1 + x_2^2 - 2x_2 + 4 x_1 x_2$ evaluated at $(1, 1)$. We know gradients are 
+
+- $\frac{\partial g}{\partial x_1} = 2x_1 + 2 + 4x_2$
+- $\frac{\partial g}{\partial x_2} = 2x_2 - 2 + 4x_1$
+
+```{julia}
+g(x) = x[1]^2 + 2*x[1] + x[2]^2 - 2*x[2] + 4*x[1]*x[2];
+grad(my_central_diff, g, [1.0, 1.0])
+```
+
+. . . 
+
+Note that the return value is a tuple and the vector of derivatives is the first element. We can access it directly doing by adding `[1]`:
+
+```{julia}
+grad(my_central_diff, g, [1.0, 1.0])[1]
+```
+
+
+## Using `FiniteDifferences.jl`: Jacobians of scalar functions
+
+The Jacobian matrix for a multivariate scalar function $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is the row vector of first-order partial derivatives of $f$: 
+
+$$
+J = \begin{bmatrix}
+\frac{\partial f}{\partial x_1} & \frac{\partial f}{\partial x_2} & \cdots & \frac{\partial f}{\partial x_n}
+\end{bmatrix}
+$$
+
+. . .
+
+So, in this case, the Jacobian for $g(x_1, x_2) = x_1^2 + 2x_1 + x_2^2 - 2x_2 + 4 x_1 x_2$ is the same as the gradient
+```{julia}
+jacobian(my_central_diff, g, [1.0, 1.0])[1] # Again, [1] gets is the first element of the tuple
+```
+
+
+## Using `FiniteDifferences.jl`: Jacobians of vector functions
+
+In many instances, we will work vector functions of the type $f: \mathbb{R}^n \rightarrow \mathbb{R}^n$, where $f = (f_1, f_2, \ldots, f_n)$ and each $f_i$ is a function of $n$ variables $x_1, x_2, \ldots, x_n$
+
+The Jacobian matrix can be represented as follows:
+
+$$
+J = \begin{bmatrix}
+\frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2} & \cdots & \frac{\partial f_1}{\partial x_n} \\
+\frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2} & \cdots & \frac{\partial f_2}{\partial x_n} \\
+\vdots & \vdots & \ddots & \vdots \\
+\frac{\partial f_n}{\partial x_1} & \frac{\partial f_n}{\partial x_2} & \cdots & \frac{\partial f_n}{\partial x_n} \\
+\end{bmatrix}
+$$
+
+
+## Using `FiniteDifferences.jl`: Jacobians of vector functions
+
+The process with `FiniteDifferences.jl` for vector functions is the same. Let's try it with $G: \mathbb{R}^2 \rightarrow \mathbb{R}^2$
+
+$$
+G(\mathbf{X}) = \begin{bmatrix}
+x_1^2 + 2x_1 + x_2^2 - 2x_2 + 4 x_1 x_2  \\
+x_1^2 - 2x_1 + x_2^2 + 2x_2 - 4 x_1 x_2  \\
+\end{bmatrix}
+$$
+
+```{julia}
+function G(x)
+    G = similar(x) # Initializes a vector with same dimensions as x (2x1)
+    G[1] = x[1]^2 + 2.0*x[1] + x[2]^2 - 2.0*x[2] + 4.0*x[1]*x[2]
+    G[2] = x[1]^2 - 2.0*x[1] + x[2]^2 + 2.0*x[2] - 4.0*x[1]*x[2]
+    return G
+end;
+
+jacobian(my_central_diff, G, [1.0 1.0])[1] #[1] returns the first element of the output tuple (a matrix)
+```
+
+
+
+## Using `FiniteDifferences.jl`: Hesssian of scalar functions
+
+The Hessian matrix for a function $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is a square matrix of second-order partial derivatives of $f$:
+
+$$
+H = \begin{bmatrix}
+\frac{\partial^2 f}{\partial x_1^2} & \frac{\partial^2 f}{\partial x_1 \partial x_2} & \cdots & \frac{\partial^2 f}{\partial x_1 \partial x_n} \\
+\frac{\partial^2 f}{\partial x_2 \partial x_1} & \frac{\partial^2 f}{\partial x_2^2} & \cdots & \frac{\partial^2 f}{\partial x_2 \partial x_n} \\
+\vdots & \vdots & \ddots & \vdots \\
+\frac{\partial^2 f}{\partial x_n \partial x_1} & \frac{\partial^2 f}{\partial x_n \partial x_2} & \cdots & \frac{\partial^2 f}{\partial x_n^2} \\
+\end{bmatrix}
+$$
+
+. . .
+
+`FiniteDifferences.jl` currently doesn't have a specific function to calculate Hessians directly. But it's easy to do it by acknowledging that each row $i$ of a Hessian matrix is the Jacobian of function $f_i(x) = \frac{\partial f(x)}{\partial x_i} \rightarrow$ it's a Jacobian of a Jacobian!
+
+## Using `FiniteDifferences.jl`: Hesssian of scalar functions
+
+Let's write a function to calculate a Hessian matrix
+
+```{julia}
+function hessian(fdm, f, x)
+    # Calculate the Jacobian of function f
+    f_i(x) = jacobian(fdm, f, x)[1] #[1] gets the 1st element in the tuple output, which is a vector of partial derivatives
+    # Calculate the Jacobian of vector function f_i
+    H = jacobian(fdm, f_i, x)[1]
+    return H
+end;
+hessian(my_central_diff, g, [1.0, 1.0])
+```
+
+. . .
+
+This is a pretty bad approximation! Let's try it again with more points:
+
+```{julia}
+hessian(my_central_diff_6pts, g, [1.0, 1.0])
+```
+
+Much better!
+
+# Automatic differentiation
+
+
+## Differentiation without error?
+
+Finite differences put us in between two opposing forces on the size of $h$
+
+. . .
+
+Can we improve upon finite differences?
+
+. . .
+
+- Analytic derivatives
+  - One way is to code up the actual derivative
+
+. . .
+
+```{julia, results = 'hide'}
+deriv_x_squared(x) = 2x
+```
+
+```{julia, echo = F}
+println("The derivative is: $(deriv_x_squared(2.))")
+```
+
+. . .
+
+Exact solution! *(But up to machine precision, of course)*
+
+
+
+## Analytic derivatives
+
+Coding up analytic derivatives by hand for complex problems is not always great because:
+
+. . .
+
+- It can take A LOT of programmer time, more than it is worth
+
+. . .
+
+- Humans are susceptible to error in coding or calculating the derivative mathematically^[But Julia can actually solve some derivates for us... more on that in the Appendix.]
+
+. . .
+
+There is another option...
+
+
+
+## Autodiff: let the computer do it
+
+Think about this: your code is *always* made up of simple arithmetic operations
+
+- add, subtract, divide, multiply
+- trig functions
+- exponentials/logs
+- etc
+
+. . .
+
+The closed form derivatives of these operations is not hard: it turns out your computer can do it and yield exact solutions
+
+That's called **automatic differentiation**, or **autodiff** for short
+
+
+
+## Autodiff: let the computer do it
+
+How? 
+
+. . .
+
+There are methods that basically apply a giant *chain rule* to your whole program and break down the derivative into the (easy) component parts that another package knows how to handle
+
+. . .
+
+The details of decomposing calculations with computer instructions get pretty complicated pretty fast. We're not going to code it by hand. Instead, we're going to use a package for that: `ForwardDiff.jl`
+
+- The name follows from *forward mode*, which is one way of doing autodiff
+  - Check out Nocedal & Wright Ch.8 for more details
+- *(For Python, a popular autodiff package is [JAX](https://jax.readthedocs.io/en/latest/tutorials/automatic-differentiation.html))
+
+
+
+## `ForwardDiff.jl`: basics
+
+There are four basic methods we are interested in
+  
+- `derivative(f, x)`: derivative of univariate scalar function `f` at point `x`
+- `gradient(f, x)`: partial derivatives of multivariate scalar function `f` 
+- `jacobian(f, x)`: Jacobian matrix of multivariate **vector** function `f`
+  - Note: `f` MUST return a vector, even if it's a single dimension
+- `hessian(f, x)`: Hessian matrix of multivariate scalar function `f`
+
+
+## `ForwardDiff.jl`: scalars and gradients
+
+Calculating scalar derivatives of univariate functions is easy:
+
+```{julia}
+using ForwardDiff
+f(x) = x^2;
+ForwardDiff.derivative(f, 2.0)
+```
+
+. . .
+
+The same goes for gradients:
+
+```{julia}
+g(x) = x[1]^2 + 2*x[1] + x[2]^2 - 2*x[2] + 4*x[1]*x[2];
+ForwardDiff.gradient(g, [1.0, 1.0])
+```
+
+Note: `ForwardDiff.jl` doesn't implement higher-order derivatives. But you can easily calculate them by composition: define derivatives as functions and apply derivatives on them.
+
+## `ForwardDiff.jl`: Jacobians
+
+For Jacobians, you need to be careful and make sure your function always returns an array, even if it's one-dimensional
+
+```{julia}
+# Note the square brackets that make array_g return an array
+array_g(x) = [x[1]^2 + 2*x[1] + x[2]^2 - 2*x[2] + 4*x[1]*x[2]];
+array_g([1.0, 1.0])
+```
+
+```{julia}
+ForwardDiff.jacobian(array_g, [1.0, 1.0])
+```
+
+. . .
+
+Jacobians of "true" vector functions follow the same procedure
+
+```{julia}
+function G(x)
+    G = similar(x)
+    G[1] = x[1]^2 + 2.0*x[1] + x[2]^2 - 2.0*x[2] + 4.0*x[1]*x[2]
+    G[2] = x[1]^2 - 2.0*x[1] + x[2]^2 + 2.0*x[2] - 4.0*x[1]*x[2]
+    return G
+end;
+ForwardDiff.jacobian(G, [1.0 1.0])
+```
+
+
+## `ForwardDiff.jl`: Hessians
+
+Hessians are also easy to obtain:
+
+```{julia}
+ForwardDiff.hessian(g, [1.0, 1.0])
+```
+
+## Finite differences vs automatic differentiation
+
+| Factor           | Finite Differences                                                                    | Automatic Differentiation                                                          |
+| ---------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Accuracy**     | - Less accurate and sensitive to step size choice, especially for higher derivatives. | - Highly accurate for all orders of derivatives.                                   |
+| **Robustness**   | - Error prone due to numerical instability.                                           | - More robust against numerical issues.                                            |
+| **Efficiency**   | - Generally faster, but efficiency decreases with higher orders.                      | - Generally slower, but efficiency maintained for higher derivatives.              |
+| **Memory Usage** | - Lower memory usage in general.                                                      | - Can be memory-intensive due to graph storage.                                    |
+| **Scope**        | - Works fine with "black box" functions.                                              | - Needs to modify internal parts of functions, so may fail with complex functions. |
+
+
+# Appendix: Symbolics
+
+*Analytical differentiation in Julia*
+
+
+## Programming analytical derivatives?
+
+- We've seen the obvious benefits of being able to calculate numerical derivaties
+  - Easily differentiate complicated functions
+  - Easily get Jacobians and Hessians for functions of MANY variables
+
+. . .
+
+- So what's the point of analytical derivatives?
+  - Well... just because we can!
+  - It might not be helpful for big numerical problems, but it can **speed up tedious derivations** that you can program
+  - Or, if nothing else, it can help you check your math
+
+## Enter symbolic calculation
+
+- Analytical derivatives (and general manipulation of mathematical expressions) is typically done in computers using a **CAS: Computer Algebra System**
+  - Mathematica and Maple are some examples of systems like this
+- As it turns out, you can also do that in Julia using the package `Symbolics.jl`
+  - *(In Python, you can use SymPy package to perform symbolic operations)*
+- This appendix is just a short tutorial on how to perform analytical operations (not only derivatives)
+  - Since most times we want to take those expressions and use them in papers and assignments, we will also use package `Latexify.jl` to generate LaTeX expressions for us
+
+
+## `Symbolics.jl`: defining symbols
+
+Let's work out a simple example of a profit function with isoelastic inverse demand $p(q) = \alpha q^{-1/\epsilon}$ and quadratic cost $c(q) = \kappa \frac{1}{2}q^2$
+
+$$
+\pi(q) = q p(q) - c(q) = q [\alpha q^{-1/\epsilon}] - \kappa \frac{1}{2}q^2
+$$
+
+. . .
+
+We start by using macro `@variables` to register the name of symbols (symbolic variables)
+
+```{julia}
+using Symbolics, Latexify
+@variables q, α, ϵ, κ # Declare symbolic variables and constants
+```
+
+## `Symbolics.jl`: defining symbols
+
+Then, define the symbol for $\pi$ as a function of other symbols
+
+```{julia}
+symb_π = q*(α*q^(-1/ϵ)) - 0.5*κ*q^2
+```
+
+
+## `Symbolics.jl`: taking derivatives
+
+```{julia}
+symb_dπdq = Symbolics.derivative(symb_π, q)
+```
+
+. . .
+
+We can use `Latexify.jl` to print it in LaTeX for us:
+
+```{julia}
+println(latexify(symb_dπdq))
+```
+
+
+
+## `Symbolics.jl`: taking Jacobians
+
+Now let's expand this to a duopoly problem:
+
+$$
+\begin{gather}
+\pi_1(q_1, q_2) = q_1 p(q_1 + q_2) - c(q_1) = q_1 [\alpha (q_1+q_2)^{-1/\epsilon}] - \kappa_1 \frac{1}{2}q_1^2 \\
+\pi_2(q_1, q_2) = q_2 p(q_1 + q_2) - c(q_2) = q_2 [\alpha (q_1+q_2)^{-1/\epsilon}] - \kappa_2 \frac{1}{2}q_2^2
+\end{gather}
+$$
+
+```{julia}
+@variables q_1, q_2, κ_1, κ_2;
+symb_π_1 = q_1*(α*(q_1+q_2)^(-1/ϵ)) - 0.5*κ_1*q_1^2
+```
+
+```{julia}
+symb_π_2 = q_2*(α*(q_1+q_2)^(-1/ϵ)) - 0.5*κ_2*q_2^2
+```
+
+## `Symbolics.jl`: taking Jacobians
+
+We can obtain the Jacobian matrix of the stacked profit functions with
+
+```{julia}
+symb_jacobian = Symbolics.jacobian([symb_π_1, symb_π_2], [q_1, q_2])
+```
+
+
+## `Symbolics.jl`: turning symbolics into numerics
+
+This packages also offers a handy way to turn those expressions into actual Julia functions!
+
+But first we need to assign the global values for our constant parameters
+
+```{julia}
+α = 2.0;
+ϵ = 1.6;
+κ_1 = 0.6;
+κ_2 = 0.8;
+```
+
+. . .
+
+```{julia}
+jl_π_1 = eval(build_function(symb_π_1, q_1, q_2)) # Julia function for π_1
+```
+
+```{julia}
+jl_π_2 = eval(build_function(symb_π_2, q_1, q_2)) # Julia function for π_1
+```
+
+
+## `Symbolics.jl`: turning symbolics into numerics
+
+
+Testing some values
+```{julia}
+jl_π_1(0.2, 0.2)
+```
+
+```{julia}
+jl_π_2(0.2, 0.2)
+```
+
+
+## `Symbolics.jl`: turning symbolics derivatives into numerical ones
+
+Now, we are ready to create a Julia function for the Jacobian
+
+```{julia}
+jl_jacobian = eval(build_function(symb_jacobian, q_1, q_2)[1]) 
+```
+
+- Note: `build_function` function actually give us two options in this case. 
+  - The First is a function that allocates a new matrix
+  - The second is a memory-optimized version that modifies a pre-allocated matrix in place.
+  - We are using the first one here
+
+## `Symbolics.jl`: turning symbolics derivatives into numerical ones
+
+Next, we use a wrapper function to map vector `q` into symbolic variables
+
+```{julia}
+f_jacob(q) = jl_jacobian(q[1], q[2]);
+# Test it
+f_jacob([0.2, 0.2])
+```
+
+. . .
+
+Let's check if it matches with Autodiff
+
+```{julia}
+π_vector(q) = [jl_π_1(q[1], q[2]);
+               jl_π_2(q[1], q[2])] # Note this is a 2x1 array
+ForwardDiff.jacobian(π_vector, [0.2, 0.2])
+```
+
+Success!
+
+
