@@ -1415,14 +1415,9 @@ More on coding practices and efficiency:
 
 ## What about ChatGPT, Claude, and other LLMs?
 
-- You are lucky! You're among the first cohorts learning to program with an available AI language model that is advanced enough to **understand, explain, and generate** code
-
-. . .
-
-- Currently, one of the best available services for that is called GitHub Copilot. It's paid, but you can get it for free with an `.edu` email
+- You are lucky! You're among the first cohorts learning these methods with available AI language models that are advanced enough to **understand, explain, and generate** code
 
 **But hold on. Don't use this powerful resource without careful consideration**
-
 
 
 ## What about ChatGPT, Claude, and other LLMs?
@@ -1435,39 +1430,11 @@ Why?
 
 . . .
 
-- For especialized scientific use, AI often produces buggy, incomplete, or outright incorrect code 
-  - Before you use it accurately, you need to be familiar enough with programming logic and the language you are using to know when things are wrong
+- For especialized scientific use, AI often produces buggy or incomplete, and sometimes outright incorrect solutions 
+  - Before you use it accurately, you need to be familiar enough with programming logic and the methods you are using to know when things are wrong
 - These tools are improving fast, but they will always be imperfect
   - There is an inherent limitation in translating ambiguous (natural) languages to non-ambiguous (formal) languages
 - Treat it like a very smart intern who can do well-defined tasks very quickly
   - But, to correctly supervise an intern, you need to know the job well yourself!
-
-
-
-## Advice on AI coding assistants
-
-*Here is my personal advice to you focusing on your the medium/long-term career as a researcher*
-
-1) **Do not use AI assistants to generate code you still cannot write and understand**
-
-- There's too big of a risk of producing incorrect code
-- It will place a low cap on your logical thinking for computational methods
-- Once you advance and become familiar with programming structures, you can start relying in AI to speed up your coding
-  - For this course, coding assignments are relatively short, so I expect you to know what every line of code you write does
-
-
-
-## Advice on AI coding assistants
-
-*Here is my personal advice to you focusing on your the medium/long-term career as a researcher*
-
-2) **Use AI assistants to explain code to you or generate examples**
-- Throughout the semester, you will see many examples of algorithms
-- AI can offer *tremendous* help explaining the inner workings of algorithms
-
-. . .
-
-3) If you are a good programmer in one language, **AI tools can also help you translate code**
-- Even in that case, I'd still recommend you start using it to explain code in the "new" language rather than simply generate code for you
 
 
