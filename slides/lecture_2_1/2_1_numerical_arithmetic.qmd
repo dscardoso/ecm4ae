@@ -376,6 +376,41 @@ println("16 bit largest float is $(floatmax(Float16))")
 ```
 
 
+## Epsilon is about differences in number magnitudes
+
+Q: If `eps()` was of the order of $10^{-16}$, why is `floatmin()` of the order of $10^{-308}$?
+
+. . .
+
+A: Because it's all about the **relative scale of numbers**. `eps()` in particular is about the relative distance from $1.0\times 10^0$, so it's a good reference point. But what matters is the distance in the exponents! Let's divide everything by $100$ and check:
+
+```{julia}
+println("Is 1/100 + ϵ/100 > 1/100? $(1.0/100 + eps(Float64)/100 > 1.0/100)")
+```
+```{julia}
+println("Because the next representable number from 1/100 is $(nextfloat(1.0/100.0)),
+ so the machine epsilon at that scale is $(eps(1.0/100.0))")
+```
+
+
+## Epsilon is about differences in number magnitudes
+
+And it works all the way down to the smallest representable number
+
+```{julia}
+println("The mininum float is $(floatmin(Float64)), and the next float is $(nextfloat(floatmin(Float64))),
+ so their difference $(nextfloat(floatmin(Float64)) - floatmin(Float64))
+ is equal to epsilon at that scale $(eps(floatmin(Float64)))")
+```
+
+. . .
+
+So we will have problems if we try and take a step much bigger based on the epsilon at scale 1.0
+
+```{julia}
+println("Is floatmin + ϵ(1.0) = ϵ(1.0)? $(floatmin(Float64) + eps(1.0) == eps(1.0))")
+```
+
 
 ## The limits of computers: time is a flat circle
 

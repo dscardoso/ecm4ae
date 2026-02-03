@@ -258,7 +258,7 @@ Diego S. Cardoso
 </section>
 <section id="what-happens-when-we-run-a-program" class="slide level2">
 <h2>What happens when we run a program?</h2>
-<div id="2d5947c4" class="cell" data-execution_count="2">
+<div id="f5eb204e" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href=""></a><span class="kw">function</span> <span class="fu">hello</span>()</span>
 <span id="cb1-2"><a href=""></a>  <span class="fu">print</span>(<span class="st">"hello, world</span><span class="sc">\n</span><span class="st">"</span>)</span>
 <span id="cb1-3"><a href=""></a><span class="kw">end</span>;</span>
@@ -366,11 +366,11 @@ Diego S. Cardoso
 <p>Simple arithmetic: <span class="math inline">\((10^{-20} + 1) - 1 = 10^{-20} + (1 - 1)\)</span>, right?</p>
 <div class="fragment">
 <p>Let’s check:</p>
-<div id="4d6ac255" class="cell" data-execution_count="3">
+<div id="f4a7280c" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href=""></a>x <span class="op">=</span> (<span class="fl">1e-20</span> <span class="op">+</span> <span class="fl">1</span>) <span class="op">-</span> <span class="fl">1</span>;</span>
 <span id="cb3-2"><a href=""></a>y <span class="op">=</span> (<span class="fl">1e-20</span>) <span class="op">+</span> (<span class="fl">1</span> <span class="op">-</span> <span class="fl">1</span>);</span>
 <span id="cb3-3"><a href=""></a>x <span class="op">==</span> y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="112">
 <pre><code>false</code></pre>
 </div>
 </div>
@@ -383,15 +383,15 @@ Diego S. Cardoso
 <section id="why-bother-2" class="slide level2">
 <h2>Why bother?</h2>
 <p>Welcome to the world of <strong>finite precision</strong></p>
-<div id="8d7bf30d" class="cell" data-execution_count="4">
+<div id="aee5d22c" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="113">
 <pre><code>0.0</code></pre>
 </div>
 </div>
-<div id="6fe0190a" class="cell" data-execution_count="5">
+<div id="510a8082" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href=""></a>y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="114">
 <pre><code>1.0e-20</code></pre>
 </div>
 </div>
@@ -449,7 +449,7 @@ Diego S. Cardoso
 </div>
 <div class="fragment">
 <p>We’ve seen these types before</p>
-<div id="4a282f15" class="cell" data-execution_count="6">
+<div id="c030d683" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href=""></a><span class="fu">println</span>(<span class="fu">typeof</span>(<span class="fl">5.0</span>))</span>
 <span id="cb9-2"><a href=""></a><span class="fu">println</span>(<span class="fu">typeof</span>(<span class="fl">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -482,7 +482,7 @@ Int64</code></pre>
 </section>
 <section id="the-limits-of-computers-1" class="slide level2">
 <h2>The limits of computers</h2>
-<div id="ab8061ed" class="cell" data-execution_count="7">
+<div id="4f77f7fa" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href=""></a><span class="fu">println</span>(<span class="st">"Machine epsilon ϵ is </span><span class="sc">$</span>(<span class="fu">eps</span>(<span class="dt">Float64</span>))<span class="st">"</span>)</span>
 <span id="cb11-2"><a href=""></a><span class="fu">println</span>(<span class="st">"Is 1 + ϵ/2 &gt; 1? </span><span class="sc">$</span>(<span class="fl">1.0</span> <span class="op">+</span> <span class="fu">eps</span>(<span class="dt">Float64</span>)<span class="op">/</span><span class="fl">2</span> <span class="op">&gt;</span> <span class="fl">1.0</span>)<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -494,7 +494,7 @@ Is 1 + ϵ/2 &gt; 1? false</code></pre>
 </section>
 <section id="the-limits-of-computers-2" class="slide level2">
 <h2>The limits of computers</h2>
-<div id="06617a9e" class="cell" data-execution_count="8">
+<div id="782a8628" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href=""></a><span class="fu">println</span>(<span class="st">"The smallest representable number larger than 1.0 is </span><span class="sc">$</span>(<span class="fu">nextfloat</span>(<span class="fl">1.0</span>))<span class="st">"</span>)</span>
 <span id="cb13-2"><a href=""></a><span class="fu">println</span>(<span class="st">"The largest representable number smaller than 1.0 is </span><span class="sc">$</span>(<span class="fu">prevfloat</span>(<span class="fl">1.0</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -507,7 +507,7 @@ The largest representable number smaller than 1.0 is 0.9999999999999999</code></
 <h2>The limits of computers</h2>
 <p>The machine epsilon changes depending on the amount of storage allocated</p>
 <div class="fragment">
-<div id="792e5ae8" class="cell" data-execution_count="9">
+<div id="e0e8bce9" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href=""></a><span class="fu">println</span>(<span class="st">"32 bit machine epsilon is </span><span class="sc">$</span>(<span class="fu">eps</span>(<span class="dt">Float32</span>))<span class="st">"</span>)</span>
 <span id="cb15-2"><a href=""></a><span class="fu">println</span>(<span class="st">"Is 1 + ϵ/2 &gt; 1? </span><span class="sc">$</span>(<span class="fu">Float32</span>(<span class="fl">1</span>) <span class="op">+</span> <span class="fu">eps</span>(<span class="dt">Float32</span>)<span class="op">/</span><span class="fl">2</span> <span class="op">&gt;</span> <span class="fl">1</span>)<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -526,7 +526,7 @@ Is 1 + ϵ/2 &gt; 1? false</code></pre>
 <section id="the-limits-of-computers-4" class="slide level2">
 <h2>The limits of computers</h2>
 <p><strong>Fact 2</strong>: There is a <strong>smallest representable number</strong></p>
-<div id="6ebc4183" class="cell" data-execution_count="10">
+<div id="2da841e4" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href=""></a><span class="fu">println</span>(<span class="st">"64 bit smallest float is </span><span class="sc">$</span>(<span class="fu">floatmin</span>(<span class="dt">Float64</span>))<span class="st">"</span>)</span>
 <span id="cb17-2"><a href=""></a><span class="fu">println</span>(<span class="st">"32 bit smallest float is </span><span class="sc">$</span>(<span class="fu">floatmin</span>(<span class="dt">Float32</span>))<span class="st">"</span>)</span>
 <span id="cb17-3"><a href=""></a><span class="fu">println</span>(<span class="st">"16 bit smallest float is </span><span class="sc">$</span>(<span class="fu">floatmin</span>(<span class="dt">Float16</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -540,7 +540,7 @@ Is 1 + ϵ/2 &gt; 1? false</code></pre>
 <section id="the-limits-of-computers-5" class="slide level2">
 <h2>The limits of computers</h2>
 <p><strong>Fact 3</strong>: There is a <strong>largest representable number</strong></p>
-<div id="9bc477b6" class="cell" data-execution_count="11">
+<div id="b957d06e" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href=""></a><span class="fu">println</span>(<span class="st">"64 bit largest float is </span><span class="sc">$</span>(<span class="fu">floatmax</span>(<span class="dt">Float64</span>))<span class="st">"</span>)</span>
 <span id="cb19-2"><a href=""></a><span class="fu">println</span>(<span class="st">"32 bit largest float is </span><span class="sc">$</span>(<span class="fu">floatmax</span>(<span class="dt">Float32</span>))<span class="st">"</span>)</span>
 <span id="cb19-3"><a href=""></a><span class="fu">println</span>(<span class="st">"16 bit largest float is </span><span class="sc">$</span>(<span class="fu">floatmax</span>(<span class="dt">Float16</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -551,12 +551,56 @@ Is 1 + ϵ/2 &gt; 1? false</code></pre>
 </div>
 </div>
 </section>
+<section id="epsilon-is-about-differences-in-number-magnitudes" class="slide level2">
+<h2>Epsilon is about differences in number magnitudes</h2>
+<p>Q: If <code>eps()</code> was of the order of <span class="math inline">\(10^{-16}\)</span>, why is <code>floatmin()</code> of the order of <span class="math inline">\(10^{-308}\)</span>?</p>
+<div class="fragment">
+<p>A: Because it’s all about the <strong>relative scale of numbers</strong>. <code>eps()</code> in particular is about the relative distance from <span class="math inline">\(1.0\times 10^0\)</span>, so it’s a good reference point. But what matters is the distance in the exponents! Let’s divide everything by <span class="math inline">\(100\)</span> and check:</p>
+<div id="2a0056cb" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href=""></a><span class="fu">println</span>(<span class="st">"Is 1/100 + ϵ/100 &gt; 1/100? </span><span class="sc">$</span>(<span class="fl">1.0</span><span class="op">/</span><span class="fl">100</span> <span class="op">+</span> <span class="fu">eps</span>(<span class="dt">Float64</span>)<span class="op">/</span><span class="fl">100</span> <span class="op">&gt;</span> <span class="fl">1.0</span><span class="op">/</span><span class="fl">100</span>)<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Is 1/100 + ϵ/100 &gt; 1/100? true</code></pre>
+</div>
+</div>
+<div id="a7044917" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href=""></a><span class="fu">println</span>(<span class="st">"Because the next representable number from 1/100 is </span><span class="sc">$</span>(<span class="fu">nextfloat</span>(<span class="fl">1.0</span><span class="op">/</span><span class="fl">100.0</span>))<span class="st">,</span></span>
+<span id="cb23-2"><a href=""></a> so the machine epsilon at that scale is <span class="op">$</span>(<span class="fu">eps</span>(<span class="fl">1.0</span><span class="op">/</span><span class="fl">100.0</span>))<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Because the next representable number from 1/100 is 0.010000000000000002,
+ so the machine epsilon at that scale is 1.734723475976807e-18</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="epsilon-is-about-differences-in-number-magnitudes-1" class="slide level2">
+<h2>Epsilon is about differences in number magnitudes</h2>
+<p>And it works all the way down to the smallest representable number</p>
+<div id="e62f92cc" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a href=""></a><span class="fu">println</span>(<span class="st">"The mininum float is </span><span class="sc">$</span>(<span class="fu">floatmin</span>(<span class="dt">Float64</span>))<span class="st">, and the next float is </span><span class="sc">$</span>(<span class="fu">nextfloat</span>(<span class="fu">floatmin</span>(<span class="dt">Float64</span>)))<span class="st">,</span></span>
+<span id="cb25-2"><a href=""></a> so their difference <span class="op">$</span>(<span class="fu">nextfloat</span>(<span class="fu">floatmin</span>(<span class="dt">Float64</span>)) <span class="op">-</span> <span class="fu">floatmin</span>(<span class="dt">Float64</span>))</span>
+<span id="cb25-3"><a href=""></a> is equal to epsilon at that scale <span class="op">$</span>(<span class="fu">eps</span>(<span class="fu">floatmin</span>(<span class="dt">Float64</span>)))<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The mininum float is 2.2250738585072014e-308, and the next float is 2.225073858507202e-308,
+ so their difference 5.0e-324
+ is equal to epsilon at that scale 5.0e-324</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p>So we will have problems if we try and take a step much bigger based on the epsilon at scale 1.0</p>
+<div id="3ef73b84" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb27-1"><a href=""></a><span class="fu">println</span>(<span class="st">"Is floatmin + ϵ(1.0) = ϵ(1.0)? </span><span class="sc">$</span>(<span class="fu">floatmin</span>(<span class="dt">Float64</span>) <span class="op">+</span> <span class="fu">eps</span>(<span class="fl">1.0</span>) <span class="op">==</span> <span class="fu">eps</span>(<span class="fl">1.0</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Is floatmin + ϵ(1.0) = ϵ(1.0)? true</code></pre>
+</div>
+</div>
+</div>
+</section>
 <section id="the-limits-of-computers-time-is-a-flat-circle" class="slide level2">
 <h2>The limits of computers: time is a flat circle</h2>
-<div id="46c76e7b" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href=""></a><span class="fu">println</span>(<span class="st">"The largest 64 bit integer is </span><span class="sc">$</span>(<span class="fu">typemax</span>(<span class="dt">Int64</span>))<span class="st">"</span>)</span>
-<span id="cb21-2"><a href=""></a><span class="fu">println</span>(<span class="st">"Add one to it and we get: </span><span class="sc">$</span>(<span class="fu">typemax</span>(<span class="dt">Int64</span>)<span class="op">+</span><span class="fl">1</span>)<span class="st">"</span>)</span>
-<span id="cb21-3"><a href=""></a><span class="fu">println</span>(<span class="st">"It loops us around the number line: </span><span class="sc">$</span>(<span class="fu">typemin</span>(<span class="dt">Int64</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="968add2f" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb29-1"><a href=""></a><span class="fu">println</span>(<span class="st">"The largest 64 bit integer is </span><span class="sc">$</span>(<span class="fu">typemax</span>(<span class="dt">Int64</span>))<span class="st">"</span>)</span>
+<span id="cb29-2"><a href=""></a><span class="fu">println</span>(<span class="st">"Add one to it and we get: </span><span class="sc">$</span>(<span class="fu">typemax</span>(<span class="dt">Int64</span>)<span class="op">+</span><span class="fl">1</span>)<span class="st">"</span>)</span>
+<span id="cb29-3"><a href=""></a><span class="fu">println</span>(<span class="st">"It loops us around the number line: </span><span class="sc">$</span>(<span class="fu">typemin</span>(<span class="dt">Int64</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The largest 64 bit integer is 9223372036854775807
 Add one to it and we get: -9223372036854775808
@@ -591,8 +635,8 @@ It loops us around the number line: -9223372036854775808</code></pre>
 <section id="rounding" class="slide level2">
 <h2>Rounding</h2>
 <p>We will always need to round numbers to the nearest computer representable number. This introduces error</p>
-<div id="5d850734" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href=""></a><span class="fu">println</span>(<span class="st">"Half of π is: </span><span class="sc">$</span>(<span class="cn">π</span><span class="op">/</span><span class="fl">2</span>)<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="10e9d2db" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb31-1"><a href=""></a><span class="fu">println</span>(<span class="st">"Half of π is: </span><span class="sc">$</span>(<span class="cn">π</span><span class="op">/</span><span class="fl">2</span>)<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Half of π is: 1.5707963267948966</code></pre>
 </div>
@@ -619,11 +663,11 @@ It loops us around the number line: -9223372036854775808</code></pre>
 <section id="error-example-1" class="slide level2">
 <h2>Error example 1</h2>
 <p>Let’s get back to the example we saw earlier</p>
-<div id="0d373e57" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a href=""></a>x <span class="op">=</span> (<span class="fl">1e-20</span> <span class="op">+</span> <span class="fl">1</span>) <span class="op">-</span> <span class="fl">1</span>   </span>
-<span id="cb25-2"><a href=""></a>y <span class="op">=</span> <span class="fl">1e-20</span> <span class="op">+</span> (<span class="fl">1</span> <span class="op">-</span> <span class="fl">1</span>)   </span>
-<span id="cb25-3"><a href=""></a></span>
-<span id="cb25-4"><a href=""></a><span class="fu">println</span>(<span class="st">"The difference is: </span><span class="sc">$</span>(x<span class="op">-</span>y)<span class="st">."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="c54efa3c" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb33-1"><a href=""></a>x <span class="op">=</span> (<span class="fl">1e-20</span> <span class="op">+</span> <span class="fl">1</span>) <span class="op">-</span> <span class="fl">1</span>   </span>
+<span id="cb33-2"><a href=""></a>y <span class="op">=</span> <span class="fl">1e-20</span> <span class="op">+</span> (<span class="fl">1</span> <span class="op">-</span> <span class="fl">1</span>)   </span>
+<span id="cb33-3"><a href=""></a></span>
+<span id="cb33-4"><a href=""></a><span class="fu">println</span>(<span class="st">"The difference is: </span><span class="sc">$</span>(x<span class="op">-</span>y)<span class="st">."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The difference is: -1.0e-20.</code></pre>
 </div>
@@ -646,20 +690,20 @@ It loops us around the number line: -9223372036854775808</code></pre>
 <h2>Error example 2</h2>
 <p>Consider a simple quadratic eq. <span class="math inline">\(x^2-26x+1=0\)</span> with solution <span class="math inline">\(x = 13-\sqrt{168}\)</span></p>
 <div class="fragment">
-<div id="a164bb16" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb27-1"><a href=""></a><span class="fu">println</span>(<span class="st">"64 bit: 13 - √168 = </span><span class="sc">$</span>(<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="3200b2a5" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb35-1"><a href=""></a><span class="fu">println</span>(<span class="st">"64 bit: 13 - √168 = </span><span class="sc">$</span>(<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>64 bit: 13 - √168 = 0.03851860318427924</code></pre>
 </div>
 </div>
-<div id="ab267ce9" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb29-1"><a href=""></a><span class="fu">println</span>(<span class="st">"32 bit: 13 - √168 = </span><span class="sc">$</span>(<span class="fu">convert</span>(<span class="dt">Float32</span>,<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>)))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="5df56bce" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb37-1"><a href=""></a><span class="fu">println</span>(<span class="st">"32 bit: 13 - √168 = </span><span class="sc">$</span>(<span class="fu">convert</span>(<span class="dt">Float32</span>,<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>)))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>32 bit: 13 - √168 = 0.038518604</code></pre>
 </div>
 </div>
-<div id="a8212b9e" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb31-1"><a href=""></a><span class="fu">println</span>(<span class="st">"16 bit: 13 - √168 = </span><span class="sc">$</span>(<span class="fu">convert</span>(<span class="dt">Float16</span>,<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>)))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="79d95c4b" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb39-1"><a href=""></a><span class="fu">println</span>(<span class="st">"16 bit: 13 - √168 = </span><span class="sc">$</span>(<span class="fu">convert</span>(<span class="dt">Float16</span>,<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>)))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>16 bit: 13 - √168 = 0.0385</code></pre>
 </div>
@@ -670,12 +714,12 @@ It loops us around the number line: -9223372036854775808</code></pre>
 <h2>Error example 2</h2>
 <p>Let’s check whether they solve the equation</p>
 <div class="fragment">
-<div id="6d7e003b" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb33-1"><a href=""></a>x64 <span class="op">=</span> <span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>); x32 <span class="op">=</span> <span class="fu">convert</span>(<span class="dt">Float32</span>,<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>)); x16 <span class="op">=</span> <span class="fu">convert</span>(<span class="dt">Float16</span>,<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>));</span>
-<span id="cb33-2"><a href=""></a><span class="fu">f</span>(x) <span class="op">=</span> x<span class="op">^</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">26</span>x <span class="op">+</span> <span class="fl">1</span>;</span>
-<span id="cb33-3"><a href=""></a><span class="fu">println</span>(<span class="st">"64 bit: </span><span class="sc">$</span>(<span class="fu">f</span>(x64))<span class="st">"</span>)</span>
-<span id="cb33-4"><a href=""></a><span class="fu">println</span>(<span class="st">"32 bit: </span><span class="sc">$</span>(<span class="fu">f</span>(x32))<span class="st">"</span>)</span>
-<span id="cb33-5"><a href=""></a><span class="fu">println</span>(<span class="st">"16 bit: </span><span class="sc">$</span>(<span class="fu">f</span>(x16))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="0f28b93d" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb41-1"><a href=""></a>x64 <span class="op">=</span> <span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>); x32 <span class="op">=</span> <span class="fu">convert</span>(<span class="dt">Float32</span>,<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>)); x16 <span class="op">=</span> <span class="fu">convert</span>(<span class="dt">Float16</span>,<span class="fl">13</span><span class="fu">-sqrt</span>(<span class="fl">168</span>));</span>
+<span id="cb41-2"><a href=""></a><span class="fu">f</span>(x) <span class="op">=</span> x<span class="op">^</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">26</span>x <span class="op">+</span> <span class="fl">1</span>;</span>
+<span id="cb41-3"><a href=""></a><span class="fu">println</span>(<span class="st">"64 bit: </span><span class="sc">$</span>(<span class="fu">f</span>(x64))<span class="st">"</span>)</span>
+<span id="cb41-4"><a href=""></a><span class="fu">println</span>(<span class="st">"32 bit: </span><span class="sc">$</span>(<span class="fu">f</span>(x32))<span class="st">"</span>)</span>
+<span id="cb41-5"><a href=""></a><span class="fu">println</span>(<span class="st">"16 bit: </span><span class="sc">$</span>(<span class="fu">f</span>(x16))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>64 bit: 7.66053886991358e-15
 32 bit: 0.0
@@ -696,13 +740,13 @@ It loops us around the number line: -9223372036854775808</code></pre>
 </section>
 <section id="error-example-3-1" class="slide level2">
 <h2>Error example 3</h2>
-<div id="0944ea33" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb35-1"><a href=""></a><span class="fu">println</span>(<span class="st">"100000.2 - 100000.1 is: </span><span class="sc">$</span>(<span class="fl">100000.2</span> <span class="op">-</span> <span class="fl">100000.1</span>)<span class="st">"</span>)</span>
-<span id="cb35-2"><a href=""></a><span class="cf">if</span> (<span class="fl">100000.2</span> <span class="op">-</span> <span class="fl">100000.1</span>) <span class="op">==</span> <span class="fl">0.1</span></span>
-<span id="cb35-3"><a href=""></a>    <span class="fu">println</span>(<span class="st">"and it is equal to 0.1"</span>)</span>
-<span id="cb35-4"><a href=""></a><span class="cf">else</span></span>
-<span id="cb35-5"><a href=""></a>    <span class="fu">println</span>(<span class="st">"and it is not equal to 0.1"</span>)</span>
-<span id="cb35-6"><a href=""></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="32659f40" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb43-1"><a href=""></a><span class="fu">println</span>(<span class="st">"100000.2 - 100000.1 is: </span><span class="sc">$</span>(<span class="fl">100000.2</span> <span class="op">-</span> <span class="fl">100000.1</span>)<span class="st">"</span>)</span>
+<span id="cb43-2"><a href=""></a><span class="cf">if</span> (<span class="fl">100000.2</span> <span class="op">-</span> <span class="fl">100000.1</span>) <span class="op">==</span> <span class="fl">0.1</span></span>
+<span id="cb43-3"><a href=""></a>    <span class="fu">println</span>(<span class="st">"and it is equal to 0.1"</span>)</span>
+<span id="cb43-4"><a href=""></a><span class="cf">else</span></span>
+<span id="cb43-5"><a href=""></a>    <span class="fu">println</span>(<span class="st">"and it is not equal to 0.1"</span>)</span>
+<span id="cb43-6"><a href=""></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>100000.2 - 100000.1 is: 0.09999999999126885
 and it is not equal to 0.1</code></pre>
@@ -721,16 +765,16 @@ and it is not equal to 0.1</code></pre>
 <section id="error-example-3-3" class="slide level2">
 <h2>Error example 3</h2>
 <p>There are tools for approximate equality. Remember the <code>\approx</code> operator we saw last lecture? You can use it</p>
-<div id="9133bc3d" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb37-1"><a href=""></a>(<span class="fl">100000.2</span> <span class="op">-</span> <span class="fl">100000.1</span>) <span class="op">≈</span> <span class="fl">0.1</span> <span class="co"># You type \approx then hit TAB</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div id="798ec629" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb45-1"><a href=""></a>(<span class="fl">100000.2</span> <span class="op">-</span> <span class="fl">100000.1</span>) <span class="op">≈</span> <span class="fl">0.1</span> <span class="co"># You type \approx then hit TAB</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="133">
 <pre><code>true</code></pre>
 </div>
 </div>
 <p>This is equivalent to:</p>
-<div id="f887a779" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb39-1"><a href=""></a><span class="fu">isapprox</span>(<span class="fl">100000.2</span> <span class="op">-</span> <span class="fl">100000.1</span>, <span class="fl">0.1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div id="5e533fb4" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb47-1"><a href=""></a><span class="fu">isapprox</span>(<span class="fl">100000.2</span> <span class="op">-</span> <span class="fl">100000.1</span>, <span class="fl">0.1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="134">
 <pre><code>true</code></pre>
 </div>
 </div>
