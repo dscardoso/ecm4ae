@@ -50,3 +50,26 @@ If you have suggestions of materials, please share them with me.
 
 - [Software Carpentry: The Unix Shell]((https://swcarpentry.github.io/shell-novice/))
 - [Slides by Clément Mazet-Sonilhac (Sciences Po)](https://github.com/CMS27/IP2019/blob/master/Lectures/IP_UnixShell_S23.pdf)
+
+
+## Unit 2: Fundamentals of Numerical Methods
+
+### Readings
+
+**Numerical Arithmetic**
+
+-	[MF02] Chapter 2, Appendix 2A 
+-	[J98] Section 2.7
+
+**Numerical differentiation and integration**
+
+-	[MF02] Chapter 5
+-	[J98] Chapter 3
+-	[NW06] Chapter 8
+
+### Technical references
+
+- [JuliaDiff](https://juliadiff.org/): List of packages for numerical differentiation in Julia
+- [FiniteDifferences.jl](https://github.com/JuliaDiff/FiniteDifferences.jl): High accuracy derivatives, estimated via numerical finite differences
+- [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl): Forward Mode Automatic Differentiation for Julia (github.com)
+- [Symbolics.jl](https://symbolics.juliasymbolics.org/stable/): A package to manipulate symbolic (analytical) objects

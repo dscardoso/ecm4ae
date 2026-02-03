@@ -15,6 +15,8 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
   - Lecture 1.2 - Best practices: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_2/ACE592_1_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_2/ACE592_1_2_notes.html)
   - Lecture 1.3 - Intro to Julia: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_3/ACE592_1_3_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_1_3/ACE592_1_3_notes.html)
 
+- Unit 2 - Fundamentals of Numerical Methods
+  - Lecture 2.1 - Numerical arithmetic: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_1/ACE592_2_1_notes.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_1/ACE592_2_1_notes.html)
 
 
 ## Recommended additional resources
