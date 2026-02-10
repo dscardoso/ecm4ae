@@ -18,6 +18,8 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
 - Unit 2 - Fundamentals of Numerical Methods
   - Lecture 2.1 - Numerical arithmetic: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_1/ACE592_2_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_1/ACE592_2_1_notes.html)
   - Lecture 2.2 - Numerical differentiation: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_2/ACE592_2_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_2/ACE592_2_2_notes.html)
+  - Lecture 2.3 - Numerical integration: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_3/ACE592_2_3_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_3/ACE592_2_3_notes.html)
+
 
 
 
