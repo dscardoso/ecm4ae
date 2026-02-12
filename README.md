@@ -20,6 +20,8 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
   - Lecture 2.2 - Numerical differentiation: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_2/ACE592_2_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_2/ACE592_2_2_notes.html)
   - Lecture 2.3 - Numerical integration: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_3/ACE592_2_3_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_2_3/ACE592_2_3_notes.html)
 
+- Unit 3 - Systems of Equations
+  - Lecture 3.1 - Linear Systems: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_3_1/ACE592_3_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_3_1/ACE592_3_1_notes.html)
 
 
 
