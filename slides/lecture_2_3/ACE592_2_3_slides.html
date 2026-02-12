@@ -602,7 +602,7 @@ Integrating with 100 nodes:333.3248307995783</code></pre>
 </div>
 <div class="fragment">
 <p><span class="math display">\[
-\int_I x^kw(x)dx = \sum_{i=1}^n w_i x^k_i, \;\text{for}\; k=0,...,2n-1
+\int_I s^kw(s)ds = \sum_{i=1}^n w_i x^k_i, \;\text{for}\; k=0,...,2n-1
 \]</span></p>
 <p>where <span class="math inline">\(I\)</span> is the interval over which we are integrating and <span class="math inline">\(w(x)\)</span> is a given weight function</p>
 </div>
@@ -612,7 +612,7 @@ Integrating with 100 nodes:333.3248307995783</code></pre>
 <p>The moment matching conditions pin down <span class="math inline">\(w_i\)</span>s and <span class="math inline">\(x_i\)</span>s so we can approximate an integral by a weighted sum of the function at the prescribed nodes</p>
 <div class="fragment">
 <p><span class="math display">\[
-\int_i f(x) w(x)dx \approx \sum_{i=1}^n w_i f(x_i)
+\int_I f(s) w(s)ds \approx \sum_{i=1}^n w_i f(x_i)
 \]</span></p>
 </div>
 <div class="fragment">
@@ -629,21 +629,21 @@ Integrating with 100 nodes:333.3248307995783</code></pre>
 </ul>
 </div>
 <div class="fragment">
-<p>But what do we pick for the weighting function <span class="math inline">\(w(x)\)</span>?</p>
+<p>But what do we pick for the weighting function <span class="math inline">\(w(s)\)</span>?</p>
 </div>
 </section>
 <section id="gauss-legendre" class="slide level2">
 <h2>Gauss-Legendre</h2>
-<p>We can start out with a simple <span class="math inline">\(w(x) = 1\)</span>: this gives us <strong>Gauss-Legendre</strong> quadrature</p>
+<p>We can start out with a simple <span class="math inline">\(w(s) = 1\)</span>: this gives us <strong>Gauss-Legendre</strong> quadrature</p>
 <p>This can approximate the integral of any function arbitrarily well by increasing <span class="math inline">\(n\)</span></p>
 </section>
 <section id="gauss-laguerre" class="slide level2">
 <h2>Gauss-Laguerre</h2>
 <p>Sometimes we want to compute exponentially discounted sums like</p>
 <p><span class="math display">\[
-\int_I f(x) e^{-x} dx
+\int_I f(s) e^{-s} ds
 \]</span></p>
-<p>The weighting function <span class="math inline">\(e^{-x}\)</span> is <strong>Gauss-Laguerre quadrature</strong></p>
+<p>The weighting function <span class="math inline">\(e^{-s}\)</span> is <strong>Gauss-Laguerre quadrature</strong></p>
 <div class="fragment">
 <ul>
 <li>In economics, this method is particularly suited for applications with continuous-time discounting</li>
@@ -654,7 +654,7 @@ Integrating with 100 nodes:333.3248307995783</code></pre>
 <h2>Gauss-Hermite</h2>
 <p>Sometimes we want to take expectations of functions of normally distributed variables</p>
 <p><span class="math display">\[
-\int_I f(x) e^{-x^2} dx
+\int_I f(s) e^{-s^2} ds
 \]</span></p>
 <div class="fragment">
 <ul>

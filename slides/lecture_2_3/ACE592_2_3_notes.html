@@ -533,7 +533,7 @@ Integrating with 100 nodes:333.3248307995783</code></pre>
 <p>For a given order of approximation <span class="math inline">n</span>, the weights <span class="math inline">w_1,...,w_n</span> and nodes <span class="math inline">x_1,...,x_n</span> are chosen to satisfy <span class="math inline">2n</span> <strong>moment matching conditions</strong>:</p>
 <p>. . .</p>
 <p><span class="math display">
-\int_I x^kw(x)dx = \sum_{i=1}^n w_i x^k_i, \;\text{for}\; k=0,...,2n-1
+\int_I s^kw(s)ds = \sum_{i=1}^n w_i x^k_i, \;\text{for}\; k=0,...,2n-1
 </span></p>
 <p>where <span class="math inline">I</span> is the interval over which we are integrating and <span class="math inline">w(x)</span> is a given weight function</p>
 </section>
@@ -542,7 +542,7 @@ Integrating with 100 nodes:333.3248307995783</code></pre>
 <p>The moment matching conditions pin down <span class="math inline">w_i</span>s and <span class="math inline">x_i</span>s so we can approximate an integral by a weighted sum of the function at the prescribed nodes</p>
 <p>. . .</p>
 <p><span class="math display">
-\int_i f(x) w(x)dx \approx \sum_{i=1}^n w_i f(x_i)
+\int_I f(s) w(s)ds \approx \sum_{i=1}^n w_i f(x_i)
 </span></p>
 <p>. . .</p>
 <p>Gaussian rules are <span class="math inline">2n-1</span> order exact: we can exactly compute the integral of any polynomial order <span class="math inline">2n-1</span></p>
@@ -556,20 +556,20 @@ Integrating with 100 nodes:333.3248307995783</code></pre>
 <li>As <span class="math inline">n\rightarrow\infty</span> we have a continuum of mass points and recover the continuous pdf</li>
 </ul>
 <p>. . .</p>
-<p>But what do we pick for the weighting function <span class="math inline">w(x)</span>?</p>
+<p>But what do we pick for the weighting function <span class="math inline">w(s)</span>?</p>
 </section>
 <section id="gauss-legendre" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="gauss-legendre"><span class="header-section-number">4.5</span> Gauss-Legendre</h2>
-<p>We can start out with a simple <span class="math inline">w(x) = 1</span>: this gives us <strong>Gauss-Legendre</strong> quadrature</p>
+<p>We can start out with a simple <span class="math inline">w(s) = 1</span>: this gives us <strong>Gauss-Legendre</strong> quadrature</p>
 <p>This can approximate the integral of any function arbitrarily well by increasing <span class="math inline">n</span></p>
 </section>
 <section id="gauss-laguerre" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="gauss-laguerre"><span class="header-section-number">4.6</span> Gauss-Laguerre</h2>
 <p>Sometimes we want to compute exponentially discounted sums like</p>
 <p><span class="math display">
-\int_I f(x) e^{-x} dx
+\int_I f(s) e^{-s} ds
 </span></p>
-<p>The weighting function <span class="math inline">e^{-x}</span> is <strong>Gauss-Laguerre quadrature</strong></p>
+<p>The weighting function <span class="math inline">e^{-s}</span> is <strong>Gauss-Laguerre quadrature</strong></p>
 <p>. . .</p>
 <ul>
 <li>In economics, this method is particularly suited for applications with continuous-time discounting</li>
@@ -579,7 +579,7 @@ Integrating with 100 nodes:333.3248307995783</code></pre>
 <h2 data-number="4.7" class="anchored" data-anchor-id="gauss-hermite"><span class="header-section-number">4.7</span> Gauss-Hermite</h2>
 <p>Sometimes we want to take expectations of functions of normally distributed variables</p>
 <p><span class="math display">
-\int_I f(x) e^{-x^2} dx
+\int_I f(s) e^{-s^2} ds
 </span></p>
 <p>. . .</p>
 <ul>
