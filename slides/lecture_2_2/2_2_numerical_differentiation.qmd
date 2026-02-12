@@ -1,5 +1,5 @@
 ---
-title: "AGEC 652 - Lecture 2.2"
+title: "ACE 592 - Lecture 2.2"
 subtitle: "Numerical differentiation"
 author: "Diego S. Cardoso"
 institute: "University of Illinois Urbana-Champaign"
