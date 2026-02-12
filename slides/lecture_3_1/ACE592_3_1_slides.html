@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="3_1_linear_equations_files/libs/clipboard/clipboard.min.js"></script>
+<script src="3_1_linear_equations_files/libs/quarto-html/tabby.min.js"></script>
+<script src="3_1_linear_equations_files/libs/quarto-html/popper.min.js"></script>
+<script src="3_1_linear_equations_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="3_1_linear_equations_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="3_1_linear_equations_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="3_1_linear_equations_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Diego S. Cardoso">
+  <title>AGEC 652 - Lecture 3.1</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="3_1_linear_equations_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="3_1_linear_equations_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="3_1_linear_equations_files/libs/revealjs/dist/theme/quarto-7ed0139e1fda49eecd9b2d5bc445076f.css">
+  <link href="3_1_linear_equations_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="3_1_linear_equations_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="3_1_linear_equations_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="3_1_linear_equations_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="3_1_linear_equations_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="3_1_linear_equations_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">AGEC 652 - Lecture 3.1</h1>
+  <p class="subtitle">Linear Systems of Equations</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Diego S. Cardoso 
+</div>
+        <p class="quarto-title-affiliation">
+            University of Illinois Urbana-Champaign
+          </p>
+    </div>
+</div>
+
+</section>
+<section id="course-roadmap" class="slide level2" data-background-color="orange">
+<h2>Course Roadmap</h2>
+<ol type="1">
+<li><span class="gray">Introduction to Scientific Computing</span></li>
+<li><span class="gray">Fundamentals of numerical methods</span></li>
+<li><strong>Systems of equations</strong>
+<ol type="1">
+<li><strong>Linear systems</strong></li>
+<li>Nonlinear systems</li>
+<li>Complementarity problems</li>
+</ol></li>
+<li>Optimization</li>
+<li>Function approximation</li>
+<li>Structural estimation</li>
+</ol>
+</section>
+<section id="agenda" class="slide level2" data-background-color="orange">
+<h2>Agenda</h2>
+<ul>
+<li>Today we will start our journey solving equations</li>
+<li>Our first stop is with a familiar problem: systems of equations</li>
+<li>Although simple from a math perspective, these problems illustrate some of the challenges with solving equations using the computer</li>
+</ul>
+</section>
+<section id="main-references-for-today" class="slide level2" data-background-color="orange">
+<h2>Main references for today</h2>
+<ul>
+<li>Miranda &amp; Fackler (2002), Ch. 2</li>
+<li>Judd (1998), Ch. 3</li>
+<li>Lecture notes for Ivan Rudik’s <em>Dynamic Optimization</em> (Cornell)</li>
+</ul>
+</section>
+<section id="linear-equations-in-economics" class="slide level2">
+<h2>Linear equations in Economics</h2>
+<p>(Systems of) Linear equations are very common in Economics</p>
+<p><span class="math display">\[Ax = b\]</span> where <span class="math inline">\(A\)</span> is a <span class="math inline">\(n \times n\)</span> matrix, <span class="math inline">\(b\)</span> and <span class="math inline">\(x\)</span> are <span class="math inline">\(n\)</span>-vectors</p>
+<p>Examples?</p>
+<div class="fragment">
+<ul>
+<li>Comparative statics</li>
+<li>General equilibrium models with linear functions</li>
+<li>Log-linearized models</li>
+<li>Steady-state distributions of discrete stochastic processes</li>
+</ul>
+</div>
+</section>
+<section id="solving-linear-equations-in-julia" class="slide level2">
+<h2>Solving linear equations in Julia</h2>
+<p>Solving linear systems is generally very easy in programming languages</p>
+<div id="308d55ff" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href=""></a>A <span class="op">=</span> [<span class="op">-</span><span class="fl">3</span> <span class="fl">2</span> <span class="fl">3</span>; <span class="op">-</span><span class="fl">3</span> <span class="fl">2</span> <span class="fl">1</span>; <span class="fl">3</span> <span class="fl">0</span> <span class="fl">0</span>]; b <span class="op">=</span> [<span class="fl">10</span>; <span class="fl">8</span>; <span class="op">-</span><span class="fl">3</span>];</span>
+<span id="cb1-2"><a href=""></a>x <span class="op">=</span> A<span class="op">\</span>b <span class="co"># This is an optimized division, faster than inverting A (more on that later)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>3-element Vector{Float64}:
+ -1.0
+  2.0
+  1.0</code></pre>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>So why bother?</li>
+</ul>
+</div>
+</section>
+<section id="linear-equations-why-bother" class="slide level2">
+<h2>Linear equations: Why bother?</h2>
+<ol type="1">
+<li>It’s a <em>building block</em>: many methods decompose more complicated problems into sequences of linear problems
+<ul>
+<li>Understanding how we solve linear systems is crucial to understanding other methods</li>
+</ul></li>
+</ol>
+<div class="fragment">
+<ol start="2" type="1">
+<li>It uses key concepts of numerical analysis, such as iterative methods</li>
+</ol>
+<ul>
+<li>Seeing these ideas in action with a familiar problem will help you understand more complex ones</li>
+</ul>
+</div>
+<div class="fragment">
+<ol start="3" type="1">
+<li>Like any other numerical method, it is prone to limited precision issues that grow with repeated operations</li>
+</ol>
+<ul>
+<li>In linear systems we can see these issues in a transparent and intuitive way</li>
+</ul>
+</div>
+</section>
+<section id="solving-linear-equations" class="slide level2">
+<h2>Solving linear equations</h2>
+<p>OK, so how does the computer actually solve linear equations?</p>
+<p>Methods come in two flavors:</p>
+<ol type="1">
+<li>Direct methods</li>
+</ol>
+<ul>
+<li>We solve it in one pass and get a solution with a finite number of operations</li>
+</ul>
+<ol start="2" type="1">
+<li>Iterative methods</li>
+</ol>
+<ul>
+<li>We solve the same problem repeatedly until results converge to a solution</li>
+</ul>
+</section>
+<section id="solving-linear-equations-direct-methods" class="slide level2">
+<h2>Solving linear equations: direct methods</h2>
+<p>Let’s start with the simplest case: a <em>lower triangular</em> matrix</p>
+<p><span class="math display">\[
+A =
+\begin{bmatrix}
+a_{11} &amp; 0      &amp; 0      &amp; \cdots &amp; 0 \\
+a_{21} &amp; a_{22} &amp; 0      &amp; \cdots &amp; 0 \\
+a_{31} &amp; a_{32} &amp; a_{33} &amp; \cdots &amp; 0 \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+a_{n1} &amp; a_{n2} &amp; a_{n3} &amp; \cdots &amp; a_{nn} \\
+\end{bmatrix}
+, x =
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+x_3 \\
+\vdots \\
+x_n
+\end{bmatrix}
+, b =
+\begin{bmatrix}
+b_1 \\
+b_2 \\
+b_3 \\
+\vdots \\
+b_n
+\end{bmatrix}
+\]</span> How do we solve this?</p>
+<div class="fragment">
+<p>Easy, forward substitution!</p>
+</div>
+</section>
+<section id="solving-linear-equations-forward-substitution" class="slide level2">
+<h2>Solving linear equations: forward substitution</h2>
+<p><span class="math display">\[
+\begin{align}
+x_1 = &amp;  b_1/a_{11} \\
+x_2 = &amp; (b_2 - a_{21}x_1)/a_{22} \\
+x_3 = &amp; (b_3 - a_{31}x_1 - a_{32}x_2)/a_{33} \\
+\vdots \\
+x_n = &amp; (b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots)/a_{nn} \\
+\end{align}
+\]</span></p>
+<div class="fragment">
+<p>We can write a simple algorithm to solve it: <span class="math inline">\(x_i=\left(b_i-\sum^{i-1}_{j=1} a_{ij}x_{j}\right)/a_{ii}\)</span> for all <span class="math inline">\(i\)</span></p>
+<p>What if <span class="math inline">\(A\)</span> is <em>upper triangular</em>? We use <em>backward substitution</em> and just reverse the order</p>
+</div>
+<div class="fragment">
+<p>What is the complexity of this algorithm (in <span class="math inline">\(O\)</span> notation)?</p>
+</div>
+</section>
+<section id="solving-linear-equations-forward-substitution-1" class="slide level2">
+<h2>Solving linear equations: forward substitution</h2>
+<p><span class="math inline">\(x_i=\left(b_i-\sum^{i-1}_{j=1} a_{ij}x_{j}\right)/a_{ii}\)</span> for all <span class="math inline">\(i\)</span></p>
+<p>What is the complexity of this algorithm?</p>
+<div class="fragment">
+<p>There are:</p>
+<ul>
+<li><span class="math inline">\(n\)</span> divisions</li>
+<li><span class="math inline">\(n(n-1)/2\)</span> multiplications</li>
+<li><span class="math inline">\(n(n-1)/2\)</span> additions/subtractions</li>
+</ul>
+<p>Order of <span class="math inline">\(n^2/2\)</span> operations <span class="math inline">\(\rightarrow O(n^2)\)</span></p>
+</div>
+</section>
+<section id="lu-factorization" class="slide level2">
+<h2>LU factorization</h2>
+<p><em>In practice we rarely need to solve triangular systems!</em> What if <span class="math inline">\(A\)</span> is not triangular?</p>
+<div class="fragment">
+<ol type="1">
+<li>We decompose <span class="math inline">\(A\)</span> into two matrices: one <strong>U</strong>pper triangular and one <strong>L</strong>ower triangular <span class="math inline">\(\rightarrow A = LU\)</span></li>
+</ol>
+<ul>
+<li>We use Gaussian elimination for that</li>
+</ul>
+</div>
+<div class="fragment">
+<ol start="2" type="1">
+<li>Then, we solve the problem using a combination of forward and backward substitutions</li>
+</ol>
+<ul>
+<li>The system becomes <span class="math inline">\(Ax = (LU)x = L\underbrace{(Ux)}_{y} = b\)</span></li>
+<li>We solve <span class="math inline">\(Ly = b\)</span> using forward substitution</li>
+<li>Then <span class="math inline">\(Ux = y\)</span> using backward substitution</li>
+</ul>
+<p>This works for any non-singular matrix</p>
+</div>
+</section>
+<section id="gaussian-elimination" class="slide level2">
+<h2>Gaussian elimination</h2>
+<p>This uses the fact that we can do the following operations to a linear system <strong>without changing its solution</strong></p>
+<ol type="1">
+<li>multiply one row by a scalar and add to another row</li>
+<li>swap rows</li>
+</ol>
+<p>We’ll use that to turn a matrix <span class="math inline">\((IA)\)</span> into <span class="math inline">\((LU)\)</span></p>
+</section>
+<section id="lu-factorization-example" class="slide level2">
+<h2>LU factorization example</h2>
+<p>Let’s see an example with system <span class="math inline">\(Ax = b\)</span></p>
+<p><span class="math display">\[ A =
+\begin{bmatrix}
+-3 &amp; 2 &amp; 3 \\
+-3 &amp; 2 &amp; 1 \\
+3  &amp; 0 &amp; 0 \\
+\end{bmatrix}
+, x =
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+x_3 \\
+\end{bmatrix}
+,
+b =
+\begin{bmatrix}
+10 \\
+8 \\
+-3 \\
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="lu-factorization-1" class="slide level2">
+<h2>LU factorization</h2>
+<p>We start with <span class="math inline">\(I = L, A = U\)</span> and we to make <span class="math inline">\(U\)</span> upper triangular with Gaussian elimination</p>
+<p><span class="math display">\[ A =
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+-3 &amp; 2 &amp; 3 \\
+-3 &amp; 2 &amp; 1 \\
+3  &amp; 0 &amp; 0 \\
+\end{bmatrix}
+\]</span> We do <span class="math inline">\(row2 = row2 - (1)\times row1\)</span> and <span class="math inline">\(row3 = row3 - (-1)\times row1\)</span>, keeping track of these operations in the <span class="math inline">\(L\)</span> matrix</p>
+<p><span class="math display">\[ A =
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+1 &amp; 1 &amp; 0 \\
+-1 &amp; 0 &amp; 1 \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+-3 &amp; 2 &amp; 3 \\
+0 &amp; 0 &amp; -2 \\
+0 &amp; 2 &amp; 3 \\
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="lu-factorization-example-1" class="slide level2">
+<h2>LU factorization example</h2>
+<p>Seems like we are stuck in <span class="math inline">\(U\)</span>. But we can swap rows 2 and 3 to make it upper triangular.</p>
+<ul>
+<li><em>Correspondingly, we need to swap columns 2 and 3 in <span class="math inline">\(L\)</span></em></li>
+</ul>
+<p><span class="math display">\[ A =
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+1 &amp; 0 &amp; 1 \\
+-1 &amp; 1 &amp; 0 \\
+\end{bmatrix}\times
+\begin{bmatrix}
+-3 &amp; 2 &amp; 3 \\
+0 &amp; 2 &amp; 3 \\
+0 &amp; 0 &amp; -2 \\
+\end{bmatrix}
+\]</span></p>
+<p>Now we are ready to solve the first part of the problem: <span class="math inline">\(Ly = b\)</span></p>
+<p>But wait, <span class="math inline">\(L\)</span> is not lower triangular!</p>
+<div class="fragment">
+<p>Not yet. But all we need is for it to be <em>row-permuted</em> lower triangular because we can easily swap rows and solve for <span class="math inline">\(y\)</span></p>
+</div>
+</section>
+<section id="lu-factorization-example-2" class="slide level2">
+<h2>LU factorization example</h2>
+<p>Solving <span class="math inline">\(Ly = b\)</span> we have</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+1 &amp; 0 &amp; 1 \\
+-1 &amp; 1 &amp; 0 \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+y_3 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 \\
+8 \\
+-3 \\
+\end{bmatrix}
+\]</span></p>
+<p>is equivalent to</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+-1 &amp; 1 &amp; 0 \\
+1 &amp; 0 &amp; 1 \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+y_3 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 \\
+-3 \\
+8 \\
+\end{bmatrix}
+\]</span></p>
+<p>which is easy to solve</p>
+</section>
+<section id="lu-factorization-example-3" class="slide level2">
+<h2>LU factorization example</h2>
+<p><span class="math display">\[
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+-1 &amp; 1 &amp; 0 \\
+1 &amp; 0 &amp; 1 \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+y_3 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 \\
+-3 \\
+8 \\
+\end{bmatrix}
+\]</span></p>
+<div class="fragment">
+<p>We solve by forward substitution as</p>
+<p><span class="math display">\[
+\begin{align}
+y_1 = &amp;  b_1/l_{11} = 10 \\
+y_2 = &amp; (b_2 - l_{21}y_1)/l_{22} = [-3 - (-1)(10)]/1 = 7 \\
+y_3 = &amp; (b_3 - l_{31}y_1 - l_{32}y_2)/l_{33} = [8 - (1)(10) - (0)(7)]/1 = -2\\
+\end{align}
+\]</span></p>
+</div>
+</section>
+<section id="lu-factorization-example-4" class="slide level2">
+<h2>LU factorization example</h2>
+<p>Now that we have <span class="math inline">\(y\)</span>, we solve <span class="math inline">\(Ux = y\)</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+-3 &amp; 2 &amp; 3 \\
+0 &amp; 2 &amp; 3 \\
+0 &amp; 0 &amp; -2 \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+x_3 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 \\
+7 \\
+-2 \\
+\end{bmatrix}
+\]</span></p>
+<div class="fragment">
+<p>We solve by backward substitution as</p>
+<p><span class="math display">\[
+\begin{align}
+x_3 = &amp;  y_3/u_{33} = -2/(-2) = 1\\
+x_2 = &amp; (y_2 - u_{23}y_1)/u_{22} = [7 - (3)(1)]/2 = 2 \\
+x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) = -1\\
+\end{align}
+\]</span></p>
+<p>And done!</p>
+</div>
+</section>
+<section id="why-bother-with-this-scheme" class="slide level2">
+<h2>Why bother with this scheme?</h2>
+<p>Why not just use another method like Cramer’s rule?</p>
+<div class="fragment">
+<p><strong>Speed!</strong></p>
+</div>
+<div class="fragment">
+<ul>
+<li>LU is less than <span class="math inline">\(O(n^3)\)</span></li>
+<li>Cramer’s rule is <span class="math inline">\(O(n!\times n)\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<p>For a 10x10 system this can really matter:</p>
+<ul>
+<li>LU factorization: 430 long operations (<code>*</code> and <code>/</code>)</li>
+<li>Matrix inversion and multiplication: 1,100 long operations</li>
+<li>Cramer: 40 million long operations!</li>
+</ul>
+</div>
+</section>
+<section id="example-lu-vs-cramer" class="slide level2">
+<h2>Example: LU vs Cramer</h2>
+<p>Julia description of the division operator <code>\</code>:</p>
+<blockquote>
+<p>If A is upper or lower triangular (or diagonal), no factorization of A is required and the system is solved with either forward or backward substitution. For non-triangular square matrices, an LU factorization is used.</p>
+</blockquote>
+<p>So we can do LU factorization to solve systems by just doing <strong><code>x = A\b</code></strong>. But we could write it ourselves as well</p>
+</section>
+<section id="example-lu-vs-cramer-1" class="slide level2">
+<h2>Example: LU vs Cramer</h2>
+<p>Cramer’s Rule can be written as a simple loop:</p>
+<div id="693bb827" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href=""></a><span class="im">using</span> <span class="bu">LinearAlgebra</span></span>
+<span id="cb3-2"><a href=""></a><span class="kw">function</span> <span class="fu">solve_cramer</span>(A, b)</span>
+<span id="cb3-3"><a href=""></a></span>
+<span id="cb3-4"><a href=""></a>    dets <span class="op">=</span> <span class="fu">Vector</span>(<span class="cn">undef</span>, <span class="fu">length</span>(b))</span>
+<span id="cb3-5"><a href=""></a></span>
+<span id="cb3-6"><a href=""></a>    <span class="cf">for</span> index <span class="kw">in</span> <span class="fu">eachindex</span>(b)</span>
+<span id="cb3-7"><a href=""></a>        B <span class="op">=</span> <span class="fu">copy</span>(A)</span>
+<span id="cb3-8"><a href=""></a>        B[<span class="op">:</span>, index] <span class="op">=</span> b</span>
+<span id="cb3-9"><a href=""></a>        dets[index] <span class="op">=</span> <span class="fu">det</span>(B)</span>
+<span id="cb3-10"><a href=""></a>    <span class="cf">end</span></span>
+<span id="cb3-11"><a href=""></a></span>
+<span id="cb3-12"><a href=""></a>    <span class="cf">return</span> dets <span class="op">./</span> <span class="fu">det</span>(A)</span>
+<span id="cb3-13"><a href=""></a></span>
+<span id="cb3-14"><a href=""></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>solve_cramer (generic function with 1 method)</code></pre>
+</div>
+</div>
+<div id="a0ee952e" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href=""></a>n <span class="op">=</span> <span class="fl">1000</span>;</span>
+<span id="cb5-2"><a href=""></a>A <span class="op">=</span> <span class="fu">rand</span>(n, n);</span>
+<span id="cb5-3"><a href=""></a>b <span class="op">=</span> <span class="fu">rand</span>(n);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="example-lu-vs-cramer-2" class="slide level2">
+<h2>Example: LU vs Cramer</h2>
+<p>Let’s see the full results of the competition for a 1,000 x 1,000 matrix:</p>
+<div id="1fbb2331" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href=""></a><span class="im">using</span> <span class="bu">BenchmarkTools</span></span>
+<span id="cb6-2"><a href=""></a>cramer_time <span class="op">=</span> <span class="pp">@elapsed</span> <span class="fu">solve_cramer</span>(A, b);</span>
+<span id="cb6-3"><a href=""></a>cramer_allocation <span class="op">=</span> <span class="pp">@allocated</span> <span class="fu">solve_cramer</span>(A, b);</span>
+<span id="cb6-4"><a href=""></a>lu_time <span class="op">=</span> <span class="pp">@elapsed</span> A<span class="op">\</span>b;</span>
+<span id="cb6-5"><a href=""></a>lu_allocation <span class="op">=</span> <span class="pp">@allocated</span> A<span class="op">\</span>b;</span>
+<span id="cb6-6"><a href=""></a></span>
+<span id="cb6-7"><a href=""></a><span class="fu">println</span>(</span>
+<span id="cb6-8"><a href=""></a><span class="st">"Cramer's rule solved in </span><span class="sc">$</span>cramer_time<span class="st"> seconds and used </span><span class="sc">$</span>cramer_allocation<span class="st"> kilobytes of memory.</span></span>
+<span id="cb6-9"><a href=""></a>LU solved <span class="kw">in</span> <span class="op">$</span>(lu_time) seconds and used <span class="op">$</span>(lu_allocation) kilobytes of memory.</span>
+<span id="cb6-10"><a href=""></a>LU is <span class="op">$</span>(<span class="fu">round</span>(cramer_time<span class="op">/</span>lu_time, digits <span class="op">=</span> <span class="fl">0</span>)) times faster </span>
+<span id="cb6-11"><a href=""></a> and uses <span class="op">$</span>(<span class="fu">round</span>(lu_allocation<span class="op">/</span>cramer_allocation<span class="op">*</span><span class="fl">100</span>, digits <span class="op">=</span> <span class="fl">2</span>))<span class="op">%</span>  of the memory.<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cramer's rule solved in 12.174814781 seconds and used 16016385248 kilobytes of memory.
+LU solved in 0.006894409 seconds and used 8016264 kilobytes of memory.
+LU is 1766.0 times faster 
+ and uses 0.05%  of the memory.</code></pre>
+</div>
+</div>
+</section>
+<section id="example-lu-vs-matrix-inversion" class="slide level2">
+<h2>Example: LU vs matrix inversion</h2>
+<p>Let’s see the full results of the competition for a 1,000 x 1,000 matrix:</p>
+<div id="f7e79f04" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href=""></a><span class="im">using</span> <span class="bu">BenchmarkTools</span></span>
+<span id="cb8-2"><a href=""></a>invers_time <span class="op">=</span> <span class="pp">@elapsed</span> ((A<span class="op">^-</span><span class="fl">1</span>)<span class="op">*</span>b);</span>
+<span id="cb8-3"><a href=""></a>invers_allocation <span class="op">=</span> <span class="pp">@allocated</span> ((A<span class="op">^-</span><span class="fl">1</span>)<span class="op">*</span>b);</span>
+<span id="cb8-4"><a href=""></a></span>
+<span id="cb8-5"><a href=""></a><span class="fu">println</span>(</span>
+<span id="cb8-6"><a href=""></a><span class="st">"Matrix inversion solved in </span><span class="sc">$</span>invers_time<span class="st"> seconds and used </span><span class="sc">$</span>invers_allocation<span class="st"> kilobytes of memory.</span></span>
+<span id="cb8-7"><a href=""></a>LU solved <span class="kw">in</span> <span class="op">$</span>(lu_time) seconds and used <span class="op">$</span>(lu_allocation) kilobytes of memory.</span>
+<span id="cb8-8"><a href=""></a>LU is <span class="op">$</span>(<span class="fu">round</span>(invers_time<span class="op">/</span>lu_time, digits <span class="op">=</span> <span class="fl">2</span>)) times faster</span>
+<span id="cb8-9"><a href=""></a> and uses <span class="op">$</span>(<span class="fu">round</span>(lu_allocation<span class="op">/</span>invers_allocation<span class="op">*</span><span class="fl">100</span>, digits <span class="op">=</span> <span class="fl">2</span>))<span class="op">%</span>  of the memory.<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Matrix inversion solved in 0.465016704 seconds and used 11663552 kilobytes of memory.
+LU solved in 0.006894409 seconds and used 8016264 kilobytes of memory.
+LU is 67.45 times faster
+ and uses 68.73%  of the memory.</code></pre>
+</div>
+</div>
+</section>
+<section id="other-factorizations" class="slide level2">
+<h2>Other factorizations</h2>
+<p>LU is not the only direct method used to speed up linear equation solvers</p>
+<ul>
+<li>QR factorization decomposes <span class="math inline">\(A = QR\)</span>, where <span class="math inline">\(Q\)</span> is an orthogonal matrix and <span class="math inline">\(R\)</span> is upper triangular</li>
+<li>Cholesky factorization can be used if <span class="math inline">\(A\)</span> is positive definite
+<ul>
+<li>This is particularly useful in optimization, where we often get matrices like that</li>
+</ul></li>
+<li>There are also methods optimized for sparse matrices</li>
+</ul>
+<p>Chapter 3 in Judd has a summary and references of other methods if you need them for your research in the future</p>
+</section>
+<section id="rounding-error-blow-up" class="slide level2">
+<h2>Rounding error blow-up</h2>
+<p>In practice, Gaussian elimination can lead to <em>very inaccurate</em> solutions. For example:</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+-M^{-1} &amp; 1 \\
+1 &amp; 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 \\
+2
+\end{bmatrix}
+\]</span></p>
+<p>where <span class="math inline">\(M\)</span> is a large positive number</p>
+<div class="fragment">
+<p>Suppose we use LU factorization to solve it</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+-M^{-1} &amp; 1 \\
+1 &amp; 1
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 &amp; 0\\
+0 &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+-M^{-1} &amp; 1 \\
+1 &amp; 1
+\end{bmatrix}
+\]</span></p>
+</div>
+</section>
+<section id="numerical-error-blow-up" class="slide level2">
+<h2>Numerical error blow-up</h2>
+<p>Subtract <span class="math inline">\(-M\)</span> times the first row from the second to get the LU factorization <span class="math display">\[\begin{align*}
+        \begin{bmatrix}
+      1&amp;  0 \\
+        0 &amp; 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        -M^{-1} &amp; 1 \\
+        1 &amp; 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        1 &amp; 0\\
+        -M &amp; 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        -M^{-1} &amp; 1\\
+        0 &amp; M+1
+    \end{bmatrix}
+\end{align*}\]</span></p>
+<div class="fragment">
+<p>We can get closed-form solutions by applying forward substitution: <span class="math display">\[\begin{align*}
+    \begin{bmatrix}
+        x_1\\
+        x_2
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        M/(M+1)\\
+        (M+2)/(M+1)
+    \end{bmatrix}
+\end{align*}\]</span></p>
+</div>
+</section>
+<section id="numerical-error-blow-up-1" class="slide level2">
+<h2>Numerical error blow-up</h2>
+<p>When <span class="math inline">\(M\)</span> is large, both variables are approximately 1</p>
+<ul>
+<li>But remember adding small numbers to big numbers causes problems numerically</li>
+</ul>
+<div class="fragment">
+<p>If <span class="math inline">\(M=10000000000000000000\)</span>, the computer will return <span class="math inline">\(x_2\)</span> is equal to precisely <span class="math inline">\(1\)</span></p>
+<ul>
+<li>This isn’t terribly wrong</li>
+</ul>
+</div>
+<div class="fragment">
+<p>When we then perform the second step of backwards substitution, we solve for <span class="math inline">\(x_1=-M(1-x_2) = 0\)</span>, this is <strong>VERY</strong> wrong</p>
+</div>
+<div class="fragment">
+<p><strong>Large errors like this often occur because diagonal elements are very small</strong></p>
+</div>
+</section>
+<section id="a-numerical-error-blow-up-solution" class="slide level2">
+<h2>A numerical error blow-up solution</h2>
+<p><strong>Large errors like this often occur because diagonal elements are very small</strong></p>
+<p>In some cases, this can be solved by <strong>pivoting</strong>: we swap two rows so that small numbers are off-diagonal</p>
+<ul>
+<li>Swapping rows does not change the solution and may prevent operations causing rounding errors</li>
+</ul>
+<div class="fragment">
+<p>Most numerical linear algebra packages will do this for you (including the one embedded in Julia)</p>
+</div>
+</section>
+<section id="numerical-error-blow-up-julia-example" class="slide level2">
+<h2>Numerical error blow-up: Julia example</h2>
+<div id="cd21c9fd" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href=""></a><span class="kw">function</span> <span class="fu">solve_lu</span>(M)</span>
+<span id="cb10-2"><a href=""></a>    b <span class="op">=</span> [<span class="fl">1</span>, <span class="fl">2</span>]</span>
+<span id="cb10-3"><a href=""></a>    U <span class="op">=</span> [<span class="op">-</span>M<span class="op">^-</span><span class="fl">1</span> <span class="fl">1</span>; <span class="fl">0</span> M<span class="op">+</span><span class="fl">1</span>]</span>
+<span id="cb10-4"><a href=""></a>    L <span class="op">=</span> [<span class="fl">1</span>. <span class="fl">0</span>; <span class="op">-</span>M <span class="fl">1</span>.]</span>
+<span id="cb10-5"><a href=""></a>    y <span class="op">=</span> L<span class="op">\</span>b</span>
+<span id="cb10-6"><a href=""></a>    <span class="co"># Round element-wise to 3 digits</span></span>
+<span id="cb10-7"><a href=""></a>    x <span class="op">=</span> <span class="fu">round</span>.(U<span class="op">\</span>y, digits <span class="op">=</span> <span class="fl">5</span>)</span>
+<span id="cb10-8"><a href=""></a><span class="kw">end</span>;</span>
+<span id="cb10-9"><a href=""></a></span>
+<span id="cb10-10"><a href=""></a><span class="fu">true_solution</span>(M) <span class="op">=</span> <span class="fu">round</span>.([M<span class="op">/</span>(M<span class="op">+</span><span class="fl">1</span>), (M<span class="op">+</span><span class="fl">2</span>)<span class="op">/</span>(M<span class="op">+</span><span class="fl">1</span>)], digits <span class="op">=</span> <span class="fl">5</span>);</span>
+<span id="cb10-11"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=10   is approx. </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">10</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">10</span>))<span class="st">"</span>);</span>
+<span id="cb10-12"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=1e10 is approx. </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">1e10</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">1e10</span>))<span class="st">"</span>);</span>
+<span id="cb10-13"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=1e15 is approx. </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">1e15</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">1e15</span>))<span class="st">"</span>);</span>
+<span id="cb10-14"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=1e20 is approx. </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">1e20</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">1e20</span>))<span class="st">"</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True solution for M=10   is approx. [0.90909, 1.09091], computed solution is [0.90909, 1.09091]
+True solution for M=1e10 is approx. [1.0, 1.0], computed solution is [1.0, 1.0]
+True solution for M=1e15 is approx. [1.0, 1.0], computed solution is [1.11022, 1.0]
+True solution for M=1e20 is approx. [1.0, 1.0], computed solution is [-0.0, 1.0]</code></pre>
+</div>
+</div>
+</section>
+<section id="numerical-error-blow-up-julia-example-1" class="slide level2">
+<h2>Numerical error blow-up: Julia example</h2>
+<div id="7475b328" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=10 is approximately </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">10</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">10</span>))<span class="st">"</span>)</span>
+<span id="cb12-2"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=1e10 is approximately </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">1e10</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">1e10</span>))<span class="st">"</span>)</span>
+<span id="cb12-3"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=1e15 is approximately </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">1e15</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">1e15</span>))<span class="st">"</span>)</span>
+<span id="cb12-4"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=1e20 is approximately </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">1e20</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">1e20</span>))<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True solution for M=10 is approximately [0.90909, 1.09091], computed solution is [0.90909, 1.09091]
+True solution for M=1e10 is approximately [1.0, 1.0], computed solution is [1.0, 1.0]
+True solution for M=1e15 is approximately [1.0, 1.0], computed solution is [1.11022, 1.0]
+True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0, 1.0]</code></pre>
+</div>
+</div>
+<div id="e8f87352" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href=""></a>M <span class="op">=</span> <span class="fl">1e20</span>;</span>
+<span id="cb14-2"><a href=""></a>A <span class="op">=</span> [<span class="op">-</span>M<span class="op">^-</span><span class="fl">1</span> <span class="fl">1</span>; <span class="fl">1</span> <span class="fl">1</span>];</span>
+<span id="cb14-3"><a href=""></a>b <span class="op">=</span> [<span class="fl">1</span>., <span class="fl">2</span>.];</span>
+<span id="cb14-4"><a href=""></a>julia_solution <span class="op">=</span> A<span class="op">\</span>b;</span>
+<span id="cb14-5"><a href=""></a><span class="fu">println</span>(<span class="st">"Julia's division operator is actually pretty smart though,</span></span>
+<span id="cb14-6"><a href=""></a>        <span class="cn">true</span> solution <span class="cf">for</span> M<span class="op">=</span><span class="fl">1e20</span> is <span class="op">$</span>(julia_solution)<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Julia's division operator is actually pretty smart though,
+        true solution for M=1e20 is [1.0, 1.0]</code></pre>
+</div>
+</div>
+</section>
+<section id="ill-conditioning" class="slide level2">
+<h2>Ill-conditioning</h2>
+<p>A matrix <span class="math inline">\(A\)</span> is said to be ill-conditioned if a small perturbation in <span class="math inline">\(b\)</span> yields a large change in <span class="math inline">\(x\)</span></p>
+<div class="fragment">
+<p>One way to measure ill-conditioning in a matrix is the elasticity of the solution with respect to <span class="math inline">\(b\)</span>,</p>
+<p><span class="math display">\[
+\sup_{||\delta b || &gt; 0} \frac{||\delta x|| / ||x||}{||\delta b|| / ||b||}
+\]</span> which yields the percent change in <span class="math inline">\(x\)</span> given a percentage point change in the magnitude of <span class="math inline">\(b\)</span></p>
+</div>
+</section>
+<section id="ill-conditioning-1" class="slide level2">
+<h2>Ill-conditioning</h2>
+<p>If this elasticity is large, then then small errors in the representation of <span class="math inline">\(b\)</span> can lead to large errors in the computed solution <span class="math inline">\(x\)</span></p>
+<div class="fragment">
+<p>Calculating this elasticity is computationally expensive. We approximate it by calculating the <strong>condition number</strong> <span class="math display">\[
+\kappa = ||A|| \cdot ||A^{-1}||
+\]</span></p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(\kappa\)</span> gives the least upper bound of the elasticity and is always larger than one</p>
+</div>
+</section>
+<section id="ill-conditioning-2" class="slide level2">
+<h2>Ill-conditioning</h2>
+<p>Rule of thumb: <em>for each power of 10, a significant digit is lost in the computation of</em> <span class="math inline">\(x\)</span></p>
+<div id="0b9550ef" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href=""></a><span class="im">using</span> <span class="bu">LinearAlgebra;</span></span>
+<span id="cb16-2"><a href=""></a><span class="fu">cond</span>([<span class="fl">1</span>. <span class="fl">1</span>.; <span class="fl">1</span>. <span class="fl">1.0001</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>40002.00007491187</code></pre>
+</div>
+</div>
+<div id="29f65a2a" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href=""></a><span class="fu">cond</span>([<span class="fl">1</span>. <span class="fl">1</span>.; <span class="fl">1</span>. <span class="fl">1.00000001</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>4.000000065548868e8</code></pre>
+</div>
+</div>
+<div id="1974f1cf" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href=""></a><span class="fu">cond</span>([<span class="fl">1</span>. <span class="fl">1</span>.; <span class="fl">1</span>. <span class="fl">1.000000000001</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>3.99940450394283e12</code></pre>
+</div>
+</div>
+</section>
+<section id="iterative-methods" class="slide level2">
+<h2>Iterative methods</h2>
+<p>Direct methods like LU factorization work well for relatively small matrices. As <span class="math inline">\(n\)</span> gets bigger, the time and memory needed becomes prohibitive</p>
+<div class="fragment">
+<p>When that happens, we use <strong>iterative methods</strong> instead</p>
+<ul>
+<li>They require less memory</li>
+<li>Adequate iterative methods can give a good answer in reasonable time</li>
+</ul>
+</div>
+<div class="fragment">
+<p>Let’s start with the simplest and most intuitive iterative method</p>
+</div>
+</section>
+<section id="fixed-point-iteration" class="slide level2">
+<h2>Fixed-point iteration</h2>
+<p>Main idea: <em>we reformulate our problem as a fixed-point problem and iterate it the mapping</em></p>
+<div class="fragment">
+<p>Instead of <span class="math inline">\(Ax = b\)</span>, we define <span class="math inline">\(G(x) \equiv Ax - b + x\)</span></p>
+</div>
+<div class="fragment">
+<p>We start with an initial guess in step <span class="math inline">\(k=0\)</span> and compute the next values using</p>
+<p><span class="math display">\[x^{(k+1)} = G(x^{(k)}) = (A + I)x^{(k)} - b\]</span></p>
+</div>
+<div class="fragment">
+<p>When we find a fixed point (i.e, <span class="math inline">\(x = G(x)\)</span>), we know that <span class="math inline">\(x\)</span> solves our initial problem <span class="math inline">\(Ax = b\)</span></p>
+</div>
+<div class="fragment">
+<p>We don’t use this method though because it is very particular: it only converges if all eigenvalues of <span class="math inline">\((A + I)\)</span> have modulus less than one</p>
+</div>
+</section>
+<section id="operator-splitting-methods" class="slide level2">
+<h2>Operator Splitting methods</h2>
+<p>In a more useful method, we can rewrite <span class="math inline">\(Ax=b\)</span> as <span class="math inline">\(Qx = b + (Q - A)x\)</span> for some square matrix <span class="math inline">\(Q\)</span></p>
+<div class="fragment">
+<p>Rearranging, we get <span class="math inline">\(x = Q^{-1}b + (I - Q^{-1}A)x\)</span>, which suggests the iterating rule</p>
+<p><span class="math display">\[
+x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>It is easy to check that if <span class="math inline">\(x^{(k+1)}=x^{(k)}\)</span>, then <span class="math inline">\(x^{(k)}\)</span> is a solution to <span class="math inline">\(Ax=b\)</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>This approach can be used in nonlinear systems, too!</li>
+</ul>
+</div>
+</section>
+<section id="operator-splitting-methods-1" class="slide level2">
+<h2>Operator Splitting methods</h2>
+<p><span class="math inline">\(Q\)</span> is called the <strong>splitting matrix</strong>. That’s because it effectively splits <span class="math inline">\(A\)</span> into <span class="math inline">\(A = Q - P\)</span></p>
+<p>In practice, we choose <span class="math inline">\(Q\)</span> so that</p>
+<ol type="1">
+<li><span class="math inline">\(Q^{-1}b\)</span> and <span class="math inline">\(Q^{-1}a\)</span> are easy to compute (like when <span class="math inline">\(Q\)</span> is diagonal or triangular)</li>
+<li><span class="math inline">\(||I - Q^{-1}A ||&lt; 1\)</span> so we know the iteration converges</li>
+</ol>
+</section>
+<section id="gauss-jacobi-method" class="slide level2">
+<h2>Gauss-Jacobi method</h2>
+<p>When <span class="math inline">\(Q\)</span> is chosen to be a diagonal matrix with the same diagonal elements in <span class="math inline">\(A\)</span>, we have the <strong>Gauss-Jacobi method</strong></p>
+<div class="fragment">
+<p>The intuition is simple:</p>
+<ul>
+<li>For every equation in this system, we can always write <span class="math inline">\(x_i = \frac{1}{a_{ii}}[b_i - \sum_{j \neq i}a_{ij}x_j]\)</span></li>
+<li>We use this equation to formulate the iteration rule</li>
+</ul>
+<p><span class="math display">\[x_i^{(k+1)} = \frac{1}{a_{ii}}[b_i - \sum_{j \neq i}a_{ij}x_j^{(k)}]\]</span></p>
+</div>
+</section>
+<section id="gauss-jacobi-method-1" class="slide level2">
+<h2>Gauss-Jacobi method</h2>
+<p>Iteration rule</p>
+<p><span class="math display">\[x_i^{(k+1)} = \frac{1}{a_{ii}}[b_i - \sum_{j \neq i}a_{ij}x_j^{(k)}]\]</span></p>
+<p>Then, we assume initial values <span class="math inline">\(x_i^{(0)} \; \forall i\)</span> and iterate all <span class="math inline">\(x_i\)</span> simultaneously <em>until convergence</em></p>
+<div class="fragment">
+<p><span class="math inline">\(\Rightarrow\)</span> we turned a ” <span class="math inline">\(n\)</span> equations with <span class="math inline">\(n\)</span> unknowns” into repeatedly solving <span class="math inline">\(n\)</span> equations with <em>1</em> unknown</p>
+</div>
+</section>
+<section id="convergence" class="slide level2">
+<h2>Convergence</h2>
+<p><strong>What do we mean by <em>until convergence</em>?</strong></p>
+<div class="fragment">
+<p>This is a parameter you have to choose</p>
+<ul>
+<li>Usually, we will set a <code>tolerance</code> value</li>
+<li>Then, in each iteration, we take some metric of the difference <span class="math inline">\(\delta_x\)</span> between <span class="math inline">\(x^{k+1}\)</span> and <span class="math inline">\(x^{k}\)</span></li>
+<li>If <span class="math inline">\(d_x &lt;\)</span> <code>tolerance</code>, we stop iterating and declare <span class="math inline">\(x^{k+1}\)</span> our solution</li>
+</ul>
+<p>The actual choice of <code>tolerance</code> will depend on the scale of your variables and the desired precision</p>
+</div>
+</section>
+<section id="convergence-1" class="slide level2">
+<h2>Convergence</h2>
+<p>It is a good practice to set a <code>max_iterations</code> parameter to stop your code once a maximum number of iterations have run</p>
+<ul>
+<li>This avoids your code getting into an <strong>infinite loop</strong> if your method turn out not to converge</li>
+</ul>
+<p>You can do that by incrementing a variable that counts the number of iterations and testing the condition <code>iteration &lt;= max_iterations</code> before proceeding</p>
+<ul>
+<li>If your hit the maximum number of iteration, it’s a sign your solution did not converge</li>
+</ul>
+</section>
+<section id="convergence-2" class="slide level2">
+<h2>Convergence</h2>
+<p>An example of how to test both the convergence and maximum iteration conditions is</p>
+<div id="1bc8e9bd" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href=""></a>dx <span class="op">=</span> <span class="cn">Inf</span> <span class="co"># Start with a very large number</span></span>
+<span id="cb22-2"><a href=""></a>tol <span class="op">=</span> <span class="fl">1e-6</span> <span class="co"># One example</span></span>
+<span id="cb22-3"><a href=""></a>iteration <span class="op">=</span> <span class="fl">0</span> <span class="co"># Initialize value</span></span>
+<span id="cb22-4"><a href=""></a>max_iterations <span class="op">=</span> <span class="fl">1000</span> <span class="co"># Set max of 1000 iterations</span></span>
+<span id="cb22-5"><a href=""></a><span class="cf">while</span> (dx <span class="op">&gt;=</span> tol <span class="op">&amp;&amp;</span> iteration <span class="op">&lt;=</span> max_iterations)</span>
+<span id="cb22-6"><a href=""></a>  iteration <span class="op">=</span> iteration <span class="op">+</span> <span class="fl">1</span></span>
+<span id="cb22-7"><a href=""></a>  <span class="co"># Here you iterate your solutions and recalculate dx</span></span>
+<span id="cb22-8"><a href=""></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="gauss-seidel-method" class="slide level2">
+<h2>Gauss-Seidel method</h2>
+<p>The Gauss-Seidel method chooses <span class="math inline">\(Q\)</span> as an <em>upper triangular matrix</em> with the same elements in <span class="math inline">\(A\)</span></p>
+<div class="fragment">
+<p>Here is the intuition behind it</p>
+<p>In Gauss-Jacobi, we only use a new guess <span class="math inline">\(x^{(k+1)}\)</span> after we’ve computed all <span class="math inline">\(x_i^{(k+1)}\)</span></p>
+<ul>
+<li>For example, we use <span class="math inline">\(x_1^{k}\)</span> to calculate <span class="math inline">\(x_2^{(k+1)}\)</span> even though we already have <span class="math inline">\(x_1^{(k+1)}\)</span></li>
+</ul>
+<p>We can make faster use of information if we use our newly calculated guesses right away. That is what the <em>Gauss-Seidel method</em> does</p>
+</div>
+</section>
+<section id="gauss-seidel-method-1" class="slide level2">
+<h2>Gauss-Seidel method</h2>
+<p>So, when we compute the new guess for <span class="math inline">\(x_2\)</span>, we have <span class="math inline">\(x_2^{(k+1)} = (b_2 - a_{21}x_1^{(k+1)} - a_{23}x_1^{(k)} - \dots)/a_{22}\)</span></p>
+<p>This give the iteration rule</p>
+<p><span class="math display">\[x_i^{(k+1)} = \frac{1}{a_{ii}}[b_i - \sum_{j = 1}^{i-1}a_{ij}x_j^{(k+1)} - \sum_{j = i+1}^{n}a_{ij}x_j^{(k)} ]\]</span></p>
+<div class="fragment">
+<p>Unlike Gauss-Jacobi, <strong>in Gauss-Seidel the order equations matters</strong></p>
+<ul>
+<li>This also makes Gauss-Seidel more flexible, because we can try different orders to get it to converge</li>
+</ul>
+</div>
+</section>
+<section id="a-visual-example" class="slide level2">
+<h2>A visual example</h2>
+<p><em>Tâttonement</em> is an old concept (Walras, 1954) to describe how markets reach equilibrium by trial-and-error</p>
+<div class="fragment">
+<ol type="1">
+<li>An initial price is fixed</li>
+<li>Demanded and supplied quantities are announced based on that price</li>
+<li>If quantities don’t match, a (Walrasian) auctioneer announces a new price and the process repeats until we reach an equilibrium</li>
+</ol>
+<ul>
+<li>If there is oversupply, lower the price</li>
+<li>If there is overdemand, raise the price</li>
+</ul>
+</div>
+<div class="fragment">
+<p>We can use this concept to illustrate iterative solution methods with linear demand/supply equations</p>
+</div>
+</section>
+<section id="a-visual-example-1" class="slide level2">
+<h2>A visual example</h2>
+<p>Let’s consider the simple linear demand/supply problem</p>
+<ul>
+<li>Inverse demand: <span class="math inline">\(p = 10 - q\)</span></li>
+<li>Supply: <span class="math inline">\(q = p/2 + 1\)</span></li>
+</ul>
+<div class="fragment">
+<p>To solve it, we form the system</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+1 &amp; 1 \\
+1 &amp; -2 \\
+\end{bmatrix}
+\begin{bmatrix}
+p \\
+q \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 \\
+-2
+\end{bmatrix}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>From Gauss-Jacobi iteration rule</p>
+<p><span class="math display">\[
+\begin{align*}
+p^{(k+1)} = (10 - q^{(k)})/1 &amp; = 10 - q^{(k)}\\
+q^{(k+1)} = (-2 - p^{(k)})/(-2) &amp; = 1 + p^{(k)}/2
+\end{align*}
+\]</span></p>
+</div>
+</section>
+<section id="a-visual-example-gauss-jacobi" class="slide level2">
+<h2>A visual example: Gauss-Jacobi</h2>
+<p>But let’s see how that rule comes from matrix form</p>
+<p><span class="math display">\[
+A=
+\begin{bmatrix}
+1 &amp; 1 \\
+1 &amp; -2 \\
+\end{bmatrix}
+\Rightarrow
+Q =
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; -2 \\
+\end{bmatrix}
+\Rightarrow
+Q^{-1} =
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; -1/2 \\
+\end{bmatrix}
+\]</span></p>
+<p>So <span class="math inline">\(x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}\)</span> gives</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+p^{(k+1)} \\
+q^{(k+1)} \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; -1/2 \\
+\end{bmatrix}
+\begin{bmatrix}
+10 \\
+-2
+\end{bmatrix}
++\left(
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+\end{bmatrix}
+-
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; -1/2 \\
+\end{bmatrix}
+\begin{bmatrix}
+1 &amp; 1 \\
+1 &amp; -2 \\
+\end{bmatrix}
+\right)
+\begin{bmatrix}
+p^{(k)} \\
+q^{(k)} \\
+\end{bmatrix}
+\]</span></p>
+<div class="fragment">
+<p><span class="math display">\[
+\begin{bmatrix}
+p^{(k+1)} \\
+q^{(k+1)} \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 \\
+1
+\end{bmatrix}
++
+\begin{bmatrix}
+0 &amp; -1 \\
+1/2 &amp; 0 \\
+\end{bmatrix}
+\begin{bmatrix}
+p^{(k)} \\
+q^{(k)} \\
+\end{bmatrix}
+\]</span></p>
+</div>
+</section>
+<section id="a-visual-example-gauss-jacobi-1" class="slide level2">
+<h2>A visual example: Gauss-Jacobi</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-Base.png" height="550"></p>
+</div>
+<p>Let’s start from initial guess <span class="math inline">\(q_0=1\)</span> and <span class="math inline">\(p_0=4\)</span> and see how Gauss-Jacobi proceeds</p>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k)}\)</span></p>
+</div>
+</section>
+<section id="a-visual-example-gauss-jacobi-2" class="slide level2">
+<h2>A visual example: Gauss-Jacobi</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GJ-0p.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k)}\)</span></p>
+</div>
+<p>So</p>
+<p><span class="math inline">\(q_1 = 1 + (4)/2 = 3\)</span></p>
+</section>
+<section id="a-visual-example-gauss-jacobi-3" class="slide level2">
+<h2>A visual example: Gauss-Jacobi</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GJ-0p.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k)}\)</span></p>
+</div>
+<p>So</p>
+<p><span class="math inline">\(q_1 = 1 + (4)/2 = 3\)</span></p>
+<p><span class="math inline">\(p_1 = 10 - 1 = 9\)</span></p>
+</section>
+<section id="a-visual-example-gauss-jacobi-4" class="slide level2">
+<h2>A visual example: Gauss-Jacobi</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GJ-1.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k)}\)</span></p>
+</div>
+<p>So</p>
+<p><span class="math inline">\(q_1 = 1 + (4)/2 = 3\)</span></p>
+<p><span class="math inline">\(p_1 = 10 - 1 = 9\)</span></p>
+<p>And we move to <span class="math inline">\((3,9)\)</span></p>
+</section>
+<section id="a-visual-example-gauss-jacobi-5" class="slide level2">
+<h2>A visual example: Gauss-Jacobi</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GJ-2.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k)}\)</span></p>
+</div>
+<p>Next, we get</p>
+<div class="fragment">
+<p><span class="math inline">\(q_2 = 1 + (9)/2 = 5.5\)</span></p>
+<p><span class="math inline">\(p_2 = 10 - 3 = 7\)</span></p>
+<p>And we move to <span class="math inline">\((5.5,7)\)</span></p>
+</div>
+</section>
+<section id="a-visual-example-gauss-jacobi-6" class="slide level2">
+<h2>A visual example: Gauss-Jacobi</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GJ-3.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k)}\)</span></p>
+</div>
+<p>Then, we get</p>
+<div class="fragment">
+<p><span class="math inline">\(q_3 = 1 + (7)/2 = 4.5\)</span></p>
+<p><span class="math inline">\(p_3 = 10 - 5.5 = 4.5\)</span></p>
+<p>And we move to <span class="math inline">\((4.5,4.5)\)</span></p>
+</div>
+</section>
+<section id="a-visual-example-gauss-jacobi-7" class="slide level2">
+<h2>A visual example: Gauss-Jacobi</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GJ-4.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k)}\)</span></p>
+</div>
+<p>And we continue to process until the difference between <span class="math inline">\((q^{(k+1)},p^{(k+1)})\)</span> and <span class="math inline">\((q^{(k)},p^{(k)})\)</span> is smaller than our <code>tolerance</code> parameter (i.e., it converges)</p>
+</section>
+<section id="a-visual-example-gauss-seidel" class="slide level2">
+<h2>A visual example: Gauss-Seidel</h2>
+<p>The Gauss-Seidel iteration rules looks similar, but there is an important difference</p>
+<p><span class="math display">\[
+\begin{align*}
+q^{(k+1)} &amp; = 1 + p^{(k)}/2 \\
+p^{(k+1)} &amp; = 10 - \mathbf{q^{(k+1)}}
+\end{align*}
+\]</span></p>
+<div class="fragment">
+<p><span class="math inline">\(p^{(k+1)}\)</span> is a function of <span class="math inline">\(q^{(k+1)}\)</span>, not <span class="math inline">\(q^{(k)}\)</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Note that we could plug the 1st equation into the 2nd: <span class="math inline">\(p^{(k+1)}  = 9 - p^{(k)}/2\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>In this case, the example starts with an iteration over <span class="math inline">\(q\)</span>. Starting with <span class="math inline">\(p\)</span> is also possible <em>but gives a different sequence of steps</em></li>
+</ul>
+</div>
+</section>
+<section id="a-visual-example-gauss-seidel-1" class="slide level2">
+<h2>A visual example: Gauss-Seidel</h2>
+<p>Let’s see how that rule comes from matrix form</p>
+<p><span class="math display">\[
+A=
+\begin{bmatrix}
+1 &amp; 1 \\
+1 &amp; -2 \\
+\end{bmatrix}
+\Rightarrow
+Q =
+\begin{bmatrix}
+1 &amp; 1 \\
+0 &amp; -2 \\
+\end{bmatrix}
+\Rightarrow
+Q^{-1} =
+\begin{bmatrix}
+1 &amp; 1/2 \\
+0 &amp; -1/2 \\
+\end{bmatrix}
+\]</span></p>
+<p>So <span class="math inline">\(x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}\)</span> gives</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+p^{(k+1)} \\
+q^{(k+1)} \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 &amp; 1/2 \\
+0 &amp; -1/2 \\
+\end{bmatrix}
+\begin{bmatrix}
+10 \\
+-2
+\end{bmatrix}
++\left(
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+\end{bmatrix}
+-
+\begin{bmatrix}
+1 &amp; 1/2 \\
+0 &amp; -1/2 \\
+\end{bmatrix}
+\begin{bmatrix}
+1 &amp; 1 \\
+1 &amp; -2 \\
+\end{bmatrix}
+\right)
+\begin{bmatrix}
+p^{(k)} \\
+q^{(k)} \\
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+p^{(k+1)} \\
+q^{(k+1)} \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+9 \\
+1
+\end{bmatrix}
++
+\begin{bmatrix}
+-1/2 &amp; 0 \\
+1/2 &amp; 0 \\
+\end{bmatrix}
+\begin{bmatrix}
+p^{(k)} \\
+q^{(k)} \\
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="a-visual-example-gauss-seidel-2" class="slide level2">
+<h2>A visual example: Gauss-Seidel</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-Base.png" height="550"></p>
+</div>
+<p>Once again, we start from initial guess <span class="math inline">\(q_0=1\)</span> and <span class="math inline">\(p_0=4\)</span></p>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k+1)}\)</span></p>
+</div>
+</section>
+<section id="a-visual-example-gauss-seidel-3" class="slide level2">
+<h2>A visual example: Gauss-Seidel</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GS-1.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k+1)}\)</span></p>
+</div>
+<p>So</p>
+<p><span class="math inline">\(q_1 = 1 + (4)/2 = 3\)</span></p>
+</section>
+<section id="a-visual-example-gauss-seidel-4" class="slide level2">
+<h2>A visual example: Gauss-Seidel</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GS-2.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k+1)}\)</span></p>
+</div>
+<p>So</p>
+<p><span class="math inline">\(q_1 = 1 + (4)/2 = 3\)</span></p>
+<p><span class="math inline">\(p_1 = 10 - (3) = 7\)</span></p>
+</section>
+<section id="a-visual-example-gauss-seidel-5" class="slide level2">
+<h2>A visual example: Gauss-Seidel</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GS-3.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k+1)}\)</span></p>
+</div>
+<p>So</p>
+<p><span class="math inline">\(q_1 = 1 + (4)/2 = 3\)</span></p>
+<p><span class="math inline">\(p_1 = 10 - (3) = 7\)</span></p>
+<p><span class="math inline">\(q_2 = 1 + (7)/2 = 4.5\)</span></p>
+</section>
+<section id="a-visual-example-gauss-seidel-6" class="slide level2">
+<h2>A visual example: Gauss-Seidel</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GS-4.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k+1)}\)</span></p>
+</div>
+<p>So</p>
+<p><span class="math inline">\(q_1 = 1 + (4)/2 = 3\)</span></p>
+<p><span class="math inline">\(p_1 = 10 - (3) = 7\)</span></p>
+<p><span class="math inline">\(q_2 = 1 + (7)/2 = 4.5\)</span></p>
+<p><span class="math inline">\(p_2 = 10 - 4.5 = 5.5\)</span></p>
+</section>
+<section id="a-visual-example-gauss-seidel-7" class="slide level2">
+<h2>A visual example: Gauss-Seidel</h2>
+<div style="float:right">
+<p><img src="figures/tattonement-GS-5.png" height="550"></p>
+</div>
+<div class="blue">
+<p>The iteration rules are</p>
+<p><span class="math inline">\(q^{(k+1)} = 1 + p^{(k)}/2\)</span></p>
+<p><span class="math inline">\(p^{(k+1)} = 10 - q^{(k+1)}\)</span></p>
+</div>
+<p>And we continue to process until the difference between <span class="math inline">\((q^{(k+1)},p^{(k+1)})\)</span> and <span class="math inline">\((q^{(k)},p^{(k)})\)</span> is smaller than our <code>tolerance</code> parameter (i.e., it converges)</p>
+</section>
+<section id="acceleration-and-stabilization-methods" class="slide level2">
+<h2>Acceleration and Stabilization methods</h2>
+<ul>
+<li>When our iterations converge too slowly or diverge, we can try <strong>acceleration</strong> or <strong>stabilization</strong> methods
+<ul>
+<li>These concepts also work for nonlinear equations and optimization</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<p>These methods are conceptually simple: we will multiply our step <span class="math inline">\(x^{(k)}\rightarrow x^{(k+1)}\)</span> by a scalar <span class="math inline">\(\omega\)</span></p>
+</div>
+</section>
+<section id="acceleration-and-stabilization-methods-1" class="slide level2">
+<h2>Acceleration and Stabilization methods</h2>
+<ul>
+<li>When <span class="math inline">\(\omega &gt; 1\)</span>, it’s called <strong>extrapolation</strong>: we’re taking a <em>bigger step</em>
+<ul>
+<li>Idea: if the method converges, then the direction <span class="math inline">\(x^{(k)}\rightarrow x^{(k+1)}\)</span> is a good move, so it could be even better to go beyond <span class="math inline">\(x^{(k+1)}\)</span> and converge faster</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>When <span class="math inline">\(\omega &lt; 1\)</span>, it’s called <strong>dampening</strong>: we’re taking a <em>smaller step</em>
+<ul>
+<li>Idea: maybe the direction <span class="math inline">\(x^{(k)}\rightarrow x^{(k+1)}\)</span> is a good one, but we are overshooting, so if we stop short of <span class="math inline">\(x^{(k+1)}\)</span>, we may get it to converge</li>
+</ul></li>
+</ul>
+<div data-align="center">
+<p><img src="figures/dampening_extrap.png" height="250"></p>
+</div>
+</div>
+</section>
+<section id="acceleration-and-stabilization-methods-2" class="slide level2">
+<h2>Acceleration and Stabilization methods</h2>
+<p>Returning to our Gauss-Seidel example, <strong>accelerating</strong> the solution with <strong>extrapolation</strong> could look like this</p>
+<div data-align="center">
+<p><img src="figures/tattonement-GS-extrap.png" height="450"></p>
+</div>
+</section>
+<section id="acceleration-and-stabilization-methods-3" class="slide level2">
+<h2>Acceleration and Stabilization methods</h2>
+<p>And, <strong>stabilizing</strong> the solution with <strong>dampening</strong> could look like this</p>
+<div data-align="center">
+<p><img src="figures/tattonement-GS-dampen.png" height="450"></p>
+</div>
+</section>
+<section id="acceleration-and-stabilization-methods-4" class="slide level2">
+<h2>Acceleration and Stabilization methods</h2>
+<p>These methods don’t always work. It may be a good idea to try if you are having issues with slow convergence or divergence</p>
+<p>We’ll skip the technical details of when these methods work for operator splitting</p>
+<ul>
+<li>You can find them in chapter 3 of Judd’s textbook</li>
+</ul>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="3_1_linear_equations_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="3_1_linear_equations_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true,"theme":"whiteboard","chalkEffect":0.1},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

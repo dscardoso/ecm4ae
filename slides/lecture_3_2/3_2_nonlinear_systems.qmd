@@ -1,0 +1,1070 @@
+---
+title: "ACE 592 - Lecture 3.2"
+subtitle: "Nonlinear Systems of Equations"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_3_2_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_3_2_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  **Systems of equations**
+    1.  [Linear systems]{.gray}
+    2.  **Nonlinear systems**
+    3.  Complementarity problems
+4.  Optimization
+5.  Function approximation
+6.  Structural estimation
+
+## Agenda {background-color="orange"}
+
+-   We continue our study of methods to solve systems of equations, now looking at systems that contain nonlinear equations
+-   Unlike linear systems, with nonlinear systems we don't have guarantees of closed-form solutions, so solving them is harder
+-   We will study two types of methods: derivative-free and derivative-based
+
+## Main references for today {background-color="orange"}
+
+-   Miranda & Fackler (2002), Ch. 3
+-   Judd (1998), Ch. 5
+-   Nocedal & Wright (2006), Ch. 11
+-   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell)
+
+## Types of nonlinear equation problems
+
+Problems involving nonlinear equations are very common in economics
+
+We can classify them into two types
+
+1.  Systems of nonlinear equations
+2.  Complementarity problems
+
+## System of nonlinear equations
+
+These come in two forms
+
+A)  **Rootfinding problems**
+
+For a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^n$, we want to find a n-vector $x$ that satisfies $f(x) = 0$
+
+$\rightarrow$ Any $x$ that satisfies this condition is called a **root** of $f$
+
+Examples?
+
+. . .
+
+-   Market equilibrium in general: market clearing conditions
+-   No-arbitrage conditions (pricing models)
+-   Solving first-order optimality conditions
+
+## System of nonlinear equations
+
+B)  **Fixed-point problems**
+
+For a function $g: \mathbb{R}^n \rightarrow \mathbb{R}^n$, we want to find a n-vector $x$ that satisfies $x = g(x)$ $\rightarrow$ Any $x$ that satisfies this condition is called a **fixed point** of $g$
+
+Examples?
+
+. . .
+
+-   Best-response functions
+-   Many equilibrium concepts in game theory
+    -   A *Nash equilibrium* is a fixed point in the strategy space
+
+## System of nonlinear equations
+
+**Rootfinding and fixed-point problems are equivalent**
+
+We can easily convert one into another
+
+-   *Rootfinding* $\rightarrow$ *fixed-point*
+
+. . .
+
+-   Define a new $g(x) = x - f(x)$
+
+. . .
+
+-   *Fixed-point* $\rightarrow$ *rootfinding*
+    -   Define a new $f(x) = x - g(x)$
+
+## Complementarity problems
+
+In these problems, we have
+
+-   A function $f: \mathbb{R}^n \rightarrow \mathbb{R}^n$
+-   n-vectors $a$ and $b$, with $a<b$
+
+And we are looking for an n-vector $x \in [a,b]$ such that for all $i = 1,\dots,n$
+
+$$
+\begin{align*}
+  x_i > a_i \Rightarrow f_i(x) \geq 0 \\
+  x_i < b_i \Rightarrow f_i(x) \leq 0
+\end{align*}
+$$
+
+. . .
+
+Examples of complementarity problems?
+
+. . .
+
+-   Market equilibrium with constraints: quotas, price support, non-negativity, limited capacity, etc
+-   First-order conditions of constrained function maximization/minimization
+
+## Complementarity problems
+
+$$
+\begin{align*}
+  x_i > a_i \Rightarrow f_i(x) \geq 0 \\
+  x_i < b_i \Rightarrow f_i(x) \leq 0
+\end{align*}
+$$
+
+What do these equations mean?
+
+. . .
+
+If the constraints on $x_i$ do not bind ( $a_i < x_i < b_i$) , then the first-order condition is precisely zero
+
+. . .
+
+But suppose the upper bound binds ( $x_i = b_i$ ). Then $f_i(x) \geq 0$ since $x_i > a_i$
+
+-   But we can't guarantee that $f_i(x) = 0$ because $f_i(x)$ might still be increasing at that point
+
+## Complementarity problems
+
+Rootfinding is a special case of complementarity problems: $a = -\infty$ and $b = \infty$
+
+But complementarity problems are *not just about finding a root within* $[a, b]$
+
+-   Remember: if some $x_i$ is at the boundary ( $x_i = a_i$ or $x_i = b_i$ ), some element of $f(x)$ can be non-zero!
+
+. . .
+
+-   **NOTE:** We will not cover complementary problems in this course
+    -   But the mechanics of solving them is similar to solving nonlinear system: we just need to transform the equations
+    -   You can find the details in Miranda & Fackler Chs. 3.7 and 3.8
+
+# Derivative-free methods
+
+## Rootfinding problems
+
+Let's start simple: we have a continuous function $f:[a,b]\in\mathbb{R} \rightarrow\mathbb{R}$ and we know that $f(a)<0$ and $f(b)>0$
+
+What does the Intermediate Value Theorem says here?
+
+. . .
+
+> If $f$ is continuous and $f(a) \neq f(b)$, then $f$ must assume all values in between $f(a)$ and $f(b)$
+
+-   So if $f(a)<0$ and $f(b)>0 \Rightarrow$ there must be at least one root $x\in[a,b]$ such that $f(x) = 0$
+
+. . .
+
+How would you go about finding a root?
+
+## Bisection method
+
+Basic idea: split the search interval in two parts and check whether there's a root in each part
+
+How do we check that?
+
+. . .
+
+-   By looking at the signs of $f(x)$ at the boundaries of each interval
+    -   If they are different, there's a root $\Rightarrow$ we keep looking there
+
+Let's see an illustration
+
+## Bisection method
+
+![](figures/bisection-step1.png){fig-align="center"}
+
+
+We start with $l = a, u = b$ and find $m = (u+l)/2$
+
+Let's say $f(l)<0$, $f(u)>0$, and $f(m)>0$. What do we do next?
+
+## Bisection method
+
+![](figures/bisection-step2.png){fig-align="center"}
+
+Since $f(l)<0$ and $f(m)>0$ have different signs, we continue our search in $[l,m]$
+
+We set $u \leftarrow m$
+
+. . .
+
+Then we calculate the new midpoint $m$
+
+. . .
+
+Now say $f(l)<0$, $f(u)>0$, and $f(m)<0$. What do we do next?
+
+## Bisection method
+
+
+![](figures/bisection-step3.png){fig-align="center"}
+
+Since $f(m)<0$ and $f(u)>0$ have different signs, we continue our search in $[m,u]$
+
+We set $l \leftarrow m$
+
+And the search continues until we are satisfied with the precision
+
+## Bisection method
+
+Here are the basic steps:
+
+1.  Start with a lower ( $l = a$ ) and an upper ( $u = b$ ) bounds
+2.  Get the midpoint $m = (u+l)/2$
+3.  Check the sign of $f(m)$
+4.  If $sign(f(m)) = sign(f(l))$, move lower bound up: $l \leftarrow m$
+5.  If $sign(f(m)) = sign(f(u))$, move upper bound down: $u \leftarrow m$
+6.  Repeat 2 and 3 until our interval is short enough ( $(u-l)/2 < tol$ ) and return $x = m$
+
+. . .
+
+**Let's try it**
+
+-   We will write a function that takes `(f, a, b)` and returns a root of $f$ using the bisection method.
+-   Then, we use it to find the root of $f(x) = -x^{-2} + x - 1$ between $[0.2, 4]$
+
+## Bisection method
+
+```{julia}
+function bisection(f, lo, up)
+    tolerance = 1e-3          # tolerance for solution
+    mid = (lo + up)/2         # initial guess, bisect the interval
+    difference = (up - lo)/2  # initialize bound difference
+
+    while difference > tolerance         # loop until convergence
+        println("Intermediate guess: $mid")
+        if sign(f(lo)) == sign(f(mid)) # if the guess has the same sign as the lower bound
+            lo = mid                   # a solution is in the upper half of the interval
+            mid = (lo + up)/2
+        else                           # else the solution is in the lower half of the interval
+            up = mid
+            mid = (lo + up)/2
+        end
+        difference = (up - lo)/2       # update the difference 
+    end
+    println("The root of f(x) is $mid")
+end;
+```
+
+## Bisection method
+
+```{julia}
+f(x) = -x^(-2) + x - 1;
+bisection(f, 0.2, 4.0)
+```
+
+## Bisection method
+
+![](figures/bisection.gif){fig-align="center"}
+
+
+## Bisection method
+
+What happens if we specify the wrong interval (i.e, there's no root in there)?
+
+. . .
+
+It will go towards the boundaries
+
+```{julia}
+bisection(f, 2.0, 4.0)
+```
+
+## Bisection method
+
+So it's a good idea to check if you have the right boundaries
+
+```{julia}
+f(2.0)
+```
+
+```{julia}
+f(4.0)
+```
+
+These are both positive. So by the IVT, we can't know for sure if there's a root here
+
+## Bisection method
+
+The bisection method is incredibly robust: if a function $f$ satisfies the IVT, it is **guaranteed to converge in a finite number of iterations**
+
+. . .
+
+A root can be calculated to arbitrary precision $\epsilon$ in a maximum of $log_2\frac{b-a}{\epsilon}$ iterations
+
+But robustness comes with drawbacks:
+
+1.  It only works in one dimension
+2.  It is slow because it only uses information about the function's level but not its variation
+
+## Function iteration
+
+For the next method, we recast rootfinding as a fixed-point problem
+
+. . .
+
+$$
+f(x) = 0 \Rightarrow g(x) = x - f(x)
+$$ 
+
+Then, we start with an initial guess $x^{(0)}$ and iterate $x^{(k+1)}\leftarrow g(x^{k})$ until convergence: $|x^{(k+1)}-x^{(k)}| \approx 0$
+
+. . .
+
+**Let's try it!**
+
+-   We will write a function that takes `(f, initial_guess)` and returns a root of $f$ using function iteration
+-   Then, we'll use it to find the root of $f(x) = -x^{-2} + x - 1$ with `initial_guess = 1`
+
+## Function iteration
+
+```{julia}
+function function_iteration(f, initial_guess)
+    tolerance = 1e-3   # tolerance for solution
+    difference = Inf   # initialize difference
+    x = initial_guess  # initialize current value
+    
+    while abs(difference) > tolerance # loop until convergence
+        println("Intermediate guess: $x")
+        x_prev = x  # store previous value
+        x = x_prev - f(x_prev) # calculate next guess
+        difference = x - x_prev # update difference
+    end
+    println("The root of f(x) is $x")
+end;
+```
+
+## Function iteration
+
+```{julia}
+f(x) = -x^(-2) + x - 1;
+function_iteration(f, 1.0)
+```
+
+## Function iteration
+
+::: {.columns}
+::: {.column}
+A fixed point $x = g(x)$ is at the intersection between $g(x)$ and the 45<sup>o</sup> line
+
+-   Starting from $x^{(0)}$, we calculate $g(x^{(0)})$ and find the corresponding point on the 45<sup>o</sup> line for $x^{(1)}$
+-   We keep iterating until we (approximately) find the fixed point
+:::
+::: {.column}
+![](figures/function_iteration.png)
+:::
+:::
+
+
+## Function iteration
+
+Function iteration is guaranteed to converge to a fixed point $x^*$ if 
+
+1. $g$ is differentiable, and 
+2. 2. the initial guess is "sufficiently close" to an $x^*$ at which $\|g^\prime (x^{*}) \| < 1$
+
+It may also converge when these conditions are not met
+
+Since this is an easy method to implement, it's worth trying it before switching to more complex methods
+
+## Function iteration
+
+But wait: What is "sufficiently close"?
+
+. . .
+
+Good question! There is no practical formula. As Miranda and Fackler (2002) put it
+
+> Typically, an analyst makes a reasonable guess for the root $f$ and counts his/her blessings if the iterates converge. If the iterates do not converge, then the analyst must look more closely at the properties of $f$ to find a better starting value, or change to another rootfinding method.
+
+This is where science also becomes a bit of an art
+
+# Derivative-based methods
+
+## Newton's method
+
+Newton's method and variants are the workhorses of solving n-dimensional non-linear problems
+
+. . .
+
+Key idea: take a hard non-linear problem and replace it with a sequence of linear problems $\rightarrow$ **successive linearization**
+
+## Newton's method
+
+::: {.columns}
+::: {.column}
+1. Start with an initial guess of the root at $x^{(0)}$
+2. Approximate the non-linear function with its first-order Taylor expansion around $x^{(0)}$
+  - This is just the tangent line at $x^0$
+3. Solve for the root of this linear approximation, call it $x^{(1)}$
+:::
+::: {.column}
+![](figures/newtons_method.png)
+:::
+:::
+
+
+## Newton's method
+
+::: {.columns}
+::: {.column}
+4. Repeat starting at $x^{(1)}$ until we converge to $x^*$
+
+This can be applied to a function with an arbitrary number of dimensions
+:::
+::: {.column}
+![](figures/newtons_method.png)
+:::
+:::
+
+
+## Newton's method
+
+Formally: begin with some initial guess of the root vector $\mathbf{x^{(0)}}$
+
+. . .
+
+Given $\mathbf{x^{(k)}}$, our new guess $\mathbf{x^{(k+1)}}$ is obtained by approximating $f(\mathbf{x})$ using a first-order Taylor expansion around $\mathbf{x^{(k)}}$
+
+$$
+f(\mathbf{x}) \approx f(\mathbf{x^{(k)}}) + f'(\mathbf{x^{(k)}})(\mathbf{x^{(k+1)}}-\mathbf{x^{(k)}}) = 0
+$$
+
+Then, solve for $\mathbf{x^{(k+1)}}$:
+
+$$
+\mathbf{x^{(k+1)}} = \mathbf{x^{(k)}} - \left[f'(\mathbf{x^{(k)}})\right]^{-1}f(\mathbf{x^{(k)}})
+$$
+
+## Newton's method
+
+$$
+\mathbf{x^{(k+1)}} \leftarrow \mathbf{x^{(k)}} - \left[f'(\mathbf{x^{(k)}})\right]^{-1}f(\mathbf{x^{(k)}})
+$$
+
+**Let's try it!**
+
+-   Write a function that takes `(f, f_prime, initial_guess)` and returns a root of $f$ using Newton's method
+-   Then use it to find the root of $f(x) = -x^{-2} + x - 1$ with `initial_guess = 1`
+
+## Newton's method
+
+```{julia}
+function newtons_method(f, f_prime, initial_guess)
+  tolerance = 1e-3   # tolerance for solution
+  difference = Inf   # initialize difference
+  x = initial_guess  # initialize current value
+  
+  while abs(difference) > tolerance # loop until convergence
+      println("Intermediate guess: $x")
+      x_prev = x  # store previous value
+      x = x_prev - f(x_prev)/f_prime(x_prev) # calculate next guess
+      # ^ this is the only line that changes from function iteration
+      difference = x - x_prev # update difference
+  end
+  println("The root of f(x) is $x")
+end;
+```
+
+## Newton's method
+
+```{julia}
+f(x) = -x^(-2) + x - 1;
+f_prime(x) = 2x^(-3) + 1;
+newtons_method(f, f_prime, 1.0)
+```
+
+## Newton's method
+
+Newton's method has nice properties regarding convergence and speed
+
+It converges if
+
+1.  If $f(x)$ is continuously differentiable,
+2.  The initial guess is "sufficiently close" to the root, and
+3.  $f(x)$ is invertible near the root
+
+. . .
+
+We need $f(x)$ to be invertible so the algorithm above is well defined
+
+. . .
+
+If $f'(x)$ is ill-conditioned we can run into problems with rounding error
+
+## Newton's method: a duopoly example
+
+Inverse demand: $P(q) = q^{-1/\epsilon}$
+
+Two firms with costs: $C_i(q_i) = \frac{1}{2}c_i q_i^2$
+
+. . .
+
+Firm i's profits: $\pi_i(q_1,q_2) = P(q_1 + q_2)q_i - C_i(q_i)$
+
+. . .
+
+Firms take other's output as given. So their first-order conditions are
+
+$$
+\frac{\partial \pi_i}{\partial q_i} = P(q_1 + q_2) + P^\prime(q_1 + q_2)q_i - C_i^\prime(q_i) = 0
+$$
+
+## Newton's method: a duopoly example
+
+We are looking for an equilibrium: a pair $(q_1, q_2)$ which are roots to two nonlinear equations
+
+$$
+\begin{align*}
+f_1(q_1, q_2) & = (q_1 + q_2)^{-1/\epsilon} - (1/\epsilon)(q_1 + q_2)^{-1/\epsilon-1}q_1 - c_1 q_1 = 0 \\
+f_2(q_1, q_2) & = (q_1 + q_2)^{-1/\epsilon} - (1/\epsilon)(q_1 + q_2)^{-1/\epsilon-1}q_2 - c_2 q_2 = 0
+\end{align*}
+$$
+
+Can you solve this analytically? It's quite hard...
+
+. . .
+
+Let's do it numerically, starting by coding this function in Julia
+
+## Newton's method: a duopoly example
+
+For this example, $\epsilon = 1.6, c_1 = 0.6, c_2 = 0.8$
+
+```{julia}
+epsilon = 1.6; c = [0.6; 0.8]; # column vector
+```
+
+$f(q)$ will return a vector (*pay attention to how I used the dot syntax*)
+
+```{julia}
+function f(q)
+    Q = sum(q)
+    F = Q^(-1/epsilon) .- (1/epsilon)Q^(-1/epsilon-1) .*q .- c .*q
+end;
+f([0.2; 0.2])
+```
+
+## Newton's method: a duopoly example
+
+What do we need next to use Newton's method?
+
+. . .
+
+The derivatives! In this case, we have a function $f:\mathbb{R}^2\rightarrow\mathbb{R}^2$, so we need to define the Jacobian matrix
+
+$$
+J = 
+\begin{bmatrix}
+\frac{\partial f_1}{\partial q_1} & \frac{\partial f_1}{\partial q_2} \\
+\frac{\partial f_2}{\partial q_1} & \frac{\partial f_2}{\partial q_2} \\
+\end{bmatrix}
+$$
+
+## Newton's method: a duopoly example
+
+We can derive these terms analytically
+
+$$
+\begin{align*}
+\frac{\partial f_{i}}{\partial q_{i}} &= (1/\epsilon)(q_{1}+q_{2})^{-1/\epsilon-1}\left[-2+(1/\epsilon+1)(q_{1}+q_{2})^{-1}q_{i}\right]-c_{i} \\
+\frac{\partial f_{i}}{\partial q_{j\neq i}} &= \underbrace{(1/\epsilon)(q_{1}+q_{2})^{-1/\epsilon-1}}_{A} \left[-1+ \underbrace{(1/\epsilon+1)(q_{1}+q_{2})^{-1}}_{B} q_{i}\right]
+\end{align*}
+$$
+
+## Newton's method: a duopoly example
+
+So we can write the Jacobian as
+
+$$
+J = -A
+\begin{bmatrix}
+2 & 1\\
+1 & 2
+\end{bmatrix}
++AB
+\begin{bmatrix}
+q_{1} & q_{1}\\
+q_{2} & q_{2}\\
+\end{bmatrix}
+ -
+\begin{bmatrix}
+c_{1} & 0\\
+0 & c_{2}
+\end{bmatrix}
+$$ 
+
+where $A\equiv(1/\epsilon)(q_{1}+q_{2})^{-1/\epsilon-1}$, $B\equiv(1/\epsilon)(q_{1}+q_{2})^{-1}$
+
+. . .
+
+Let's turn this Jacobian into a Julia function so we can use Newton's method
+
+## Newton's method: a duopoly example
+
+Now we define a function for the Jacobian
+
+```{julia}
+using LinearAlgebra
+function f_jacobian(q)
+    Q = sum(q)
+    A = (1/epsilon)Q^(-1/epsilon-1)
+    B = (1/epsilon+1)Q^(-1)
+    J = -A .* [2 1; 1 2] + (A*B) .* [q q] - LinearAlgebra.Diagonal(c)
+end;
+f_jacobian([0.2; 0.2])
+```
+
+## Newton's method: a duopoly example
+
+We need to write a new version of our Newton's method so it can handle $n$-dimensional functions
+
+```{julia}
+function newtons_method_multidim(f, f_jacobian, initial_guess) 
+    tolerance = 1e-3   
+    difference = Inf   
+    x = initial_guess  
+    
+    while norm(difference) > tolerance # <=== Changed here
+        println("Intermediate guess: $x")
+        x_prev = x  
+        x = x_prev - f_jacobian(x_prev)\f(x_prev) # <=== and here
+        difference = x - x_prev 
+    end
+    println("The root of f(x) is $x")
+    return x
+  end;
+```
+
+## Newton's method: a duopoly example
+
+Note that we only needed to change 2 things from the previous version:
+
+1.  Our tolerance is now over the norm of the difference vector
+2.  The "derivative" is a Jacobian matrix, so we multiply $f(x^{(k)})$ by the inverse of $J(x^{(k)})$
+
+-   We use operator `\` because it is more efficient than inverting $J$
+
+We also added a `return x` so that the function returns a solution
+
+## Newton's method: a duopoly example
+
+Let's test it out with initial guess $(0.2, 0.2)$
+
+```{julia}
+x = newtons_method_multidim(f, f_jacobian, [0.2; 0.2])
+```
+
+## Newton's method: a duopoly example
+
+Let's check our solution
+
+```{julia}
+f(x)
+```
+
+Pretty good result with quick convergence!
+
+## Newton's method: a duopoly example
+
+Visually, this is the path Newton's method followed
+
+![](figures/newtons_method_ex.png){fig-align="center"}
+
+## Newton's method: analytic vs numerical derivatives
+
+It was tedious but in the previous example we could calculate the Jacobian analytically. Sometimes it's much harder and we can make mistakes.
+
+*Here is a challenge for you: redo the previous example but, instead of defining the Jacobian analytically, use the ForwardDiff package to do the derivatives for you. Then, compare your solution with mine.*
+
+. . .
+
+An alternative is to use the `Symbolics.jl` package. For low-dimensional derivative and Jacobians, it does a good job!
+
+## Quasi-Newton methods
+
+We usually don't want to deal with analytic derivatives unless we have access to autodifferentiation
+
+Why?
+
+. . .
+
+1.  It can be difficult to do the analytic derivation
+2.  Coding a complicate Jacobian is prone to errors and takes time
+3.  Can actually be slower to evaluate than finite differences for a nonlinear problem
+
+. . .
+
+Alternative $\rightarrow$ *finite differences* instead of analytic derivatives
+
+## Quasi-Newton: Secant method
+
+Using our current root guess $x^{(k)}$ and our previous root guess $x^{(k-1)}$:
+
+$$
+f'(x^{(k)}) \approx \frac{f(x^{(k)})-f(x^{(k-1)})}{x^{(k)} - x^{(k-1)}}
+$$
+
+. . .
+
+Our new iteration rule then becomes
+
+$$
+x^{(k+1)} = x^{(k)} - \frac{x^{(k)}-x^{(k-1)}}{f(x^{(k)})-f(x^{(k-1)})}f(x^{(k)})
+$$
+
+. . .
+
+Now we **require two initial guesses** so that we have an initial approximation of the derivative
+
+## Quasi-Newton: Secant method
+
+
+![](figures/secant_method.png){fig-align="center"}
+
+## Quasi-Newton: Broyden's method
+
+Broyden's method is the most widely used rootfinding method for n-dimensional problems
+
+-   This is a generalization of the secant method where have a *sequence of guesses of the Jacobian at the root*
+
+. . .
+
+It also relies on a 1st-order Taylor expansion about $\mathbf{x}$, but now in n dimensions
+
+$$
+f(\mathbf{x}) \approx f(\mathbf{x^{(k)}}) + A^{(k)} (\mathbf{x} - \mathbf{x^{(k)}}) = 0
+$$
+
+. . .
+
+We must initially provide a guess of the root, $x^{(0)}$, but also a guess of the Jacobian, $A_{(0)}$
+
+-   A good guess for $A_{(0)}$ is to calculate it numerically at our chosen $x^{(0)}$
+
+## Quasi-Newton: Broyden's method
+
+The iteration rule is the same as before but with our guess of the Jacobian substituted in for the actual Jacobian (or the finite difference approximation)
+
+$$
+\mathbf{x^{(k+1)}} \leftarrow \mathbf{x^{(k)}} - (A^{(k)})^{-1} \, f(\mathbf{x^{(k)}})
+$$
+
+. . .
+
+We still need to update $A_{(k)}$: the idea of Broyden's method is to choose a new Jacobian that satisfies the multidimensional **secant condition**
+
+$$
+f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) = A^{(k+1)}\left( \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}} \right)
+$$
+
+- Any reasonable guess for the Jacobian should satisfy this condition
+
+. . .
+
+But this gives $n$ conditions with $n^2$ elements to solve for in $A$
+
+## Quasi-Newton: Broyden's method
+
+Broyden's methods solves this under-determined problem with an assumption that focuses on the direction we are most interested in: $d^{(k)} = \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}}$
+
+For any direction $q$ orthogonal to $d^{(k)}$, it assumes that $A^{(k+1)}q = A^{(k)}q$
+
+-   In other words, our next guess is as good as the current ones for any changes in $x$ that are orthogonal to the one we are interested right now
+
+. . .
+
+Jointly, the secant condition and the orthogonality assumption give the iteration rule for the Jacobian: 
+
+. . .
+
+$$
+A^{(k+1)} \leftarrow A^{(k)} + \left[f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) - A^{(k)}d^{(k)}\right] \frac{d^{(k)T}}{d^{(k)T}d^{(k)}}
+$$
+
+## Quasi-Newton: Broyden's method
+
+The general algorithm for Broyden's method is:
+
+1.  Choose an initial guess for the root $\mathbf{x}^{(0)}$ and the Jacobian $A^{(0)}$
+2.  Calculate the next guess for the root: $\mathbf{x}^{(k+1)}$
+3.  Calculate the next guess for the Jacobian: $A^{(k+1)}$
+4.  Repeat 2 and 3 until convergence: $\|\mathbf{x}^{(k+1)} - \mathbf{x}^{(k)} \| \leq tolerance$
+
+## Quasi-Newton: Broyden's method
+
+One costly part of Broyden's method is that we update the Jacobian and "invert" it every iteration
+
+. . .
+
+But, since we only need the Jacobian's inverse to update $\mathbf{x}$, we can make it faster by updating the inverse Jacobian directly
+
+$$
+B^{(k+1)} = B^{(k)} + \frac{[d^{(k)} - u^{(k)}]{d^{(k)T}}B_{(k)}}{{d^{(k)T}} u^{(k)}}
+$$
+
+where $u^{(k)} = B^{(k)}\left[f(\mathbf{x^{(k+1)}})-f(\mathbf{x^{(k)}})\right]$
+
+-   Most canned implementations of Broyden's method use the inverse update rule
+
+## Quasi-Newton: Broyden's method
+
+Broyden converges under relatively weak conditions:
+
+1.  $f$ is continuously differentiable,
+2.  $x^{(0)}$ is "close" to the root of $f$
+3.  $f'$ is invertible around the root
+4.  $A_0$ is sufficiently close to the Jacobian
+
+## Broyden's method: a duopoly example
+
+Let's revisit our previous example but now solve it using Broyden's method
+
+We won't code it by hand. Instead, we use package `NLsolve.jl`
+
+Function `NLsolve.nlsolve` has a ton of options to solve nonlinear equations
+
+. . .
+
+Once again, we are looking a pair $(q_1, q_2)$ which are roots to two nonlinear equations
+
+$$
+\begin{align*}
+f_1(q_1, q_2) & = (q_1 + q_2)^{-1/\epsilon} - (1/\epsilon)(q_1 + q_2)^{-1/\epsilon-1}q_1 - c_1 q_1 = 0 \\
+f_2(q_1, q_2) & = (q_1 + q_2)^{-1/\epsilon} - (1/\epsilon)(q_1 + q_2)^{-1/\epsilon-1}q_2 - c_2 q_2 = 0
+\end{align*}
+$$
+
+## Broyden's method: a duopoly example
+
+Using our previously defined $f$, we run
+
+```{julia}
+using NLsolve
+NLsolve.nlsolve(f, [1.0; 2.0], method=:broyden,
+                xtol=:1e-8, ftol=:0.0, iterations=:1000, show_trace=:true)
+```
+
+
+## Broyden's method: a duopoly example
+
+-   The first and second arguments are $f$ and an initial guess
+    -   `nlsolve` will automatically generate a Jacobian guess for us
+-   `method=:broyden` tells `nlsolve` to use Broyden's methods
+
+. . .
+
+The other arguments are optional
+
+-   `xtol` is the convergence tolerance over $x$: $\| \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}} \| \leq$ `xtol` (default is `0.0` meaning no criterion)
+-   `ftol` is the convergence tolerance over $f(x)$: $\| f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) \| \leq$ `ftol` (default is `1e-8`)
+-   `iterations` set the maximum number of iterations before declaring non-convergence (default is `1000`)
+-   `show_trace` will print all the iterations if you set to `true` (default is `false`)
+
+## `NLsolve.jl`
+
+We can use this package to solve with Newton's method as well. Here we make use of the analytic Jacobian we defined earlier
+
+```{julia}
+NLsolve.nlsolve(f, f_jacobian, [1.0; 2.0], method=:newton,
+                xtol=:1e-8, ftol=:0.0, iterations=:1000)
+```
+
+
+## `NLsolve.jl`
+
+If you omit the Jacobian, `nlsolve` will calculate it numerically for you using centered finite differencing
+
+```{julia, eval=FALSE}
+NLsolve.nlsolve(f, [1.0; 2.0], method=:newton,
+                xtol=:1e-8, ftol=:0.0, iterations=:1000)
+```
+
+
+## `NLsolve.jl`
+
+You can add argument `autodiff=:forward` to use forward autodifferentiation instead of finite differences
+
+```{julia}
+NLsolve.nlsolve(f, [1.0; 2.0], method=:newton, autodiff=:forward,
+                xtol=:1e-8, ftol=:0.0, iterations=:1000)
+```
+
+
+## Quick detour
+
+Before we continue, take a look again at our $f$
+
+```{julia}
+function f(q)
+    Q = sum(q)
+    F = Q^(-1/epsilon) .- (1/epsilon)Q^(-1/epsilon-1) .*q .- c .*q
+end;
+```
+
+Do you see any potential inefficiency?
+
+. . .
+
+We allocate a new `F` every time we call this function!
+
+Instead, we can be more efficient by writing a function that modifies a pre-allocated vector
+
+
+
+## Quick detour: functions that modify arguments
+
+By convention, in Julia we name functions that modify arguments with a `!` at the end. For our $f$, we can define
+
+```{julia}
+function f!(F, q)
+    F[1] = sum(q)^(-1/epsilon) - (1/epsilon)sum(q)^(-1/epsilon-1)*q[1] - c[1]*q[1]
+    F[2] = sum(q)^(-1/epsilon) - (1/epsilon)sum(q)^(-1/epsilon-1)*q[2] - c[2]*q[2]
+end;
+F = zeros(2) # This allocates a 2-vector with elements equal to zero
+f!(F, [0.2; 0.2]); # Note the first argument is a pre-allocated vector
+F
+```
+
+
+
+## Quick detour: functions that modify arguments
+
+`NLsolve.nlsolve` understands when we pass a `!` function and pre-allocates the vector for us
+
+Because it allocates only once, it will be more efficient
+
+```{julia}
+NLsolve.nlsolve(f!, [1.0; 2.0], method=:newton,
+                xtol=:1e-8, ftol=:0.0, iterations=:1000)
+```
+
+
+
+
+# Comparing methods
+
+## Convergence speed
+
+Rootfinding algorithms will converge at different speeds in terms of the number of operations
+
+. . .
+
+A sequence of iterates $x^{(k)}$ is said to converge to $x^*$ at a rate of order $p$ if there is a constant $C$ such that
+
+$$
+\|x^{(k+1)}-x^{*}\|\leq C \|x^{(k)} - x^{*}\|^p
+$$
+
+for sufficiently large $k$
+
+## Convergence speed
+
+$$
+\|x^{(k+1)}-x^{*}\|\leq C \|x^{(k)} - x^{*}\|^p
+$$
+
+-   If $C < 1$ and $p = 1$: linear convergence
+-   If $1 < p < 2$: superlinear convergence
+-   If $p = 2$: quadratic convergence
+
+The higher order the convergence rate, the faster it converges
+
+## Convergence speed
+
+How fast do the methods we've seen converge?
+
+. . .
+
+-   Bisection: linear rate with $C = 0.5$
+
+. . .
+
+-   Function iteration: linear rate with $C = ||f'(x^*)||$
+
+. . .
+
+-   Secant and Broyden: superlinear rate with $p \approx 1.62$
+
+. . .
+
+-   Newton: $p = 2$
+
+## Convergence speed
+
+Consider an example where $f(x) = x - \sqrt(x) = 0$
+
+This is how the 3 main approaches converge in terms of the $L^1-$norm for an initial guess $x^{(0)} = 0.5$
+
+![](figures/rootfinder_speed.png){fig-align="center"}
+
+## Choosing a solution method
+
+Convergence rates only account for the number of iterations of the method
+
+The steps taken in a given iteration of each solution method may vary in computational cost because of differences in the number of arithmetic operations
+
+Although an algorithm may take more iterations to solve, each iteration may be solved faster and the overall algorithm takes less time
+
+## Choosing a solution method
+
+-   Bisection method only requires a single function evaluation during each iteration
+-   Function iteration only requires a single function evaluation during each iteration
+-   Broyden's method requires both a function evaluation and matrix multiplication
+-   Newton's method requires a function evaluation, a derivative evaluation, and solving a linear system
+
+. . .
+
+$\rightarrow$ Bisection and function iteration are usually slow
+
+$\rightarrow$ Broyden's method can be faster than Newton's method if derivatives are costly to compute
+
+## Choosing a solution method
+
+Besides convergence rates and algorithm speed, you should also factor development time
+
+-   Newton's method is fastest to converge
+    -   If deriving and programming the Jacobian is relatively simple and not too costly to compute, this method is a good choice
+-   If derivatives are complex, quasi-Newton methods are good candidates
+-   Bisection and function iteration are generally dominated options but are easy to program/debug, so they have value as a quick proof-of-concept
+    -   Bisection is often used in hybrid methods, such as Dekker's and Brent's. Hybrid methods select between bisection, secant, or other basic solution methods every iteration depending on a set of criteria
+

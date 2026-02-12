@@ -24,18 +24,6 @@ format:
 
 ---
 
-```{julia}
-#| include: FALSE
-using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
-Pkg.add("Statistics"); Pkg.add("Plots");
-using Statistics
-using Plots
-```
-
-
-
 # Welcome to ACE 592 - ECM!
 
 

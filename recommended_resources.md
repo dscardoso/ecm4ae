@@ -73,3 +73,22 @@ If you have suggestions of materials, please share them with me.
 - [FiniteDifferences.jl](https://github.com/JuliaDiff/FiniteDifferences.jl): High accuracy derivatives, estimated via numerical finite differences
 - [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl): Forward Mode Automatic Differentiation for Julia (github.com)
 - [Symbolics.jl](https://symbolics.juliasymbolics.org/stable/): A package to manipulate symbolic (analytical) objects
+
+
+## Unit 3: Systems of Equations
+
+### Readings
+
+**Linear Equations**
+- [MF02] Chapter 2
+- [J98] Chapter 3
+
+**Nonlinear Equations**
+
+- [MF02] Chapter 3
+- [J98] Chapter 5
+
+### Technical references
+
+- [NLSolve](https://github.com/JuliaNLSolvers/NLsolve.jl)
+  

@@ -32,16 +32,6 @@ format:
     html-math-method: katex
 ---
 
-```{julia}
-#| echo: false
-using Pkg
-#Pkg.activate(".")
-#Pkg.instantiate()
-#Pkg.add("Distributions"); Pkg.add("QuantEcon")
-```
-
-
-
 ## Course Roadmap {background-color="orange"}
 
 1.  [Introduction to Scientific Computing]{.gray}

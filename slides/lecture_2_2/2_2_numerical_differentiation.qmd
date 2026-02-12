@@ -33,17 +33,6 @@ format:
 ---
 
 
-
-```{julia}
-#| echo: false
-using Pkg
-#Pkg.activate(".")
-#Pkg.instantiate()
-#Pkg.add("ForwardDiff"); Pkg.add("FiniteDifferences"); Pkg.add("Symbolics"); Pkg.add("Latexify")
-```
-
-
-
 ## Course Roadmap {background-color="orange"}
 
 1.  [Introduction to Scientific Computing]{.gray}

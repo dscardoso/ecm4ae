@@ -33,16 +33,6 @@ format:
 ---
 
 
-```{julia}
-#| echo: false
-using Pkg
-#Pkg.activate(".")
-#Pkg.instantiate()
-Pkg.add("BenchmarkTools")
-```
-
-
-
 ## Course Roadmap {background-color="orange"}
 
 1.  [Introduction to Scientific Computing]{.gray}

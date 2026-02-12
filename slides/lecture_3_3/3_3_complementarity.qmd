@@ -1,0 +1,464 @@
+---
+title: "ACE 592 - Lecture 3.3"
+subtitle: "Complementarity Problems"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_3_3_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_3_3_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+```{julia}
+#| echo: false
+using Pkg
+Pkg.activate(".")
+Pkg.instantiate()
+Pkg.add("NLsolve");
+```
+
+
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  **Systems of equations**
+    1. [Linear systems]{.gray}
+    2. [Nonlinear systems]{.gray}
+    3. **Complementarity problems**
+4.  Optimization
+5.  Function approximation
+6.  Structural estimation
+
+## Agenda {background-color="orange"}
+
+- Today, we will cover complementarity problems, which are a generalization of rootfinding problems that allow for constraints on the solution
+- Here, we cover how to set up and solve mixed complementarity problems in Julia
+
+
+## Main references {background-color="orange"}
+
+-   Miranda & Fackler (2002), Chs. 3.7 and 3.8
+-   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell) 
+
+
+## Complementarity problems
+
+
+In these problems, we have
+
+- A function $f: \mathbb{R}^n \rightarrow \mathbb{R}^n$
+- n-vectors $a$ and $b$, with $a<b$
+
+And we are looking for an n-vector $x \in [a,b]$ such that for all $i = 1,\dots,n$
+
+$$
+\begin{align*}
+  x_i > a_i \Rightarrow f_i(x) \geq 0 \\
+  x_i < b_i \Rightarrow f_i(x) \leq 0
+\end{align*}
+$$
+
+. . .
+
+- This formulation is usually referred to as a *Mixed Complementarity Problem* because it has an upper and lower bounds
+  - Standard complementarity problems have one-sided bounds
+
+
+
+## Complementarity problems
+
+An economic interpretation
+
+- $x$ is an n-dimensional vector of some economic action
+- $a_i$ and $b_i$ are the lower and upper bounds on action $i$
+- $f_i(x)$ is the marginal arbitrage profit of action $i$
+
+. . .
+
+There are disequilibrium profit opportunities if 
+
+1. $x_i < b_i$ and $f_i(x) > 0$  (we can increase profits by raising $x_i$)
+
+. . .
+
+2. $x_i > a_i$ and $f_i(x) < 0$ (we can increase profits by decreasing $x_i$)
+
+
+
+## Complementarity problems
+
+We obtain a no-arbitrage equilibrium if and only if $x$ solves the complementary problem $CP(f,a,b)$
+
+. . .
+
+We can write out the problem as finding a vector $x \in [a,b]$ that solves
+
+$$
+\begin{align}
+	x_i > a_i \Rightarrow f_i(x) \geq 0 \,\,\, \forall i = 1,...,n \notag\\ 
+	x_i < b_i \Rightarrow f_i(x) \leq 0 \,\,\, \forall i = 1,...,n \notag
+\end{align}
+$$
+
+. . .
+
+At interior solution, the function must be precisely be zero
+
+Corner solution at the upper bound $b_i$ for $x_i$ $\rightarrow$ $f$ must be increasing in direction $i$
+
+The opposite is true if we are at the lower bound
+
+
+
+## Complementarity problems
+
+Most economic problems are complementarity problems where we are
+
+- Looking for a root of a function (e.g. marginal profit)
+- Subject to some constraint (e.g. price floors)
+
+. . .
+
+The Karush-Kuhn-Tucker theorem shows that $x$ solves the constrained optimization problem ( $\max_x F(x)$ subject to $x \in [a,b]$) only if it solves the complementarity problem $CP(f, a, b)$, where $f_i = \partial F/\partial x_i$
+
+. . .
+
+Let's use a linear $f$ to visualize what do we mean by a solution in complementarity problems
+
+
+
+## Complementarity problems
+
+::: {.columns}
+::: {.column}
+**Case 1**
+
+What is the solution?
+
+$x^{*} = a$, with $f(x^{*}) < 0$
+
+Another way of seeing it: imagine we're trying to maximize $F$
+
+What would $F$ look like between $a$ and $b$?
+
+- The decreasing part of a concave parabola
+:::
+::: {.column}
+![](figures/CP_case1.png)
+:::
+:::
+
+
+
+
+## Complementarity problems
+
+
+::: {.columns}
+::: {.column}
+**Case 2**
+
+What is the solution?
+
+$x^{*} = b$, with $f(x^{*}) > 0$
+
+Once again, imagine we're trying to maximize $F$
+
+What would $F$ look like between $a$ and $b$?
+
+- The increasing part of a concave parabola
+:::
+::: {.column}
+![](figures/CP_case2.png)
+:::
+:::
+
+
+## Complementarity problems
+
+::: {.columns}
+::: {.column}
+**Case 3**
+
+What is the solution?
+
+Some $x^{*}$ between $a$ and $b$, with $f(x^{*}) = 0$
+
+What would $F$ look like between $a$ and $b$?
+
+- A concave parabola with an interior maximum
+:::
+::: {.column}
+![](figures/CP_case3.png)
+:::
+:::
+
+
+## Complementarity problems
+
+::: {.columns}
+::: {.column}
+**Case 4**
+
+What is the solution?
+
+Actually, we have 3 solutions:
+
+1. $x^{*} = a$, with $f(x^{*}) < 0$
+2. $x^{*} = b$, with $f(x^{*}) > 0$
+3. Some $x^{*} \in (a,b)$, with $f(x^{*}) = 0$
+  - And this is an unstable solution
+
+What would $F$ look like between $a$ and $b$?
+
+- A convex parabola! So we end up with multiple local maxima that satisfy the 1st-order condition
+:::
+::: {.column}
+![](figures/CP_case4.png)
+:::
+:::
+
+## Solving CPs
+
+A complementarity problem $CP(f, a, b)$ can be re-framed as a rootfinding problem
+
+$$
+\hat{f}(x) = min(max(f(x),a-x),b-x) = 0
+$$
+
+. . .
+
+Let's revisit those 4 cases to understand why this works
+
+
+
+
+## Solving CPs
+
+
+::: {.columns}
+::: {.column}
+**Case 1**
+
+$\hat{f}(x) = min(max(f(x),a-x),b-x) = 0$
+
+- Dashed lines are $b-x$ and $a-x$
+- Thin solid line is $f(x)$
+- Thick solid line is $\hat{f}(x)$
+
+$\rightarrow$ The solution is $x^{*} = a$
+
+- Note that $f(x) < 0$ for all $x \in [a,b]$, so this is still case 1
+:::
+::: {.column}
+![](figures/CP_sol_case1.png)
+:::
+:::
+
+
+## Solving CPs
+
+::: {.columns}
+::: {.column}
+**Case 2: **
+
+$\hat{f}(x) = min(max(f(x),a-x),b-x) = 0$
+
+In this case, $f(x) > 0$ for all $x \in [a,b]$
+
+$\rightarrow$ The solution is $x^{*} = b$
+:::
+::: {.column}
+![](figures/CP_sol_case2.png)
+:::
+:::
+
+
+
+## Solving CPs
+
+::: {.columns}
+::: {.column}
+**Case 3: **
+
+$\hat{f}(x) = min(max(f(x),a-x),b-x) = 0$
+
+In this case, $f(a) > 0$, $f(b) < 0$
+
+$\rightarrow$ The solution is some $x^{*} \in (a, b)$
+:::
+::: {.column}
+![](figures/CP_sol_case3.png)
+:::
+:::
+
+
+## Solving CPs
+
+::: {.columns}
+::: {.column}
+**Case 4: **
+
+$\hat{f}(x) = min(max(f(x),a-x),b-x) = 0$
+
+In this case, $f(a) < 0$, $f(b) > 0$
+
+$\rightarrow$ We have the same 3 solutions
+
+1. $x^{*} = a$, with $f(x^{*}) < 0$
+2. $x^{*} = b$, with $f(x^{*}) > 0$
+3. Some $x^{*} \in (a,b)$, with $f(x^{*}) = 0$
+:::
+::: {.column}
+![](figures/CP_sol_case4.png)
+:::
+:::
+
+
+
+
+## Solving CPs
+
+Once $\hat{f}$ is defined, we can use Newton's or quasi-Newton methods to solve a CP
+
+If using Newton, we need to define the Jacobian $\hat{J}(x)$ with row $i$ being
+
+- $\hat{J}_i(x) = J_i(x)$, if $a_i - x_i < f_i(x) < b_i - x_i$
+- $\hat{J}_i(x) = -I_i(x)$, otherwise
+
+where $I$ is the identity matrix
+
+
+## Solving CPs
+
+Rootfinding with $\hat{f}$ works well in many cases but can be problematic in others
+
+One problem is that $\hat{f}$ has nondiferentiable kinks. This can lead to slower convergence, cycles, and incorrect answers^[See Miranda & Fackler (2002) Ch. 3.8 for a pathological example that needs smoothing.]
+
+A workaround is to use an alternative function with smoother transitions, such as Fischer's function
+
+$$
+\tilde{f}(x) = \phi^{-}(\phi^{+}(f(x), a-x), b-x) 
+$$
+
+where $\phi_i^\pm(u, v) = u_i + v_i \pm \sqrt{u_i^2 + v_i^2}$
+
+
+
+## Solving CPs
+
+![](figures/CP_smooth.png){fig-align="center"}
+
+
+
+## Solving CPs in Julia
+
+We can use `NLsolve.mcpsolve` to solve CPs for us.^[Because complementarity conditions are constraints, a more comprehensive way for larger systems is through `JuMP.jl` modeling interface. We will cover that in the Constrained Optimization unit.] Let's see an example of $f:\mathbb{R}^2\rightarrow\mathbb{R}^2$
+
+$$
+\begin{align*}
+f_1(x_1, x_2) & = 3x_1^2 + 2x_1x_2 + 2x_2^2 + 4x_1 - 2 \\
+f_2(x_1, x_2) & = 2x_1^2 + 5x_1x_2 - x_2^2 + x_2 + 1
+\end{align*}
+$$
+
+```{julia}
+function f!(F, x) # We need to program the memory-efficient version here
+    F[1] = 3*x[1]^2 + 2*x[1]*x[2] + 2*x[2]^2 + 4*x[1] - 2
+    F[2] = 2*x[1]^2 + 5*x[1]*x[2] -   x[2]^2 + x[2] + 1
+end;
+```
+
+
+## Solving CPs in Julia
+
+Let's check the solution to the standard rootfinding problem using Newton's method
+
+```{julia}
+using NLsolve;
+NLsolve.nlsolve(f!, [1.0; 1.0], method=:newton)
+```
+
+
+## Solving CPs in Julia
+
+Getting back to CPs, let's impose non-negativity bounds on $x_1$ and $x_2$ but no upper bounds (i.e., $b = \infty$)
+
+```{julia}
+a = [0.0; 0.0]; b = [Inf; Inf];
+r = NLsolve.mcpsolve(f!, a, b, [1.0; 1.0], method=:newton, reformulation=:minmax)
+```
+
+
+
+## Solving CPs in Julia
+
+We can get the value of the root using `r.zero`. Checking $f(x^*)$
+
+```{julia}
+r.zero
+f(r.zero)
+```
+
+So the non-negativity constraint is binding for $x_2$ but not $x_1$
+
+
+
+## Solving CPs in Julia
+
+`mcpsolve` takes the same additional arguments `nlsolve` had: `xtol`, `ftol`, `iterations`, `autodiff`, `show_trace`, etc
+
+In addition, it accepts argument `reformulation`, which can be `smooth` (default) or `minmax` 
+
+```{julia}
+NLsolve.mcpsolve(f!, a, b, [1.0; 1.0], method=:newton, reformulation=:minmax, autodiff=:forward)
+```
+
+
+## Solving CPs in Julia
+
+**IMPORTANT NOTE**. Miranda and Fackler's textbook (and Matlab package) flip the sign convention for MCP problems. That's because they are formulating it with an economic context in mind, where these problems arise from constrained optimization.
+
+. . .
+
+The conventional setup is (note the flipped inequalities)
+
+$$
+\begin{align*}
+  x_i > a_i \Rightarrow f_i(x) \leq 0 \\
+  x_i < b_i \Rightarrow f_i(x) \geq 0
+\end{align*}
+$$
+
+. . .
+
+**Solution. If you are using standard MCP solvers (like mcpsolve), flip the sign of your $f$ function**
+
+- For more details, see Miranda and Fackler's Bibliographic Notes after Chapter 3
+
