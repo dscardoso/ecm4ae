@@ -463,7 +463,7 @@ For a given order of approximation $n$, the weights $w_1,...,w_n$ and nodes $x_1
 . . .
 
 $$
-\int_I x^kw(x)dx = \sum_{i=1}^n w_i x^k_i, \;\text{for}\; k=0,...,2n-1
+\int_I s^kw(s)ds = \sum_{i=1}^n w_i x^k_i, \;\text{for}\; k=0,...,2n-1
 $$
 
 where $I$ is the interval over which we are integrating and $w(x)$ is a given weight function
@@ -477,7 +477,7 @@ The moment matching conditions pin down $w_i$s and $x_i$s so we can approximate 
 . . .
 
 $$
-\int_i f(x) w(x)dx \approx \sum_{i=1}^n w_i f(x_i)
+\int_I f(s) w(s)ds \approx \sum_{i=1}^n w_i f(x_i)
 $$
 
 . . .
@@ -498,13 +498,13 @@ into mass points (nodes) and probabilities (weights) for some other discrete dis
 
 . . .
 
-But what do we pick for the weighting function $w(x)$?
+But what do we pick for the weighting function $w(s)$?
 
 
 
 ## Gauss-Legendre
 
-We can start out with a simple $w(x) = 1$: this gives us **Gauss-Legendre** quadrature
+We can start out with a simple $w(s) = 1$: this gives us **Gauss-Legendre** quadrature
 
 This can approximate the integral of any function arbitrarily well by increasing $n$
 
@@ -515,10 +515,10 @@ This can approximate the integral of any function arbitrarily well by increasing
 Sometimes we want to compute exponentially discounted sums like
 
 $$
-\int_I f(x) e^{-x} dx
+\int_I f(s) e^{-s} ds
 $$
 
-The weighting function $e^{-x}$ is **Gauss-Laguerre quadrature**
+The weighting function $e^{-s}$ is **Gauss-Laguerre quadrature**
 
 . . .
 
@@ -531,7 +531,7 @@ The weighting function $e^{-x}$ is **Gauss-Laguerre quadrature**
 Sometimes we want to take expectations of functions of normally distributed variables
 
 $$
-\int_I f(x) e^{-x^2} dx
+\int_I f(s) e^{-s^2} ds
 $$
 
 . . .
