@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Diego S. Cardoso">
-  <title>AGEC 652 - Lecture 3.1</title>
+  <title>ACE 592 - Lecture 3.1</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -195,7 +195,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">AGEC 652 - Lecture 3.1</h1>
+  <h1 class="title">ACE 592 - Lecture 3.1</h1>
   <p class="subtitle">Linear Systems of Equations</p>
 
 <div class="quarto-title-authors">
@@ -242,6 +242,11 @@ Diego S. Cardoso
 <li>Lecture notes for Ivan Rudik’s <em>Dynamic Optimization</em> (Cornell)</li>
 </ul>
 </section>
+<section>
+<section id="introduction" class="title-slide slide level1 center">
+<h1>Introduction</h1>
+
+</section>
 <section id="linear-equations-in-economics" class="slide level2">
 <h2>Linear equations in Economics</h2>
 <p>(Systems of) Linear equations are very common in Economics</p>
@@ -259,7 +264,7 @@ Diego S. Cardoso
 <section id="solving-linear-equations-in-julia" class="slide level2">
 <h2>Solving linear equations in Julia</h2>
 <p>Solving linear systems is generally very easy in programming languages</p>
-<div id="308d55ff" class="cell" data-execution_count="2">
+<div id="37a830b1" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href=""></a>A <span class="op">=</span> [<span class="op">-</span><span class="fl">3</span> <span class="fl">2</span> <span class="fl">3</span>; <span class="op">-</span><span class="fl">3</span> <span class="fl">2</span> <span class="fl">1</span>; <span class="fl">3</span> <span class="fl">0</span> <span class="fl">0</span>]; b <span class="op">=</span> [<span class="fl">10</span>; <span class="fl">8</span>; <span class="op">-</span><span class="fl">3</span>];</span>
 <span id="cb1-2"><a href=""></a>x <span class="op">=</span> A<span class="op">\</span>b <span class="co"># This is an optimized division, faster than inverting A (more on that later)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -316,6 +321,11 @@ Diego S. Cardoso
 <ul>
 <li>We solve the same problem repeatedly until results converge to a solution</li>
 </ul>
+</section></section>
+<section>
+<section id="solution-approach-direct-methods" class="title-slide slide level1 center">
+<h1>Solution approach: direct methods</h1>
+
 </section>
 <section id="solving-linear-equations-direct-methods" class="slide level2">
 <h2>Solving linear equations: direct methods</h2>
@@ -635,7 +645,7 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 <section id="example-lu-vs-cramer-1" class="slide level2">
 <h2>Example: LU vs Cramer</h2>
 <p>Cramer’s Rule can be written as a simple loop:</p>
-<div id="693bb827" class="cell" data-execution_count="3">
+<div id="6b60ac75" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href=""></a><span class="im">using</span> <span class="bu">LinearAlgebra</span></span>
 <span id="cb3-2"><a href=""></a><span class="kw">function</span> <span class="fu">solve_cramer</span>(A, b)</span>
 <span id="cb3-3"><a href=""></a></span>
@@ -654,7 +664,7 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 <pre><code>solve_cramer (generic function with 1 method)</code></pre>
 </div>
 </div>
-<div id="a0ee952e" class="cell" data-execution_count="4">
+<div id="fe863b91" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href=""></a>n <span class="op">=</span> <span class="fl">1000</span>;</span>
 <span id="cb5-2"><a href=""></a>A <span class="op">=</span> <span class="fu">rand</span>(n, n);</span>
 <span id="cb5-3"><a href=""></a>b <span class="op">=</span> <span class="fu">rand</span>(n);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -663,7 +673,7 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 <section id="example-lu-vs-cramer-2" class="slide level2">
 <h2>Example: LU vs Cramer</h2>
 <p>Let’s see the full results of the competition for a 1,000 x 1,000 matrix:</p>
-<div id="1fbb2331" class="cell" data-execution_count="5">
+<div id="59e154c3" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href=""></a><span class="im">using</span> <span class="bu">BenchmarkTools</span></span>
 <span id="cb6-2"><a href=""></a>cramer_time <span class="op">=</span> <span class="pp">@elapsed</span> <span class="fu">solve_cramer</span>(A, b);</span>
 <span id="cb6-3"><a href=""></a>cramer_allocation <span class="op">=</span> <span class="pp">@allocated</span> <span class="fu">solve_cramer</span>(A, b);</span>
@@ -676,9 +686,9 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 <span id="cb6-10"><a href=""></a>LU is <span class="op">$</span>(<span class="fu">round</span>(cramer_time<span class="op">/</span>lu_time, digits <span class="op">=</span> <span class="fl">0</span>)) times faster </span>
 <span id="cb6-11"><a href=""></a> and uses <span class="op">$</span>(<span class="fu">round</span>(lu_allocation<span class="op">/</span>cramer_allocation<span class="op">*</span><span class="fl">100</span>, digits <span class="op">=</span> <span class="fl">2</span>))<span class="op">%</span>  of the memory.<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Cramer's rule solved in 12.174814781 seconds and used 16016385248 kilobytes of memory.
-LU solved in 0.006894409 seconds and used 8016264 kilobytes of memory.
-LU is 1766.0 times faster 
+<pre><code>Cramer's rule solved in 14.508500636 seconds and used 16016320576 kilobytes of memory.
+LU solved in 0.013017181 seconds and used 8016232 kilobytes of memory.
+LU is 1115.0 times faster 
  and uses 0.05%  of the memory.</code></pre>
 </div>
 </div>
@@ -686,7 +696,7 @@ LU is 1766.0 times faster
 <section id="example-lu-vs-matrix-inversion" class="slide level2">
 <h2>Example: LU vs matrix inversion</h2>
 <p>Let’s see the full results of the competition for a 1,000 x 1,000 matrix:</p>
-<div id="f7e79f04" class="cell" data-execution_count="6">
+<div id="81863cf4" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href=""></a><span class="im">using</span> <span class="bu">BenchmarkTools</span></span>
 <span id="cb8-2"><a href=""></a>invers_time <span class="op">=</span> <span class="pp">@elapsed</span> ((A<span class="op">^-</span><span class="fl">1</span>)<span class="op">*</span>b);</span>
 <span id="cb8-3"><a href=""></a>invers_allocation <span class="op">=</span> <span class="pp">@allocated</span> ((A<span class="op">^-</span><span class="fl">1</span>)<span class="op">*</span>b);</span>
@@ -697,10 +707,10 @@ LU is 1766.0 times faster
 <span id="cb8-8"><a href=""></a>LU is <span class="op">$</span>(<span class="fu">round</span>(invers_time<span class="op">/</span>lu_time, digits <span class="op">=</span> <span class="fl">2</span>)) times faster</span>
 <span id="cb8-9"><a href=""></a> and uses <span class="op">$</span>(<span class="fu">round</span>(lu_allocation<span class="op">/</span>invers_allocation<span class="op">*</span><span class="fl">100</span>, digits <span class="op">=</span> <span class="fl">2</span>))<span class="op">%</span>  of the memory.<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Matrix inversion solved in 0.465016704 seconds and used 11663552 kilobytes of memory.
-LU solved in 0.006894409 seconds and used 8016264 kilobytes of memory.
-LU is 67.45 times faster
- and uses 68.73%  of the memory.</code></pre>
+<pre><code>Matrix inversion solved in 0.570772101 seconds and used 19843296 kilobytes of memory.
+LU solved in 0.013017181 seconds and used 8016232 kilobytes of memory.
+LU is 43.85 times faster
+ and uses 40.4%  of the memory.</code></pre>
 </div>
 </div>
 </section>
@@ -716,6 +726,11 @@ LU is 67.45 times faster
 <li>There are also methods optimized for sparse matrices</li>
 </ul>
 <p>Chapter 3 in Judd has a summary and references of other methods if you need them for your research in the future</p>
+</section></section>
+<section>
+<section id="numerical-issues-is-linear-systems" class="title-slide slide level1 center">
+<h1>Numerical issues is linear systems</h1>
+
 </section>
 <section id="rounding-error-blow-up" class="slide level2">
 <h2>Rounding error blow-up</h2>
@@ -822,7 +837,7 @@ x_2 \\
 </section>
 <section id="numerical-error-blow-up-julia-example" class="slide level2">
 <h2>Numerical error blow-up: Julia example</h2>
-<div id="cd21c9fd" class="cell" data-execution_count="7">
+<div id="bea55eae" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href=""></a><span class="kw">function</span> <span class="fu">solve_lu</span>(M)</span>
 <span id="cb10-2"><a href=""></a>    b <span class="op">=</span> [<span class="fl">1</span>, <span class="fl">2</span>]</span>
 <span id="cb10-3"><a href=""></a>    U <span class="op">=</span> [<span class="op">-</span>M<span class="op">^-</span><span class="fl">1</span> <span class="fl">1</span>; <span class="fl">0</span> M<span class="op">+</span><span class="fl">1</span>]</span>
@@ -847,7 +862,7 @@ True solution for M=1e20 is approx. [1.0, 1.0], computed solution is [-0.0, 1.0]
 </section>
 <section id="numerical-error-blow-up-julia-example-1" class="slide level2">
 <h2>Numerical error blow-up: Julia example</h2>
-<div id="7475b328" class="cell" data-execution_count="8">
+<div id="7b79a197" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=10 is approximately </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">10</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">10</span>))<span class="st">"</span>)</span>
 <span id="cb12-2"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=1e10 is approximately </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">1e10</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">1e10</span>))<span class="st">"</span>)</span>
 <span id="cb12-3"><a href=""></a><span class="fu">println</span>(<span class="st">"True solution for M=1e15 is approximately </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">1e15</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">1e15</span>))<span class="st">"</span>)</span>
@@ -859,7 +874,7 @@ True solution for M=1e15 is approximately [1.0, 1.0], computed solution is [1.11
 True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0, 1.0]</code></pre>
 </div>
 </div>
-<div id="e8f87352" class="cell" data-execution_count="9">
+<div id="97d172eb" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href=""></a>M <span class="op">=</span> <span class="fl">1e20</span>;</span>
 <span id="cb14-2"><a href=""></a>A <span class="op">=</span> [<span class="op">-</span>M<span class="op">^-</span><span class="fl">1</span> <span class="fl">1</span>; <span class="fl">1</span> <span class="fl">1</span>];</span>
 <span id="cb14-3"><a href=""></a>b <span class="op">=</span> [<span class="fl">1</span>., <span class="fl">2</span>.];</span>
@@ -897,25 +912,30 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 <section id="ill-conditioning-2" class="slide level2">
 <h2>Ill-conditioning</h2>
 <p>Rule of thumb: <em>for each power of 10, a significant digit is lost in the computation of</em> <span class="math inline">\(x\)</span></p>
-<div id="0b9550ef" class="cell" data-execution_count="10">
+<div id="40c3e76a" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href=""></a><span class="im">using</span> <span class="bu">LinearAlgebra;</span></span>
 <span id="cb16-2"><a href=""></a><span class="fu">cond</span>([<span class="fl">1</span>. <span class="fl">1</span>.; <span class="fl">1</span>. <span class="fl">1.0001</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>40002.00007491187</code></pre>
 </div>
 </div>
-<div id="29f65a2a" class="cell" data-execution_count="11">
+<div id="7bd6a925" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href=""></a><span class="fu">cond</span>([<span class="fl">1</span>. <span class="fl">1</span>.; <span class="fl">1</span>. <span class="fl">1.00000001</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>4.000000065548868e8</code></pre>
 </div>
 </div>
-<div id="1974f1cf" class="cell" data-execution_count="12">
+<div id="87a9299e" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href=""></a><span class="fu">cond</span>([<span class="fl">1</span>. <span class="fl">1</span>.; <span class="fl">1</span>. <span class="fl">1.000000000001</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>3.99940450394283e12</code></pre>
 </div>
 </div>
+</section></section>
+<section>
+<section id="solution-approach-iterative-methods" class="title-slide slide level1 center">
+<h1>Solution approach: iterative methods</h1>
+
 </section>
 <section id="iterative-methods" class="slide level2">
 <h2>Iterative methods</h2>
@@ -1023,7 +1043,7 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 <section id="convergence-2" class="slide level2">
 <h2>Convergence</h2>
 <p>An example of how to test both the convergence and maximum iteration conditions is</p>
-<div id="1bc8e9bd" class="cell" data-execution_count="13">
+<div id="f3c3f3f6" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href=""></a>dx <span class="op">=</span> <span class="cn">Inf</span> <span class="co"># Start with a very large number</span></span>
 <span id="cb22-2"><a href=""></a>tol <span class="op">=</span> <span class="fl">1e-6</span> <span class="co"># One example</span></span>
 <span id="cb22-3"><a href=""></a>iteration <span class="op">=</span> <span class="fl">0</span> <span class="co"># Initialize value</span></span>
@@ -1474,8 +1494,8 @@ q^{(k)} \\
 </div>
 <p>And we continue to process until the difference between <span class="math inline">\((q^{(k+1)},p^{(k+1)})\)</span> and <span class="math inline">\((q^{(k)},p^{(k)})\)</span> is smaller than our <code>tolerance</code> parameter (i.e., it converges)</p>
 </section>
-<section id="acceleration-and-stabilization-methods" class="slide level2">
-<h2>Acceleration and Stabilization methods</h2>
+<section id="enhancements-acceleration-and-stabilization-methods" class="slide level2">
+<h2>Enhancements: Acceleration and Stabilization methods</h2>
 <ul>
 <li>When our iterations converge too slowly or diverge, we can try <strong>acceleration</strong> or <strong>stabilization</strong> methods
 <ul>
@@ -1486,7 +1506,7 @@ q^{(k)} \\
 <p>These methods are conceptually simple: we will multiply our step <span class="math inline">\(x^{(k)}\rightarrow x^{(k+1)}\)</span> by a scalar <span class="math inline">\(\omega\)</span></p>
 </div>
 </section>
-<section id="acceleration-and-stabilization-methods-1" class="slide level2">
+<section id="acceleration-and-stabilization-methods" class="slide level2">
 <h2>Acceleration and Stabilization methods</h2>
 <ul>
 <li>When <span class="math inline">\(\omega &gt; 1\)</span>, it’s called <strong>extrapolation</strong>: we’re taking a <em>bigger step</em>
@@ -1506,21 +1526,21 @@ q^{(k)} \\
 </div>
 </div>
 </section>
-<section id="acceleration-and-stabilization-methods-2" class="slide level2">
+<section id="acceleration-and-stabilization-methods-1" class="slide level2">
 <h2>Acceleration and Stabilization methods</h2>
 <p>Returning to our Gauss-Seidel example, <strong>accelerating</strong> the solution with <strong>extrapolation</strong> could look like this</p>
 <div data-align="center">
 <p><img src="figures/tattonement-GS-extrap.png" height="450"></p>
 </div>
 </section>
-<section id="acceleration-and-stabilization-methods-3" class="slide level2">
+<section id="acceleration-and-stabilization-methods-2" class="slide level2">
 <h2>Acceleration and Stabilization methods</h2>
 <p>And, <strong>stabilizing</strong> the solution with <strong>dampening</strong> could look like this</p>
 <div data-align="center">
 <p><img src="figures/tattonement-GS-dampen.png" height="450"></p>
 </div>
 </section>
-<section id="acceleration-and-stabilization-methods-4" class="slide level2">
+<section id="acceleration-and-stabilization-methods-3" class="slide level2">
 <h2>Acceleration and Stabilization methods</h2>
 <p>These methods don’t always work. It may be a good idea to try if you are having issues with slow convergence or divergence</p>
 <p>We’ll skip the technical details of when these methods work for operator splitting</p>
@@ -1528,7 +1548,7 @@ q^{(k)} \\
 <li>You can find them in chapter 3 of Judd’s textbook</li>
 </ul>
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

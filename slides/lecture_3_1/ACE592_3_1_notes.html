@@ -8,7 +8,7 @@
 
 <meta name="author" content="Diego S. Cardoso">
 
-<title>AGEC 652 - Lecture 3.1</title>
+<title>ACE 592 - Lecture 3.1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -128,7 +128,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">AGEC 652 - Lecture 3.1</h1>
+<h1 class="title">ACE 592 - Lecture 3.1</h1>
 <p class="subtitle lead">Linear Systems of Equations</p>
 </div>
 
@@ -159,28 +159,8 @@ window.Quarto = {
 </header>
 
 
-<div id="69b74c66" class="cell" data-execution_count="1">
-<div class="cell-output cell-output-stderr">
-<div class="ansi-escaped-output">
-<pre><span class="ansi-green-fg ansi-bold">  Activating</span> project at `~/local_repos/ecm4ae/slides/lecture_3_1`
-
-<span class="ansi-green-fg ansi-bold">   Resolving</span> package versions...
-
-<span class="ansi-cyan-fg ansi-bold">     Project</span> No packages added to or removed from `~/local_repos/ecm4ae/slides/lecture_3_1/Project.toml`
-
-<span class="ansi-cyan-fg ansi-bold">    Manifest</span> No packages added to or removed from `~/local_repos/ecm4ae/slides/lecture_3_1/Manifest.toml`
-
-<span class="ansi-green-fg ansi-bold">   Resolving</span> package versions...
-
-<span class="ansi-cyan-fg ansi-bold">     Project</span> No packages added to or removed from `~/local_repos/ecm4ae/slides/lecture_3_1/Project.toml`
-
-<span class="ansi-cyan-fg ansi-bold">    Manifest</span> No packages added to or removed from `~/local_repos/ecm4ae/slides/lecture_3_1/Manifest.toml`
-</pre>
-</div>
-</div>
-</div>
-<section id="course-roadmap" class="level2" data-background-color="orange" data-number="1">
-<h2 data-background-color="orange" data-number="1" class="anchored" data-anchor-id="course-roadmap"><span class="header-section-number">1</span> Course Roadmap</h2>
+<section id="course-roadmap" class="level2" data-background-color="orange" data-number="0.1">
+<h2 data-background-color="orange" data-number="0.1" class="anchored" data-anchor-id="course-roadmap"><span class="header-section-number">0.1</span> Course Roadmap</h2>
 <ol type="1">
 <li><span class="gray">Introduction to Scientific Computing</span></li>
 <li><span class="gray">Fundamentals of numerical methods</span></li>
@@ -195,24 +175,26 @@ window.Quarto = {
 <li>Structural estimation</li>
 </ol>
 </section>
-<section id="agenda" class="level2" data-background-color="orange" data-number="2">
-<h2 data-background-color="orange" data-number="2" class="anchored" data-anchor-id="agenda"><span class="header-section-number">2</span> Agenda</h2>
+<section id="agenda" class="level2" data-background-color="orange" data-number="0.2">
+<h2 data-background-color="orange" data-number="0.2" class="anchored" data-anchor-id="agenda"><span class="header-section-number">0.2</span> Agenda</h2>
 <ul>
 <li>Today we will start our journey solving equations</li>
 <li>Our first stop is with a familiar problem: systems of equations</li>
 <li>Although simple from a math perspective, these problems illustrate some of the challenges with solving equations using the computer</li>
 </ul>
 </section>
-<section id="main-references-for-today" class="level2" data-background-color="orange" data-number="3">
-<h2 data-background-color="orange" data-number="3" class="anchored" data-anchor-id="main-references-for-today"><span class="header-section-number">3</span> Main references for today</h2>
+<section id="main-references-for-today" class="level2" data-background-color="orange" data-number="0.3">
+<h2 data-background-color="orange" data-number="0.3" class="anchored" data-anchor-id="main-references-for-today"><span class="header-section-number">0.3</span> Main references for today</h2>
 <ul>
 <li>Miranda &amp; Fackler (2002), Ch. 2</li>
 <li>Judd (1998), Ch. 3</li>
 <li>Lecture notes for Ivan Rudik’s <em>Dynamic Optimization</em> (Cornell)</li>
 </ul>
 </section>
-<section id="linear-equations-in-economics" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="linear-equations-in-economics"><span class="header-section-number">4</span> Linear equations in Economics</h2>
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<section id="linear-equations-in-economics" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="linear-equations-in-economics"><span class="header-section-number">1.1</span> Linear equations in Economics</h2>
 <p>(Systems of) Linear equations are very common in Economics</p>
 <p><span class="math display">Ax = b</span> where <span class="math inline">A</span> is a <span class="math inline">n \times n</span> matrix, <span class="math inline">b</span> and <span class="math inline">x</span> are <span class="math inline">n</span>-vectors</p>
 <p>Examples?</p>
@@ -224,10 +206,10 @@ window.Quarto = {
 <li>Steady-state distributions of discrete stochastic processes</li>
 </ul>
 </section>
-<section id="solving-linear-equations-in-julia" class="level2" data-number="5">
-<h2 data-number="5" class="anchored" data-anchor-id="solving-linear-equations-in-julia"><span class="header-section-number">5</span> Solving linear equations in Julia</h2>
+<section id="solving-linear-equations-in-julia" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="solving-linear-equations-in-julia"><span class="header-section-number">1.2</span> Solving linear equations in Julia</h2>
 <p>Solving linear systems is generally very easy in programming languages</p>
-<div id="308d55ff" class="cell" data-execution_count="2">
+<div id="37a830b1" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> [<span class="op">-</span><span class="fl">3</span> <span class="fl">2</span> <span class="fl">3</span>; <span class="op">-</span><span class="fl">3</span> <span class="fl">2</span> <span class="fl">1</span>; <span class="fl">3</span> <span class="fl">0</span> <span class="fl">0</span>]; b <span class="op">=</span> [<span class="fl">10</span>; <span class="fl">8</span>; <span class="op">-</span><span class="fl">3</span>];</span>
@@ -245,8 +227,8 @@ window.Quarto = {
 <li>So why bother?</li>
 </ul>
 </section>
-<section id="linear-equations-why-bother" class="level2" data-number="6">
-<h2 data-number="6" class="anchored" data-anchor-id="linear-equations-why-bother"><span class="header-section-number">6</span> Linear equations: Why bother?</h2>
+<section id="linear-equations-why-bother" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="linear-equations-why-bother"><span class="header-section-number">1.3</span> Linear equations: Why bother?</h2>
 <ol type="1">
 <li>It’s a <em>building block</em>: many methods decompose more complicated problems into sequences of linear problems
 <ul>
@@ -268,8 +250,8 @@ window.Quarto = {
 <li>In linear systems we can see these issues in a transparent and intuitive way</li>
 </ul>
 </section>
-<section id="solving-linear-equations" class="level2" data-number="7">
-<h2 data-number="7" class="anchored" data-anchor-id="solving-linear-equations"><span class="header-section-number">7</span> Solving linear equations</h2>
+<section id="solving-linear-equations" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="solving-linear-equations"><span class="header-section-number">1.4</span> Solving linear equations</h2>
 <p>OK, so how does the computer actually solve linear equations?</p>
 <p>Methods come in two flavors:</p>
 <ol type="1">
@@ -285,8 +267,11 @@ window.Quarto = {
 <li>We solve the same problem repeatedly until results converge to a solution</li>
 </ul>
 </section>
-<section id="solving-linear-equations-direct-methods" class="level2" data-number="8">
-<h2 data-number="8" class="anchored" data-anchor-id="solving-linear-equations-direct-methods"><span class="header-section-number">8</span> Solving linear equations: direct methods</h2>
+</section>
+<section id="solution-approach-direct-methods" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Solution approach: direct methods</h1>
+<section id="solving-linear-equations-direct-methods" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="solving-linear-equations-direct-methods"><span class="header-section-number">2.1</span> Solving linear equations: direct methods</h2>
 <p>Let’s start with the simplest case: a <em>lower triangular</em> matrix</p>
 <p><span class="math display">
 A =
@@ -317,8 +302,8 @@ b_n
 <p>. . .</p>
 <p>Easy, forward substitution!</p>
 </section>
-<section id="solving-linear-equations-forward-substitution" class="level2" data-number="9">
-<h2 data-number="9" class="anchored" data-anchor-id="solving-linear-equations-forward-substitution"><span class="header-section-number">9</span> Solving linear equations: forward substitution</h2>
+<section id="solving-linear-equations-forward-substitution" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="solving-linear-equations-forward-substitution"><span class="header-section-number">2.2</span> Solving linear equations: forward substitution</h2>
 <p><span class="math display">
 \begin{align}
 x_1 = &amp;  b_1/a_{11} \\
@@ -334,8 +319,8 @@ x_n = &amp; (b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots)/a_{nn} \\
 <p>. . .</p>
 <p>What is the complexity of this algorithm (in <span class="math inline">O</span> notation)?</p>
 </section>
-<section id="solving-linear-equations-forward-substitution-1" class="level2" data-number="10">
-<h2 data-number="10" class="anchored" data-anchor-id="solving-linear-equations-forward-substitution-1"><span class="header-section-number">10</span> Solving linear equations: forward substitution</h2>
+<section id="solving-linear-equations-forward-substitution-1" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="solving-linear-equations-forward-substitution-1"><span class="header-section-number">2.3</span> Solving linear equations: forward substitution</h2>
 <p><span class="math inline">x_i=\left(b_i-\sum^{i-1}_{j=1} a_{ij}x_{j}\right)/a_{ii}</span> for all <span class="math inline">i</span></p>
 <p>What is the complexity of this algorithm?</p>
 <p>. . .</p>
@@ -347,8 +332,8 @@ x_n = &amp; (b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots)/a_{nn} \\
 </ul>
 <p>Order of <span class="math inline">n^2/2</span> operations <span class="math inline">\rightarrow O(n^2)</span></p>
 </section>
-<section id="lu-factorization" class="level2" data-number="11">
-<h2 data-number="11" class="anchored" data-anchor-id="lu-factorization"><span class="header-section-number">11</span> LU factorization</h2>
+<section id="lu-factorization" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="lu-factorization"><span class="header-section-number">2.4</span> LU factorization</h2>
 <p><em>In practice we rarely need to solve triangular systems!</em> What if <span class="math inline">A</span> is not triangular?</p>
 <p>. . .</p>
 <ol type="1">
@@ -368,8 +353,8 @@ x_n = &amp; (b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots)/a_{nn} \\
 </ul>
 <p>This works for any non-singular matrix</p>
 </section>
-<section id="gaussian-elimination" class="level2" data-number="12">
-<h2 data-number="12" class="anchored" data-anchor-id="gaussian-elimination"><span class="header-section-number">12</span> Gaussian elimination</h2>
+<section id="gaussian-elimination" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="gaussian-elimination"><span class="header-section-number">2.5</span> Gaussian elimination</h2>
 <p>This uses the fact that we can do the following operations to a linear system <strong>without changing its solution</strong></p>
 <ol type="1">
 <li>multiply one row by a scalar and add to another row</li>
@@ -377,8 +362,8 @@ x_n = &amp; (b_n - a_{n1}x_1 - a_{n2}x_2 - \cdots)/a_{nn} \\
 </ol>
 <p>We’ll use that to turn a matrix <span class="math inline">(IA)</span> into <span class="math inline">(LU)</span></p>
 </section>
-<section id="lu-factorization-example" class="level2" data-number="13">
-<h2 data-number="13" class="anchored" data-anchor-id="lu-factorization-example"><span class="header-section-number">13</span> LU factorization example</h2>
+<section id="lu-factorization-example" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="lu-factorization-example"><span class="header-section-number">2.6</span> LU factorization example</h2>
 <p>Let’s see an example with system <span class="math inline">Ax = b</span></p>
 <p><span class="math display"> A =
 \begin{bmatrix}
@@ -401,8 +386,8 @@ b =
 \end{bmatrix}
 </span></p>
 </section>
-<section id="lu-factorization-1" class="level2" data-number="14">
-<h2 data-number="14" class="anchored" data-anchor-id="lu-factorization-1"><span class="header-section-number">14</span> LU factorization</h2>
+<section id="lu-factorization-1" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="lu-factorization-1"><span class="header-section-number">2.7</span> LU factorization</h2>
 <p>We start with <span class="math inline">I = L, A = U</span> and we to make <span class="math inline">U</span> upper triangular with Gaussian elimination</p>
 <p><span class="math display"> A =
 \begin{bmatrix}
@@ -431,8 +416,8 @@ b =
 \end{bmatrix}
 </span></p>
 </section>
-<section id="lu-factorization-example-1" class="level2" data-number="15">
-<h2 data-number="15" class="anchored" data-anchor-id="lu-factorization-example-1"><span class="header-section-number">15</span> LU factorization example</h2>
+<section id="lu-factorization-example-1" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="lu-factorization-example-1"><span class="header-section-number">2.8</span> LU factorization example</h2>
 <p>Seems like we are stuck in <span class="math inline">U</span>. But we can swap rows 2 and 3 to make it upper triangular.</p>
 <ul>
 <li><em>Correspondingly, we need to swap columns 2 and 3 in <span class="math inline">L</span></em></li>
@@ -454,8 +439,8 @@ b =
 <p>. . .</p>
 <p>Not yet. But all we need is for it to be <em>row-permuted</em> lower triangular because we can easily swap rows and solve for <span class="math inline">y</span></p>
 </section>
-<section id="lu-factorization-example-2" class="level2" data-number="16">
-<h2 data-number="16" class="anchored" data-anchor-id="lu-factorization-example-2"><span class="header-section-number">16</span> LU factorization example</h2>
+<section id="lu-factorization-example-2" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="lu-factorization-example-2"><span class="header-section-number">2.9</span> LU factorization example</h2>
 <p>Solving <span class="math inline">Ly = b</span> we have</p>
 <p><span class="math display">
 \begin{bmatrix}
@@ -498,8 +483,8 @@ y_3 \\
 </span></p>
 <p>which is easy to solve</p>
 </section>
-<section id="lu-factorization-example-3" class="level2" data-number="17">
-<h2 data-number="17" class="anchored" data-anchor-id="lu-factorization-example-3"><span class="header-section-number">17</span> LU factorization example</h2>
+<section id="lu-factorization-example-3" class="level2" data-number="2.10">
+<h2 data-number="2.10" class="anchored" data-anchor-id="lu-factorization-example-3"><span class="header-section-number">2.10</span> LU factorization example</h2>
 <p><span class="math display">
 \begin{bmatrix}
 1 &amp; 0 &amp; 0 \\
@@ -529,8 +514,8 @@ y_3 = &amp; (b_3 - l_{31}y_1 - l_{32}y_2)/l_{33} = [8 - (1)(10) - (0)(7)]/1 = -2
 \end{align}
 </span></p>
 </section>
-<section id="lu-factorization-example-4" class="level2" data-number="18">
-<h2 data-number="18" class="anchored" data-anchor-id="lu-factorization-example-4"><span class="header-section-number">18</span> LU factorization example</h2>
+<section id="lu-factorization-example-4" class="level2" data-number="2.11">
+<h2 data-number="2.11" class="anchored" data-anchor-id="lu-factorization-example-4"><span class="header-section-number">2.11</span> LU factorization example</h2>
 <p>Now that we have <span class="math inline">y</span>, we solve <span class="math inline">Ux = y</span></p>
 <p><span class="math display">
 \begin{bmatrix}
@@ -562,8 +547,8 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 </span></p>
 <p>And done!</p>
 </section>
-<section id="why-bother-with-this-scheme" class="level2" data-number="19">
-<h2 data-number="19" class="anchored" data-anchor-id="why-bother-with-this-scheme"><span class="header-section-number">19</span> Why bother with this scheme?</h2>
+<section id="why-bother-with-this-scheme" class="level2" data-number="2.12">
+<h2 data-number="2.12" class="anchored" data-anchor-id="why-bother-with-this-scheme"><span class="header-section-number">2.12</span> Why bother with this scheme?</h2>
 <p>Why not just use another method like Cramer’s rule?</p>
 <p>. . .</p>
 <p><strong>Speed!</strong></p>
@@ -580,18 +565,18 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 <li>Cramer: 40 million long operations!</li>
 </ul>
 </section>
-<section id="example-lu-vs-cramer" class="level2" data-number="20">
-<h2 data-number="20" class="anchored" data-anchor-id="example-lu-vs-cramer"><span class="header-section-number">20</span> Example: LU vs Cramer</h2>
+<section id="example-lu-vs-cramer" class="level2" data-number="2.13">
+<h2 data-number="2.13" class="anchored" data-anchor-id="example-lu-vs-cramer"><span class="header-section-number">2.13</span> Example: LU vs Cramer</h2>
 <p>Julia description of the division operator <code>\</code>:</p>
 <blockquote class="blockquote">
 <p>If A is upper or lower triangular (or diagonal), no factorization of A is required and the system is solved with either forward or backward substitution. For non-triangular square matrices, an LU factorization is used.</p>
 </blockquote>
 <p>So we can do LU factorization to solve systems by just doing <strong><code>x = A\b</code></strong>. But we could write it ourselves as well</p>
 </section>
-<section id="example-lu-vs-cramer-1" class="level2" data-number="21">
-<h2 data-number="21" class="anchored" data-anchor-id="example-lu-vs-cramer-1"><span class="header-section-number">21</span> Example: LU vs Cramer</h2>
+<section id="example-lu-vs-cramer-1" class="level2" data-number="2.14">
+<h2 data-number="2.14" class="anchored" data-anchor-id="example-lu-vs-cramer-1"><span class="header-section-number">2.14</span> Example: LU vs Cramer</h2>
 <p>Cramer’s Rule can be written as a simple loop:</p>
-<div id="693bb827" class="cell" data-execution_count="3">
+<div id="6b60ac75" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LinearAlgebra</span></span>
@@ -613,7 +598,7 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 <pre><code>solve_cramer (generic function with 1 method)</code></pre>
 </div>
 </div>
-<div id="a0ee952e" class="cell" data-execution_count="4">
+<div id="fe863b91" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">1000</span>;</span>
@@ -622,10 +607,10 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 </details>
 </div>
 </section>
-<section id="example-lu-vs-cramer-2" class="level2" data-number="22">
-<h2 data-number="22" class="anchored" data-anchor-id="example-lu-vs-cramer-2"><span class="header-section-number">22</span> Example: LU vs Cramer</h2>
+<section id="example-lu-vs-cramer-2" class="level2" data-number="2.15">
+<h2 data-number="2.15" class="anchored" data-anchor-id="example-lu-vs-cramer-2"><span class="header-section-number">2.15</span> Example: LU vs Cramer</h2>
 <p>Let’s see the full results of the competition for a 1,000 x 1,000 matrix:</p>
-<div id="1fbb2331" class="cell" data-execution_count="5">
+<div id="59e154c3" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">BenchmarkTools</span></span>
@@ -641,17 +626,17 @@ x_1 = &amp; (y_1 - u_{13}y_1 - u_{12}y_2)/u_{11} = [10 - (3)(1) - (2)(2)]/(-3) =
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a> and uses <span class="op">$</span>(<span class="fu">round</span>(lu_allocation<span class="op">/</span>cramer_allocation<span class="op">*</span><span class="fl">100</span>, digits <span class="op">=</span> <span class="fl">2</span>))<span class="op">%</span>  of the memory.<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Cramer's rule solved in 10.944359884 seconds and used 16016384608 kilobytes of memory.
-LU solved in 0.009854624 seconds and used 8016264 kilobytes of memory.
-LU is 1111.0 times faster 
+<pre><code>Cramer's rule solved in 11.835742245 seconds and used 16016384608 kilobytes of memory.
+LU solved in 0.009058278 seconds and used 8016264 kilobytes of memory.
+LU is 1307.0 times faster 
  and uses 0.05%  of the memory.</code></pre>
 </div>
 </div>
 </section>
-<section id="example-lu-vs-matrix-inversion" class="level2" data-number="23">
-<h2 data-number="23" class="anchored" data-anchor-id="example-lu-vs-matrix-inversion"><span class="header-section-number">23</span> Example: LU vs matrix inversion</h2>
+<section id="example-lu-vs-matrix-inversion" class="level2" data-number="2.16">
+<h2 data-number="2.16" class="anchored" data-anchor-id="example-lu-vs-matrix-inversion"><span class="header-section-number">2.16</span> Example: LU vs matrix inversion</h2>
 <p>Let’s see the full results of the competition for a 1,000 x 1,000 matrix:</p>
-<div id="f7e79f04" class="cell" data-execution_count="6">
+<div id="81863cf4" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">BenchmarkTools</span></span>
@@ -665,15 +650,15 @@ LU is 1111.0 times faster
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a> and uses <span class="op">$</span>(<span class="fu">round</span>(lu_allocation<span class="op">/</span>invers_allocation<span class="op">*</span><span class="fl">100</span>, digits <span class="op">=</span> <span class="fl">2</span>))<span class="op">%</span>  of the memory.<span class="st">")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Matrix inversion solved in 0.021905475 seconds and used 16373552 kilobytes of memory.
-LU solved in 0.009854624 seconds and used 8016264 kilobytes of memory.
-LU is 2.22 times faster
- and uses 48.96%  of the memory.</code></pre>
+<pre><code>Matrix inversion solved in 0.033294279 seconds and used 15702848 kilobytes of memory.
+LU solved in 0.009058278 seconds and used 8016264 kilobytes of memory.
+LU is 3.68 times faster
+ and uses 51.05%  of the memory.</code></pre>
 </div>
 </div>
 </section>
-<section id="other-factorizations" class="level2" data-number="24">
-<h2 data-number="24" class="anchored" data-anchor-id="other-factorizations"><span class="header-section-number">24</span> Other factorizations</h2>
+<section id="other-factorizations" class="level2" data-number="2.17">
+<h2 data-number="2.17" class="anchored" data-anchor-id="other-factorizations"><span class="header-section-number">2.17</span> Other factorizations</h2>
 <p>LU is not the only direct method used to speed up linear equation solvers</p>
 <ul>
 <li>QR factorization decomposes <span class="math inline">A = QR</span>, where <span class="math inline">Q</span> is an orthogonal matrix and <span class="math inline">R</span> is upper triangular</li>
@@ -685,8 +670,11 @@ LU is 2.22 times faster
 </ul>
 <p>Chapter 3 in Judd has a summary and references of other methods if you need them for your research in the future</p>
 </section>
-<section id="rounding-error-blow-up" class="level2" data-number="25">
-<h2 data-number="25" class="anchored" data-anchor-id="rounding-error-blow-up"><span class="header-section-number">25</span> Rounding error blow-up</h2>
+</section>
+<section id="numerical-issues-is-linear-systems" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Numerical issues is linear systems</h1>
+<section id="rounding-error-blow-up" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="rounding-error-blow-up"><span class="header-section-number">3.1</span> Rounding error blow-up</h2>
 <p>In practice, Gaussian elimination can lead to <em>very inaccurate</em> solutions. For example:</p>
 <p><span class="math display">
 \begin{bmatrix}
@@ -722,8 +710,8 @@ x_2 \\
 \end{bmatrix}
 </span></p>
 </section>
-<section id="numerical-error-blow-up" class="level2" data-number="26">
-<h2 data-number="26" class="anchored" data-anchor-id="numerical-error-blow-up"><span class="header-section-number">26</span> Numerical error blow-up</h2>
+<section id="numerical-error-blow-up" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="numerical-error-blow-up"><span class="header-section-number">3.2</span> Numerical error blow-up</h2>
 <p>Subtract <span class="math inline">-M</span> times the first row from the second to get the LU factorization <span class="math display">\begin{align*}
         \begin{bmatrix}
       1&amp;  0 \\
@@ -756,8 +744,8 @@ x_2 \\
     \end{bmatrix}
 \end{align*}</span></p>
 </section>
-<section id="numerical-error-blow-up-1" class="level2" data-number="27">
-<h2 data-number="27" class="anchored" data-anchor-id="numerical-error-blow-up-1"><span class="header-section-number">27</span> Numerical error blow-up</h2>
+<section id="numerical-error-blow-up-1" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="numerical-error-blow-up-1"><span class="header-section-number">3.3</span> Numerical error blow-up</h2>
 <p>When <span class="math inline">M</span> is large, both variables are approximately 1</p>
 <ul>
 <li>But remember adding small numbers to big numbers causes problems numerically</li>
@@ -772,8 +760,8 @@ x_2 \\
 <p>. . .</p>
 <p><strong>Large errors like this often occur because diagonal elements are very small</strong></p>
 </section>
-<section id="a-numerical-error-blow-up-solution" class="level2" data-number="28">
-<h2 data-number="28" class="anchored" data-anchor-id="a-numerical-error-blow-up-solution"><span class="header-section-number">28</span> A numerical error blow-up solution</h2>
+<section id="a-numerical-error-blow-up-solution" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="a-numerical-error-blow-up-solution"><span class="header-section-number">3.4</span> A numerical error blow-up solution</h2>
 <p><strong>Large errors like this often occur because diagonal elements are very small</strong></p>
 <p>In some cases, this can be solved by <strong>pivoting</strong>: we swap two rows so that small numbers are off-diagonal</p>
 <ul>
@@ -782,9 +770,9 @@ x_2 \\
 <p>. . .</p>
 <p>Most numerical linear algebra packages will do this for you (including the one embedded in Julia)</p>
 </section>
-<section id="numerical-error-blow-up-julia-example" class="level2" data-number="29">
-<h2 data-number="29" class="anchored" data-anchor-id="numerical-error-blow-up-julia-example"><span class="header-section-number">29</span> Numerical error blow-up: Julia example</h2>
-<div id="cd21c9fd" class="cell" data-execution_count="7">
+<section id="numerical-error-blow-up-julia-example" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="numerical-error-blow-up-julia-example"><span class="header-section-number">3.5</span> Numerical error blow-up: Julia example</h2>
+<div id="bea55eae" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">solve_lu</span>(M)</span>
@@ -810,9 +798,9 @@ True solution for M=1e20 is approx. [1.0, 1.0], computed solution is [-0.0, 1.0]
 </div>
 </div>
 </section>
-<section id="numerical-error-blow-up-julia-example-1" class="level2" data-number="30">
-<h2 data-number="30" class="anchored" data-anchor-id="numerical-error-blow-up-julia-example-1"><span class="header-section-number">30</span> Numerical error blow-up: Julia example</h2>
-<div id="7475b328" class="cell" data-execution_count="8">
+<section id="numerical-error-blow-up-julia-example-1" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="numerical-error-blow-up-julia-example-1"><span class="header-section-number">3.6</span> Numerical error blow-up: Julia example</h2>
+<div id="7b79a197" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"True solution for M=10 is approximately </span><span class="sc">$</span>(<span class="fu">true_solution</span>(<span class="fl">10</span>))<span class="st">, computed solution is </span><span class="sc">$</span>(<span class="fu">solve_lu</span>(<span class="fl">10</span>))<span class="st">"</span>)</span>
@@ -827,7 +815,7 @@ True solution for M=1e15 is approximately [1.0, 1.0], computed solution is [1.11
 True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0, 1.0]</code></pre>
 </div>
 </div>
-<div id="e8f87352" class="cell" data-execution_count="9">
+<div id="97d172eb" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="fl">1e20</span>;</span>
@@ -843,8 +831,8 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 </div>
 </div>
 </section>
-<section id="ill-conditioning" class="level2" data-number="31">
-<h2 data-number="31" class="anchored" data-anchor-id="ill-conditioning"><span class="header-section-number">31</span> Ill-conditioning</h2>
+<section id="ill-conditioning" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="ill-conditioning"><span class="header-section-number">3.7</span> Ill-conditioning</h2>
 <p>A matrix <span class="math inline">A</span> is said to be ill-conditioned if a small perturbation in <span class="math inline">b</span> yields a large change in <span class="math inline">x</span></p>
 <p>. . .</p>
 <p>One way to measure ill-conditioning in a matrix is the elasticity of the solution with respect to <span class="math inline">b</span>,</p>
@@ -852,8 +840,8 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 \sup_{||\delta b || &gt; 0} \frac{||\delta x|| / ||x||}{||\delta b|| / ||b||}
 </span> which yields the percent change in <span class="math inline">x</span> given a percentage point change in the magnitude of <span class="math inline">b</span></p>
 </section>
-<section id="ill-conditioning-1" class="level2" data-number="32">
-<h2 data-number="32" class="anchored" data-anchor-id="ill-conditioning-1"><span class="header-section-number">32</span> Ill-conditioning</h2>
+<section id="ill-conditioning-1" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="ill-conditioning-1"><span class="header-section-number">3.8</span> Ill-conditioning</h2>
 <p>If this elasticity is large, then then small errors in the representation of <span class="math inline">b</span> can lead to large errors in the computed solution <span class="math inline">x</span></p>
 <p>. . .</p>
 <p>Calculating this elasticity is computationally expensive. We approximate it by calculating the <strong>condition number</strong> <span class="math display">
@@ -862,10 +850,10 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 <p>. . .</p>
 <p><span class="math inline">\kappa</span> gives the least upper bound of the elasticity and is always larger than one</p>
 </section>
-<section id="ill-conditioning-2" class="level2" data-number="33">
-<h2 data-number="33" class="anchored" data-anchor-id="ill-conditioning-2"><span class="header-section-number">33</span> Ill-conditioning</h2>
+<section id="ill-conditioning-2" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="ill-conditioning-2"><span class="header-section-number">3.9</span> Ill-conditioning</h2>
 <p>Rule of thumb: <em>for each power of 10, a significant digit is lost in the computation of</em> <span class="math inline">x</span></p>
-<div id="0b9550ef" class="cell" data-execution_count="10">
+<div id="40c3e76a" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LinearAlgebra;</span></span>
@@ -875,7 +863,7 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 <pre><code>40002.00007491187</code></pre>
 </div>
 </div>
-<div id="29f65a2a" class="cell" data-execution_count="11">
+<div id="7bd6a925" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cond</span>([<span class="fl">1</span>. <span class="fl">1</span>.; <span class="fl">1</span>. <span class="fl">1.00000001</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -884,7 +872,7 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 <pre><code>4.000000065548868e8</code></pre>
 </div>
 </div>
-<div id="1974f1cf" class="cell" data-execution_count="12">
+<div id="87a9299e" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cond</span>([<span class="fl">1</span>. <span class="fl">1</span>.; <span class="fl">1</span>. <span class="fl">1.000000000001</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -894,8 +882,11 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 </div>
 </div>
 </section>
-<section id="iterative-methods" class="level2" data-number="34">
-<h2 data-number="34" class="anchored" data-anchor-id="iterative-methods"><span class="header-section-number">34</span> Iterative methods</h2>
+</section>
+<section id="solution-approach-iterative-methods" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Solution approach: iterative methods</h1>
+<section id="iterative-methods" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="iterative-methods"><span class="header-section-number">4.1</span> Iterative methods</h2>
 <p>Direct methods like LU factorization work well for relatively small matrices. As <span class="math inline">n</span> gets bigger, the time and memory needed becomes prohibitive</p>
 <p>. . .</p>
 <p>When that happens, we use <strong>iterative methods</strong> instead</p>
@@ -906,8 +897,8 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 <p>. . .</p>
 <p>Let’s start with the simplest and most intuitive iterative method</p>
 </section>
-<section id="fixed-point-iteration" class="level2" data-number="35">
-<h2 data-number="35" class="anchored" data-anchor-id="fixed-point-iteration"><span class="header-section-number">35</span> Fixed-point iteration</h2>
+<section id="fixed-point-iteration" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="fixed-point-iteration"><span class="header-section-number">4.2</span> Fixed-point iteration</h2>
 <p>Main idea: <em>we reformulate our problem as a fixed-point problem and iterate it the mapping</em></p>
 <p>. . .</p>
 <p>Instead of <span class="math inline">Ax = b</span>, we define <span class="math inline">G(x) \equiv Ax - b + x</span></p>
@@ -919,8 +910,8 @@ True solution for M=1e20 is approximately [1.0, 1.0], computed solution is [-0.0
 <p>. . .</p>
 <p>We don’t use this method though because it is very particular: it only converges if all eigenvalues of <span class="math inline">(A + I)</span> have modulus less than one</p>
 </section>
-<section id="operator-splitting-methods" class="level2" data-number="36">
-<h2 data-number="36" class="anchored" data-anchor-id="operator-splitting-methods"><span class="header-section-number">36</span> Operator Splitting methods</h2>
+<section id="operator-splitting-methods" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="operator-splitting-methods"><span class="header-section-number">4.3</span> Operator Splitting methods</h2>
 <p>In a more useful method, we can rewrite <span class="math inline">Ax=b</span> as <span class="math inline">Qx = b + (Q - A)x</span> for some square matrix <span class="math inline">Q</span></p>
 <p>. . .</p>
 <p>Rearranging, we get <span class="math inline">x = Q^{-1}b + (I - Q^{-1}A)x</span>, which suggests the iterating rule</p>
@@ -934,8 +925,8 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 <li>This approach can be used in nonlinear systems, too!</li>
 </ul>
 </section>
-<section id="operator-splitting-methods-1" class="level2" data-number="37">
-<h2 data-number="37" class="anchored" data-anchor-id="operator-splitting-methods-1"><span class="header-section-number">37</span> Operator Splitting methods</h2>
+<section id="operator-splitting-methods-1" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="operator-splitting-methods-1"><span class="header-section-number">4.4</span> Operator Splitting methods</h2>
 <p><span class="math inline">Q</span> is called the <strong>splitting matrix</strong>. That’s because it effectively splits <span class="math inline">A</span> into <span class="math inline">A = Q - P</span></p>
 <p>In practice, we choose <span class="math inline">Q</span> so that</p>
 <ol type="1">
@@ -943,8 +934,8 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 <li><span class="math inline">||I - Q^{-1}A ||&lt; 1</span> so we know the iteration converges</li>
 </ol>
 </section>
-<section id="gauss-jacobi-method" class="level2" data-number="38">
-<h2 data-number="38" class="anchored" data-anchor-id="gauss-jacobi-method"><span class="header-section-number">38</span> Gauss-Jacobi method</h2>
+<section id="gauss-jacobi-method" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="gauss-jacobi-method"><span class="header-section-number">4.5</span> Gauss-Jacobi method</h2>
 <p>When <span class="math inline">Q</span> is chosen to be a diagonal matrix with the same diagonal elements in <span class="math inline">A</span>, we have the <strong>Gauss-Jacobi method</strong></p>
 <p>. . .</p>
 <p>The intuition is simple:</p>
@@ -954,16 +945,16 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 </ul>
 <p><span class="math display">x_i^{(k+1)} = \frac{1}{a_{ii}}[b_i - \sum_{j \neq i}a_{ij}x_j^{(k)}]</span></p>
 </section>
-<section id="gauss-jacobi-method-1" class="level2" data-number="39">
-<h2 data-number="39" class="anchored" data-anchor-id="gauss-jacobi-method-1"><span class="header-section-number">39</span> Gauss-Jacobi method</h2>
+<section id="gauss-jacobi-method-1" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="gauss-jacobi-method-1"><span class="header-section-number">4.6</span> Gauss-Jacobi method</h2>
 <p>Iteration rule</p>
 <p><span class="math display">x_i^{(k+1)} = \frac{1}{a_{ii}}[b_i - \sum_{j \neq i}a_{ij}x_j^{(k)}]</span></p>
 <p>Then, we assume initial values <span class="math inline">x_i^{(0)} \; \forall i</span> and iterate all <span class="math inline">x_i</span> simultaneously <em>until convergence</em></p>
 <p>. . .</p>
 <p><span class="math inline">\Rightarrow</span> we turned a ” <span class="math inline">n</span> equations with <span class="math inline">n</span> unknowns” into repeatedly solving <span class="math inline">n</span> equations with <em>1</em> unknown</p>
 </section>
-<section id="convergence" class="level2" data-number="40">
-<h2 data-number="40" class="anchored" data-anchor-id="convergence"><span class="header-section-number">40</span> Convergence</h2>
+<section id="convergence" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="convergence"><span class="header-section-number">4.7</span> Convergence</h2>
 <p><strong>What do we mean by <em>until convergence</em>?</strong></p>
 <p>. . .</p>
 <p>This is a parameter you have to choose</p>
@@ -974,8 +965,8 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 </ul>
 <p>The actual choice of <code>tolerance</code> will depend on the scale of your variables and the desired precision</p>
 </section>
-<section id="convergence-1" class="level2" data-number="41">
-<h2 data-number="41" class="anchored" data-anchor-id="convergence-1"><span class="header-section-number">41</span> Convergence</h2>
+<section id="convergence-1" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="convergence-1"><span class="header-section-number">4.8</span> Convergence</h2>
 <p>It is a good practice to set a <code>max_iterations</code> parameter to stop your code once a maximum number of iterations have run</p>
 <ul>
 <li>This avoids your code getting into an <strong>infinite loop</strong> if your method turn out not to converge</li>
@@ -985,10 +976,10 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 <li>If your hit the maximum number of iteration, it’s a sign your solution did not converge</li>
 </ul>
 </section>
-<section id="convergence-2" class="level2" data-number="42">
-<h2 data-number="42" class="anchored" data-anchor-id="convergence-2"><span class="header-section-number">42</span> Convergence</h2>
+<section id="convergence-2" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="convergence-2"><span class="header-section-number">4.9</span> Convergence</h2>
 <p>An example of how to test both the convergence and maximum iteration conditions is</p>
-<div id="1bc8e9bd" class="cell" data-execution_count="13">
+<div id="f3c3f3f6" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>dx <span class="op">=</span> <span class="cn">Inf</span> <span class="co"># Start with a very large number</span></span>
@@ -1002,8 +993,8 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 </details>
 </div>
 </section>
-<section id="gauss-seidel-method" class="level2" data-number="43">
-<h2 data-number="43" class="anchored" data-anchor-id="gauss-seidel-method"><span class="header-section-number">43</span> Gauss-Seidel method</h2>
+<section id="gauss-seidel-method" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="gauss-seidel-method"><span class="header-section-number">4.10</span> Gauss-Seidel method</h2>
 <p>The Gauss-Seidel method chooses <span class="math inline">Q</span> as an <em>upper triangular matrix</em> with the same elements in <span class="math inline">A</span></p>
 <p>. . .</p>
 <p>Here is the intuition behind it</p>
@@ -1013,8 +1004,8 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 </ul>
 <p>We can make faster use of information if we use our newly calculated guesses right away. That is what the <em>Gauss-Seidel method</em> does</p>
 </section>
-<section id="gauss-seidel-method-1" class="level2" data-number="44">
-<h2 data-number="44" class="anchored" data-anchor-id="gauss-seidel-method-1"><span class="header-section-number">44</span> Gauss-Seidel method</h2>
+<section id="gauss-seidel-method-1" class="level2" data-number="4.11">
+<h2 data-number="4.11" class="anchored" data-anchor-id="gauss-seidel-method-1"><span class="header-section-number">4.11</span> Gauss-Seidel method</h2>
 <p>So, when we compute the new guess for <span class="math inline">x_2</span>, we have <span class="math inline">x_2^{(k+1)} = (b_2 - a_{21}x_1^{(k+1)} - a_{23}x_1^{(k)} - \dots)/a_{22}</span></p>
 <p>This give the iteration rule</p>
 <p><span class="math display">x_i^{(k+1)} = \frac{1}{a_{ii}}[b_i - \sum_{j = 1}^{i-1}a_{ij}x_j^{(k+1)} - \sum_{j = i+1}^{n}a_{ij}x_j^{(k)} ]</span></p>
@@ -1024,8 +1015,8 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 <li>This also makes Gauss-Seidel more flexible, because we can try different orders to get it to converge</li>
 </ul>
 </section>
-<section id="a-visual-example" class="level2" data-number="45">
-<h2 data-number="45" class="anchored" data-anchor-id="a-visual-example"><span class="header-section-number">45</span> A visual example</h2>
+<section id="a-visual-example" class="level2" data-number="4.12">
+<h2 data-number="4.12" class="anchored" data-anchor-id="a-visual-example"><span class="header-section-number">4.12</span> A visual example</h2>
 <p><em>Tâttonement</em> is an old concept (Walras, 1954) to describe how markets reach equilibrium by trial-and-error</p>
 <p>. . .</p>
 <ol type="1">
@@ -1040,8 +1031,8 @@ x^{(k+1)} = Q^{-1}b + (I - Q^{-1}A)x^{(k)}
 <p>. . .</p>
 <p>We can use this concept to illustrate iterative solution methods with linear demand/supply equations</p>
 </section>
-<section id="a-visual-example-1" class="level2" data-number="46">
-<h2 data-number="46" class="anchored" data-anchor-id="a-visual-example-1"><span class="header-section-number">46</span> A visual example</h2>
+<section id="a-visual-example-1" class="level2" data-number="4.13">
+<h2 data-number="4.13" class="anchored" data-anchor-id="a-visual-example-1"><span class="header-section-number">4.13</span> A visual example</h2>
 <p>Let’s consider the simple linear demand/supply problem</p>
 <ul>
 <li>Inverse demand: <span class="math inline">p = 10 - q</span></li>
@@ -1073,8 +1064,8 @@ q^{(k+1)} = (-2 - p^{(k)})/(-2) &amp; = 1 + p^{(k)}/2
 \end{align*}
 </span></p>
 </section>
-<section id="a-visual-example-gauss-jacobi" class="level2" data-number="47">
-<h2 data-number="47" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi"><span class="header-section-number">47</span> A visual example: Gauss-Jacobi</h2>
+<section id="a-visual-example-gauss-jacobi" class="level2" data-number="4.14">
+<h2 data-number="4.14" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi"><span class="header-section-number">4.14</span> A visual example: Gauss-Jacobi</h2>
 <p>But let’s see how that rule comes from matrix form</p>
 <p><span class="math display">
 A=
@@ -1152,8 +1143,8 @@ q^{(k)} \\
 \end{bmatrix}
 </span></p>
 </section>
-<section id="a-visual-example-gauss-jacobi-1" class="level2" data-number="48">
-<h2 data-number="48" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-1"><span class="header-section-number">48</span> A visual example: Gauss-Jacobi</h2>
+<section id="a-visual-example-gauss-jacobi-1" class="level2" data-number="4.15">
+<h2 data-number="4.15" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-1"><span class="header-section-number">4.15</span> A visual example: Gauss-Jacobi</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-Base.png" height="550"></p>
 </div>
@@ -1164,8 +1155,8 @@ q^{(k)} \\
 <p><span class="math inline">p^{(k+1)} = 10 - q^{(k)}</span></p>
 </div>
 </section>
-<section id="a-visual-example-gauss-jacobi-2" class="level2" data-number="49">
-<h2 data-number="49" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-2"><span class="header-section-number">49</span> A visual example: Gauss-Jacobi</h2>
+<section id="a-visual-example-gauss-jacobi-2" class="level2" data-number="4.16">
+<h2 data-number="4.16" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-2"><span class="header-section-number">4.16</span> A visual example: Gauss-Jacobi</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GJ-0p.png" height="550"></p>
 </div>
@@ -1177,8 +1168,8 @@ q^{(k)} \\
 <p>So</p>
 <p><span class="math inline">q_1 = 1 + (4)/2 = 3</span></p>
 </section>
-<section id="a-visual-example-gauss-jacobi-3" class="level2" data-number="50">
-<h2 data-number="50" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-3"><span class="header-section-number">50</span> A visual example: Gauss-Jacobi</h2>
+<section id="a-visual-example-gauss-jacobi-3" class="level2" data-number="4.17">
+<h2 data-number="4.17" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-3"><span class="header-section-number">4.17</span> A visual example: Gauss-Jacobi</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GJ-0p.png" height="550"></p>
 </div>
@@ -1191,8 +1182,8 @@ q^{(k)} \\
 <p><span class="math inline">q_1 = 1 + (4)/2 = 3</span></p>
 <p><span class="math inline">p_1 = 10 - 1 = 9</span></p>
 </section>
-<section id="a-visual-example-gauss-jacobi-4" class="level2" data-number="51">
-<h2 data-number="51" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-4"><span class="header-section-number">51</span> A visual example: Gauss-Jacobi</h2>
+<section id="a-visual-example-gauss-jacobi-4" class="level2" data-number="4.18">
+<h2 data-number="4.18" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-4"><span class="header-section-number">4.18</span> A visual example: Gauss-Jacobi</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GJ-1.png" height="550"></p>
 </div>
@@ -1206,8 +1197,8 @@ q^{(k)} \\
 <p><span class="math inline">p_1 = 10 - 1 = 9</span></p>
 <p>And we move to <span class="math inline">(3,9)</span></p>
 </section>
-<section id="a-visual-example-gauss-jacobi-5" class="level2" data-number="52">
-<h2 data-number="52" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-5"><span class="header-section-number">52</span> A visual example: Gauss-Jacobi</h2>
+<section id="a-visual-example-gauss-jacobi-5" class="level2" data-number="4.19">
+<h2 data-number="4.19" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-5"><span class="header-section-number">4.19</span> A visual example: Gauss-Jacobi</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GJ-2.png" height="550"></p>
 </div>
@@ -1222,8 +1213,8 @@ q^{(k)} \\
 <p><span class="math inline">p_2 = 10 - 3 = 7</span></p>
 <p>And we move to <span class="math inline">(5.5,7)</span></p>
 </section>
-<section id="a-visual-example-gauss-jacobi-6" class="level2" data-number="53">
-<h2 data-number="53" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-6"><span class="header-section-number">53</span> A visual example: Gauss-Jacobi</h2>
+<section id="a-visual-example-gauss-jacobi-6" class="level2" data-number="4.20">
+<h2 data-number="4.20" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-6"><span class="header-section-number">4.20</span> A visual example: Gauss-Jacobi</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GJ-3.png" height="550"></p>
 </div>
@@ -1238,8 +1229,8 @@ q^{(k)} \\
 <p><span class="math inline">p_3 = 10 - 5.5 = 4.5</span></p>
 <p>And we move to <span class="math inline">(4.5,4.5)</span></p>
 </section>
-<section id="a-visual-example-gauss-jacobi-7" class="level2" data-number="54">
-<h2 data-number="54" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-7"><span class="header-section-number">54</span> A visual example: Gauss-Jacobi</h2>
+<section id="a-visual-example-gauss-jacobi-7" class="level2" data-number="4.21">
+<h2 data-number="4.21" class="anchored" data-anchor-id="a-visual-example-gauss-jacobi-7"><span class="header-section-number">4.21</span> A visual example: Gauss-Jacobi</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GJ-4.png" height="550"></p>
 </div>
@@ -1250,8 +1241,8 @@ q^{(k)} \\
 </div>
 <p>And we continue to process until the difference between <span class="math inline">(q^{(k+1)},p^{(k+1)})</span> and <span class="math inline">(q^{(k)},p^{(k)})</span> is smaller than our <code>tolerance</code> parameter (i.e., it converges)</p>
 </section>
-<section id="a-visual-example-gauss-seidel" class="level2" data-number="55">
-<h2 data-number="55" class="anchored" data-anchor-id="a-visual-example-gauss-seidel"><span class="header-section-number">55</span> A visual example: Gauss-Seidel</h2>
+<section id="a-visual-example-gauss-seidel" class="level2" data-number="4.22">
+<h2 data-number="4.22" class="anchored" data-anchor-id="a-visual-example-gauss-seidel"><span class="header-section-number">4.22</span> A visual example: Gauss-Seidel</h2>
 <p>The Gauss-Seidel iteration rules looks similar, but there is an important difference</p>
 <p><span class="math display">
 \begin{align*}
@@ -1270,8 +1261,8 @@ p^{(k+1)} &amp; = 10 - \mathbf{q^{(k+1)}}
 <li>In this case, the example starts with an iteration over <span class="math inline">q</span>. Starting with <span class="math inline">p</span> is also possible <em>but gives a different sequence of steps</em></li>
 </ul>
 </section>
-<section id="a-visual-example-gauss-seidel-1" class="level2" data-number="56">
-<h2 data-number="56" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-1"><span class="header-section-number">56</span> A visual example: Gauss-Seidel</h2>
+<section id="a-visual-example-gauss-seidel-1" class="level2" data-number="4.23">
+<h2 data-number="4.23" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-1"><span class="header-section-number">4.23</span> A visual example: Gauss-Seidel</h2>
 <p>Let’s see how that rule comes from matrix form</p>
 <p><span class="math display">
 A=
@@ -1348,8 +1339,8 @@ q^{(k)} \\
 \end{bmatrix}
 </span></p>
 </section>
-<section id="a-visual-example-gauss-seidel-2" class="level2" data-number="57">
-<h2 data-number="57" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-2"><span class="header-section-number">57</span> A visual example: Gauss-Seidel</h2>
+<section id="a-visual-example-gauss-seidel-2" class="level2" data-number="4.24">
+<h2 data-number="4.24" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-2"><span class="header-section-number">4.24</span> A visual example: Gauss-Seidel</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-Base.png" height="550"></p>
 </div>
@@ -1360,8 +1351,8 @@ q^{(k)} \\
 <p><span class="math inline">p^{(k+1)} = 10 - q^{(k+1)}</span></p>
 </div>
 </section>
-<section id="a-visual-example-gauss-seidel-3" class="level2" data-number="58">
-<h2 data-number="58" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-3"><span class="header-section-number">58</span> A visual example: Gauss-Seidel</h2>
+<section id="a-visual-example-gauss-seidel-3" class="level2" data-number="4.25">
+<h2 data-number="4.25" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-3"><span class="header-section-number">4.25</span> A visual example: Gauss-Seidel</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GS-1.png" height="550"></p>
 </div>
@@ -1373,8 +1364,8 @@ q^{(k)} \\
 <p>So</p>
 <p><span class="math inline">q_1 = 1 + (4)/2 = 3</span></p>
 </section>
-<section id="a-visual-example-gauss-seidel-4" class="level2" data-number="59">
-<h2 data-number="59" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-4"><span class="header-section-number">59</span> A visual example: Gauss-Seidel</h2>
+<section id="a-visual-example-gauss-seidel-4" class="level2" data-number="4.26">
+<h2 data-number="4.26" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-4"><span class="header-section-number">4.26</span> A visual example: Gauss-Seidel</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GS-2.png" height="550"></p>
 </div>
@@ -1387,8 +1378,8 @@ q^{(k)} \\
 <p><span class="math inline">q_1 = 1 + (4)/2 = 3</span></p>
 <p><span class="math inline">p_1 = 10 - (3) = 7</span></p>
 </section>
-<section id="a-visual-example-gauss-seidel-5" class="level2" data-number="60">
-<h2 data-number="60" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-5"><span class="header-section-number">60</span> A visual example: Gauss-Seidel</h2>
+<section id="a-visual-example-gauss-seidel-5" class="level2" data-number="4.27">
+<h2 data-number="4.27" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-5"><span class="header-section-number">4.27</span> A visual example: Gauss-Seidel</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GS-3.png" height="550"></p>
 </div>
@@ -1402,8 +1393,8 @@ q^{(k)} \\
 <p><span class="math inline">p_1 = 10 - (3) = 7</span></p>
 <p><span class="math inline">q_2 = 1 + (7)/2 = 4.5</span></p>
 </section>
-<section id="a-visual-example-gauss-seidel-6" class="level2" data-number="61">
-<h2 data-number="61" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-6"><span class="header-section-number">61</span> A visual example: Gauss-Seidel</h2>
+<section id="a-visual-example-gauss-seidel-6" class="level2" data-number="4.28">
+<h2 data-number="4.28" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-6"><span class="header-section-number">4.28</span> A visual example: Gauss-Seidel</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GS-4.png" height="550"></p>
 </div>
@@ -1418,8 +1409,8 @@ q^{(k)} \\
 <p><span class="math inline">q_2 = 1 + (7)/2 = 4.5</span></p>
 <p><span class="math inline">p_2 = 10 - 4.5 = 5.5</span></p>
 </section>
-<section id="a-visual-example-gauss-seidel-7" class="level2" data-number="62">
-<h2 data-number="62" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-7"><span class="header-section-number">62</span> A visual example: Gauss-Seidel</h2>
+<section id="a-visual-example-gauss-seidel-7" class="level2" data-number="4.29">
+<h2 data-number="4.29" class="anchored" data-anchor-id="a-visual-example-gauss-seidel-7"><span class="header-section-number">4.29</span> A visual example: Gauss-Seidel</h2>
 <div style="float:right">
 <p><img src="figures/tattonement-GS-5.png" height="550"></p>
 </div>
@@ -1430,8 +1421,8 @@ q^{(k)} \\
 </div>
 <p>And we continue to process until the difference between <span class="math inline">(q^{(k+1)},p^{(k+1)})</span> and <span class="math inline">(q^{(k)},p^{(k)})</span> is smaller than our <code>tolerance</code> parameter (i.e., it converges)</p>
 </section>
-<section id="acceleration-and-stabilization-methods" class="level2" data-number="63">
-<h2 data-number="63" class="anchored" data-anchor-id="acceleration-and-stabilization-methods"><span class="header-section-number">63</span> Acceleration and Stabilization methods</h2>
+<section id="enhancements-acceleration-and-stabilization-methods" class="level2" data-number="4.30">
+<h2 data-number="4.30" class="anchored" data-anchor-id="enhancements-acceleration-and-stabilization-methods"><span class="header-section-number">4.30</span> Enhancements: Acceleration and Stabilization methods</h2>
 <ul>
 <li>When our iterations converge too slowly or diverge, we can try <strong>acceleration</strong> or <strong>stabilization</strong> methods
 <ul>
@@ -1441,8 +1432,8 @@ q^{(k)} \\
 <p>. . .</p>
 <p>These methods are conceptually simple: we will multiply our step <span class="math inline">x^{(k)}\rightarrow x^{(k+1)}</span> by a scalar <span class="math inline">\omega</span></p>
 </section>
-<section id="acceleration-and-stabilization-methods-1" class="level2" data-number="64">
-<h2 data-number="64" class="anchored" data-anchor-id="acceleration-and-stabilization-methods-1"><span class="header-section-number">64</span> Acceleration and Stabilization methods</h2>
+<section id="acceleration-and-stabilization-methods" class="level2" data-number="4.31">
+<h2 data-number="4.31" class="anchored" data-anchor-id="acceleration-and-stabilization-methods"><span class="header-section-number">4.31</span> Acceleration and Stabilization methods</h2>
 <ul>
 <li>When <span class="math inline">\omega &gt; 1</span>, it’s called <strong>extrapolation</strong>: we’re taking a <em>bigger step</em>
 <ul>
@@ -1460,27 +1451,28 @@ q^{(k)} \\
 <p><img src="figures/dampening_extrap.png" height="250"></p>
 </div>
 </section>
-<section id="acceleration-and-stabilization-methods-2" class="level2" data-number="65">
-<h2 data-number="65" class="anchored" data-anchor-id="acceleration-and-stabilization-methods-2"><span class="header-section-number">65</span> Acceleration and Stabilization methods</h2>
+<section id="acceleration-and-stabilization-methods-1" class="level2" data-number="4.32">
+<h2 data-number="4.32" class="anchored" data-anchor-id="acceleration-and-stabilization-methods-1"><span class="header-section-number">4.32</span> Acceleration and Stabilization methods</h2>
 <p>Returning to our Gauss-Seidel example, <strong>accelerating</strong> the solution with <strong>extrapolation</strong> could look like this</p>
 <div data-align="center">
 <p><img src="figures/tattonement-GS-extrap.png" height="450"></p>
 </div>
 </section>
-<section id="acceleration-and-stabilization-methods-3" class="level2" data-number="66">
-<h2 data-number="66" class="anchored" data-anchor-id="acceleration-and-stabilization-methods-3"><span class="header-section-number">66</span> Acceleration and Stabilization methods</h2>
+<section id="acceleration-and-stabilization-methods-2" class="level2" data-number="4.33">
+<h2 data-number="4.33" class="anchored" data-anchor-id="acceleration-and-stabilization-methods-2"><span class="header-section-number">4.33</span> Acceleration and Stabilization methods</h2>
 <p>And, <strong>stabilizing</strong> the solution with <strong>dampening</strong> could look like this</p>
 <div data-align="center">
 <p><img src="figures/tattonement-GS-dampen.png" height="450"></p>
 </div>
 </section>
-<section id="acceleration-and-stabilization-methods-4" class="level2" data-number="67">
-<h2 data-number="67" class="anchored" data-anchor-id="acceleration-and-stabilization-methods-4"><span class="header-section-number">67</span> Acceleration and Stabilization methods</h2>
+<section id="acceleration-and-stabilization-methods-3" class="level2" data-number="4.34">
+<h2 data-number="4.34" class="anchored" data-anchor-id="acceleration-and-stabilization-methods-3"><span class="header-section-number">4.34</span> Acceleration and Stabilization methods</h2>
 <p>These methods don’t always work. It may be a good idea to try if you are having issues with slow convergence or divergence</p>
 <p>We’ll skip the technical details of when these methods work for operator splitting</p>
 <ul>
 <li>You can find them in chapter 3 of Judd’s textbook</li>
 </ul>
+</section>
 </section>
 
 </main>

@@ -68,6 +68,7 @@ format:
 -   Judd (1998), Ch. 3
 -   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell) 
 
+# Introduction
 
 ## Linear equations in Economics
 
@@ -131,6 +132,7 @@ Methods come in two flavors:
   - We solve the same problem repeatedly until results converge to a solution
 
 
+# Solution approach: direct methods
 
 ## Solving linear equations: direct methods
 
@@ -581,8 +583,7 @@ LU is not the only direct method used to speed up linear equation solvers
 Chapter 3 in Judd has a summary and references of other methods if you need them for your research in the future
 
 
-
-
+# Numerical issues is linear systems
 
 ## Rounding error blow-up
 
@@ -799,6 +800,7 @@ cond([1. 1.; 1. 1.00000001])
 cond([1. 1.; 1. 1.000000000001])
 ```
 
+# Solution approach: iterative methods
 
 ## Iterative methods
 
@@ -1535,8 +1537,7 @@ $p^{(k+1)} = 10 - q^{(k+1)}$
 And we continue to process until the difference between $(q^{(k+1)},p^{(k+1)})$ and $(q^{(k)},p^{(k)})$ is smaller than our `tolerance` parameter (i.e., it converges)
 
 
-
-## Acceleration and Stabilization methods
+## Enhancements: Acceleration and Stabilization methods
 
 - When our iterations converge too slowly or diverge, we can try **acceleration** or **stabilization** methods
   - These concepts also work for nonlinear equations and optimization
