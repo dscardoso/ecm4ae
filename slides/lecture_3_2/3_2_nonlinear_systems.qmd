@@ -59,6 +59,8 @@ format:
 -   Nocedal & Wright (2006), Ch. 11
 -   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell)
 
+# Types of nonlinear equation problems
+
 ## Types of nonlinear equation problems
 
 Problems involving nonlinear equations are very common in economics
@@ -173,9 +175,7 @@ But complementarity problems are *not just about finding a root within* $[a, b]$
 
 . . .
 
--   **NOTE:** We will not cover complementary problems in this course
-    -   But the mechanics of solving them is similar to solving nonlinear system: we just need to transform the equations
-    -   You can find the details in Miranda & Fackler Chs. 3.7 and 3.8
+-   **NOTE:** We will complementary problems next lecture (separate slide deck)
 
 # Derivative-free methods
 
@@ -244,7 +244,12 @@ We set $l \leftarrow m$
 
 And the search continues until we are satisfied with the precision
 
-## Bisection method
+## Try it! Bisection method
+
+[Your turn!]{.blue}
+
+-   Write a function that takes `(f, a, b)` and returns a root of $f$ using the bisection method.
+-   Then, use it to find the root of $f(x) = -x^{-2} + x - 1$ between $[0.2, 4]$
 
 Here are the basic steps:
 
@@ -255,16 +260,14 @@ Here are the basic steps:
 5.  If $sign(f(m)) = sign(f(u))$, move upper bound down: $u \leftarrow m$
 6.  Repeat 2 and 3 until our interval is short enough ( $(u-l)/2 < tol$ ) and return $x = m$
 
-. . .
 
-**Let's try it**
 
--   We will write a function that takes `(f, a, b)` and returns a root of $f$ using the bisection method.
--   Then, we use it to find the root of $f(x) = -x^{-2} + x - 1$ between $[0.2, 4]$
 
 ## Bisection method
 
 ```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
 function bisection(f, lo, up)
     tolerance = 1e-3          # tolerance for solution
     mid = (lo + up)/2         # initial guess, bisect the interval
@@ -350,14 +353,16 @@ Then, we start with an initial guess $x^{(0)}$ and iterate $x^{(k+1)}\leftarrow 
 
 . . .
 
-**Let's try it!**
+Let's try it!
 
--   We will write a function that takes `(f, initial_guess)` and returns a root of $f$ using function iteration
--   Then, we'll use it to find the root of $f(x) = -x^{-2} + x - 1$ with `initial_guess = 1`
+-   Write a function that takes `(f, initial_guess)` and returns a root of $f$ using function iteration
+-   Then, use it to find the root of $f(x) = -x^{-2} + x - 1$ with `initial_guess = 1`
 
 ## Function iteration
 
 ```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
 function function_iteration(f, initial_guess)
     tolerance = 1e-3   # tolerance for solution
     difference = Inf   # initialize difference
@@ -475,20 +480,23 @@ $$
 \mathbf{x^{(k+1)}} = \mathbf{x^{(k)}} - \left[f'(\mathbf{x^{(k)}})\right]^{-1}f(\mathbf{x^{(k)}})
 $$
 
-## Newton's method
+## Your turn! Newton's method
+
+[Try it!]{.blue}
+
+-   Write a function that takes `(f, f_prime, initial_guess)` and returns a root of $f$ using Newton's method
+-   Then use it to find the root of $f(x) = -x^{-2} + x - 1$ with `initial_guess = 1`
 
 $$
 \mathbf{x^{(k+1)}} \leftarrow \mathbf{x^{(k)}} - \left[f'(\mathbf{x^{(k)}})\right]^{-1}f(\mathbf{x^{(k)}})
 $$
 
-**Let's try it!**
-
--   Write a function that takes `(f, f_prime, initial_guess)` and returns a root of $f$ using Newton's method
--   Then use it to find the root of $f(x) = -x^{-2} + x - 1$ with `initial_guess = 1`
 
 ## Newton's method
 
 ```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
 function newtons_method(f, f_prime, initial_guess)
   tolerance = 1e-3   # tolerance for solution
   difference = Inf   # initialize difference
