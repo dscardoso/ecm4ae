@@ -33,16 +33,6 @@ format:
 ---
 
 
-```{julia}
-#| echo: false
-using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
-Pkg.add("NLsolve");
-```
-
-
-
 ## Course Roadmap {background-color="orange"}
 
 1.  [Introduction to Scientific Computing]{.gray}
@@ -168,6 +158,7 @@ Another way of seeing it: imagine we're trying to maximize $F$
 What would $F$ look like between $a$ and $b$?
 
 - The decreasing part of a concave parabola
+
 :::
 ::: {.column}
 ![](figures/CP_case1.png)
@@ -423,7 +414,12 @@ We can get the value of the root using `r.zero`. Checking $f(x^*)$
 
 ```{julia}
 r.zero
-f(r.zero)
+```
+
+```{julia}
+return_f = zeros(2);
+f!(return_f, r.zero);
+return_f
 ```
 
 So the non-negativity constraint is binding for $x_2$ but not $x_1$
@@ -461,4 +457,219 @@ $$
 **Solution. If you are using standard MCP solvers (like mcpsolve), flip the sign of your $f$ function**
 
 - For more details, see Miranda and Fackler's Bibliographic Notes after Chapter 3
+
+
+
+## Example: Cournot duopoly with capacity constraints
+
+Let's revisit our duopoly example from Lecture 3.2 and add capacity constraints
+
+. . .
+
+Same setup as before:
+
+- Inverse demand: $P(Q) = \theta Q^{-1/\epsilon}$, where we add $\theta$ as demand shifter
+- Costs: $C_i(q_i) = \frac{1}{2}c_i q_i^2$
+
+. . .
+
+**New:** each firm has a capacity constraint $q_i \in [0, K_i]$
+
+- Firm $i$ maximizes $\pi_i = P(Q)q_i - C_i(q_i)$ subject to $0 \leq q_i \leq K_i$
+
+
+
+## Example: Cournot duopoly as a CP
+
+The KKT conditions for firm $i$'s problem are exactly the complementarity conditions
+
+$$
+\begin{align*}
+  q_i > 0 &\Rightarrow \frac{\partial \pi_i}{\partial q_i} \leq 0 \\
+  q_i < K_i &\Rightarrow \frac{\partial \pi_i}{\partial q_i} \geq 0
+\end{align*}
+$$
+
+. . .
+
+where marginal profit is
+
+$$
+f_i(q_1, q_2) = \theta Q^{-1/\epsilon} - \frac{\theta}{\epsilon} Q^{-1/\epsilon-1}q_i - c_i q_i
+$$
+
+. . .
+
+This is $CP(f, a, b)$ with $a = (0, 0)$ and $b = (K_1, K_2)$
+
+## Sign convention for `mcpsolve`
+
+Recall that `NLsolve.mcpsolve` uses the convention
+
+$$
+\begin{align*}
+  x_i > a_i &\Rightarrow f_i(x) \geq 0 \\
+  x_i < b_i &\Rightarrow f_i(x) \leq 0
+\end{align*}
+$$
+
+But our marginal profit $f_i > 0$ means the firm *wants to increase* $q_i$. At the upper bound $q_i = K_i$, we expect $f_i \geq 0$ (wants to produce more but can't)
+
+. . .
+
+The KKT convention has the **opposite sign**: $q_i < b_i \Rightarrow f_i \geq 0$, but `mcpsolve` expects $f_i \leq 0$
+
+**We need to pass $-f$ to `mcpsolve`**
+
+
+## Example: best responses with capacity constraints
+
+Without constraints, the Nash equilibrium is $(q_1^*, q_2^*) \approx (0.84, 0.69)$
+
+But firm 1 (the low-cost firm) can't produce more than $K_1 = 0.7$!
+
+. . .
+
+The constrained equilibrium: $q_1^* = 0.7$ (at capacity) and $q_2^* \approx 0.70$ (interior)
+
+- Firm 1's marginal profit is positive at $q_1 = K_1$: it would produce more if it could
+- Firm 2's marginal profit is zero: it is at its unconstrained optimum
+
+. . .
+
+This is precisely the complementarity structure: firm 1 is at the upper bound with $f_1 > 0$, while firm 2 is interior with $f_2 = 0$
+
+
+## Example: defining the CP with `NLsolve`
+
+We define the functions kind of like before, but now using a vector of parameters **and flipping the sign convention**
+
+```{julia}
+epsilon = 1.6; c = [0.6; 0.8]; theta = 1.0; K = [0.7; 1.0];
+
+function neg_foc!(F, q)
+    Q = sum(q)
+    for i in 1:2
+        # NOTE: we flip the sign of f_i to match mcpsolve's convention
+        F[i] = -(theta * Q^(-1/epsilon) - (theta/epsilon) * Q^(-1/epsilon - 1) * q[i] - c[i] * q[i])
+    end
+end
+```
+
+## Example: solving the CP with `NLsolve`
+
+```{julia}
+using NLsolve
+a = [0.0; 0.0]; b = K;
+r = NLsolve.mcpsolve(neg_foc!, a, b, [0.2, 0.2], method=:newton, autodiff=:forward)
+```
+
+
+## Interpreting the solution
+
+**Remember to re-flip the sign of $f$ to match the KKT convention**
+
+```{julia}
+F_check = zeros(2); # Create a vector to store the value of f at the solution
+neg_foc!(F_check, r.zero); # Compute f at the solution
+println("f(q*) = $(-F_check)")
+```
+
+. . .
+
+- $q_1^* = K_1 = 0.7$ with $f_1 > 0$: firm 1 is capacity-constrained. Marginal profit is positive: it *wants* to produce more but can't
+- $q_2^* \approx 0.70 < K_2$ with $f_2 \approx 0$: firm 2 is at its interior optimum
+
+. . .
+
+Compare with the unconstrained solution from Lecture 3.2: `[0.8396, 0.6888]`
+
+Without the constraint, firm 1 would produce $\approx 0.84 > K_1$
+
+
+
+## Best responses with capacity constraints
+
+With capacity constraints, best response functions become *truncated*
+
+![](figures/best_responses_cp.png){fig-align="center"}
+
+
+
+## Demand shifts and capacity constraints
+
+Now let's ask: **what happens to the equilibrium as demand increases?**
+
+We vary $\theta$ from $0.3$ to $3.0$
+
+. . .
+
+As $\theta$ rises, both firms want to produce more. Three regimes emerge:
+
+1. **Both interior** ($\theta < 0.75$): neither constraint binds, both FOCs hold with equality
+2. **Firm 1 at capacity** ($0.75 \leq \theta < 1.77$): firm 1 maxes out first (lower cost $\rightarrow$ higher desired output), firm 2 expands
+3. **Both at capacity** ($\theta \geq 1.77$): demand is so high that both firms are constrained
+
+
+
+## Equilibrium locus
+
+![](figures/equilibrium_locus.png){fig-align="center"}
+
+
+
+## Tracing the equilibrium locus
+
+```{julia}
+using Plots
+
+thetas = range(0.3, 3.0, length=100)
+q1_path = Float64[]; q2_path = Float64[];
+q_init = [0.3; 0.25]
+
+for θ in thetas
+    function neg_foc_theta!(F, q)
+        Q = sum(q)
+        for i in 1:2
+            F[i] = -(θ * Q^(-1/epsilon) - (θ/epsilon) * Q^(-1/epsilon - 1) * q[i] - c[i] * q[i])
+        end
+    end
+    r = NLsolve.mcpsolve(neg_foc_theta!, a, b, q_init, method=:newton, autodiff=:forward)
+    push!(q1_path, r.zero[1])
+    push!(q2_path, r.zero[2])
+    q_init = r.zero  # warm start for next iteration
+end
+```
+
+
+
+## Tracing the equilibrium locus
+
+```{julia}
+plot(collect(thetas), q1_path, label="q₁*", lw=2,
+     xlabel="θ (demand shifter)", ylabel="Equilibrium output")
+plot!(collect(thetas), q2_path, label="q₂*", lw=2)
+hline!([0.7], label="K₁", ls=:dash, color=:blue, alpha=0.5)
+hline!([1.0], label="K₂", ls=:dash, color=:red, alpha=0.5)
+```
+
+. . .
+
+The kinks in the equilibrium paths correspond to transitions between regimes where different capacity constraints become binding
+
+
+
+## Takeaways from this example
+
+1. **CP conditions arise naturally from constrained optimization**: the KKT conditions of the firms' problems are exactly the CP conditions
+
+. . .
+
+2. **Sign conventions matter**: `mcpsolve` uses a different sign convention from the standard KKT formulation. Always check the documentation and verify the solution makes economic sense
+
+. . .
+
+3. **The CP framework handles regime changes automatically**: as $\theta$ varies, the solver transitions between interior and corner solutions without us having to enumerate cases manually
+
+
 

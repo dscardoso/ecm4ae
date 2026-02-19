@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Diego S. Cardoso">
+
+<title>ACE 592 - Lecture 3.3</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="3_3_complementarity_files/libs/clipboard/clipboard.min.js"></script>
+<script src="3_3_complementarity_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="3_3_complementarity_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="3_3_complementarity_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="3_3_complementarity_files/libs/quarto-html/popper.min.js"></script>
+<script src="3_3_complementarity_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="3_3_complementarity_files/libs/quarto-html/anchor.min.js"></script>
+<link href="3_3_complementarity_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="3_3_complementarity_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="3_3_complementarity_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="3_3_complementarity_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="3_3_complementarity_files/libs/bootstrap/bootstrap-0e5f40ec6cc387305998617d35d5b2e2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-axe-checker-options" type="text/plain">eyJvdXRwdXQiOiJkb2N1bWVudCJ9</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ACE592_3_3_slides.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ACE 592 - Lecture 3.3</h1>
+<p class="subtitle lead">Complementarity Problems</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Diego S. Cardoso </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Illinois Urbana-Champaign
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="course-roadmap" class="level2" data-background-color="orange" data-number="1">
+<h2 data-background-color="orange" data-number="1" class="anchored" data-anchor-id="course-roadmap"><span class="header-section-number">1</span> Course Roadmap</h2>
+<ol type="1">
+<li><span class="gray">Introduction to Scientific Computing</span></li>
+<li><span class="gray">Fundamentals of numerical methods</span></li>
+<li><strong>Systems of equations</strong>
+<ol type="1">
+<li><span class="gray">Linear systems</span></li>
+<li><span class="gray">Nonlinear systems</span></li>
+<li><strong>Complementarity problems</strong></li>
+</ol></li>
+<li>Optimization</li>
+<li>Function approximation</li>
+<li>Structural estimation</li>
+</ol>
+</section>
+<section id="agenda" class="level2" data-background-color="orange" data-number="2">
+<h2 data-background-color="orange" data-number="2" class="anchored" data-anchor-id="agenda"><span class="header-section-number">2</span> Agenda</h2>
+<ul>
+<li>Today, we will cover complementarity problems, which are a generalization of rootfinding problems that allow for constraints on the solution</li>
+<li>Here, we cover how to set up and solve mixed complementarity problems in Julia</li>
+</ul>
+</section>
+<section id="main-references" class="level2" data-background-color="orange" data-number="3">
+<h2 data-background-color="orange" data-number="3" class="anchored" data-anchor-id="main-references"><span class="header-section-number">3</span> Main references</h2>
+<ul>
+<li>Miranda &amp; Fackler (2002), Chs. 3.7 and 3.8</li>
+<li>Lecture notes for Ivan Rudik’s <em>Dynamic Optimization</em> (Cornell)</li>
+</ul>
+</section>
+<section id="complementarity-problems" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="complementarity-problems"><span class="header-section-number">4</span> Complementarity problems</h2>
+<p>In these problems, we have</p>
+<ul>
+<li>A function <span class="math inline">f: \mathbb{R}^n \rightarrow \mathbb{R}^n</span></li>
+<li>n-vectors <span class="math inline">a</span> and <span class="math inline">b</span>, with <span class="math inline">a&lt;b</span></li>
+</ul>
+<p>And we are looking for an n-vector <span class="math inline">x \in [a,b]</span> such that for all <span class="math inline">i = 1,\dots,n</span></p>
+<p><span class="math display">
+\begin{align*}
+  x_i &gt; a_i \Rightarrow f_i(x) \geq 0 \\
+  x_i &lt; b_i \Rightarrow f_i(x) \leq 0
+\end{align*}
+</span></p>
+<p>. . .</p>
+<ul>
+<li>This formulation is usually referred to as a <em>Mixed Complementarity Problem</em> because it has an upper and lower bounds
+<ul>
+<li>Standard complementarity problems have one-sided bounds</li>
+</ul></li>
+</ul>
+</section>
+<section id="complementarity-problems-1" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="complementarity-problems-1"><span class="header-section-number">5</span> Complementarity problems</h2>
+<p>An economic interpretation</p>
+<ul>
+<li><span class="math inline">x</span> is an n-dimensional vector of some economic action</li>
+<li><span class="math inline">a_i</span> and <span class="math inline">b_i</span> are the lower and upper bounds on action <span class="math inline">i</span></li>
+<li><span class="math inline">f_i(x)</span> is the marginal arbitrage profit of action <span class="math inline">i</span></li>
+</ul>
+<p>. . .</p>
+<p>There are disequilibrium profit opportunities if</p>
+<ol type="1">
+<li><span class="math inline">x_i &lt; b_i</span> and <span class="math inline">f_i(x) &gt; 0</span> (we can increase profits by raising <span class="math inline">x_i</span>)</li>
+</ol>
+<p>. . .</p>
+<ol start="2" type="1">
+<li><span class="math inline">x_i &gt; a_i</span> and <span class="math inline">f_i(x) &lt; 0</span> (we can increase profits by decreasing <span class="math inline">x_i</span>)</li>
+</ol>
+</section>
+<section id="complementarity-problems-2" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="complementarity-problems-2"><span class="header-section-number">6</span> Complementarity problems</h2>
+<p>We obtain a no-arbitrage equilibrium if and only if <span class="math inline">x</span> solves the complementary problem <span class="math inline">CP(f,a,b)</span></p>
+<p>. . .</p>
+<p>We can write out the problem as finding a vector <span class="math inline">x \in [a,b]</span> that solves</p>
+<p><span class="math display">
+\begin{align}
+    x_i &gt; a_i \Rightarrow f_i(x) \geq 0 \,\,\, \forall i = 1,...,n \notag\\
+    x_i &lt; b_i \Rightarrow f_i(x) \leq 0 \,\,\, \forall i = 1,...,n \notag
+\end{align}
+</span></p>
+<p>. . .</p>
+<p>At interior solution, the function must be precisely be zero</p>
+<p>Corner solution at the upper bound <span class="math inline">b_i</span> for <span class="math inline">x_i</span> <span class="math inline">\rightarrow</span> <span class="math inline">f</span> must be increasing in direction <span class="math inline">i</span></p>
+<p>The opposite is true if we are at the lower bound</p>
+</section>
+<section id="complementarity-problems-3" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="complementarity-problems-3"><span class="header-section-number">7</span> Complementarity problems</h2>
+<p>Most economic problems are complementarity problems where we are</p>
+<ul>
+<li>Looking for a root of a function (e.g.&nbsp;marginal profit)</li>
+<li>Subject to some constraint (e.g.&nbsp;price floors)</li>
+</ul>
+<p>. . .</p>
+<p>The Karush-Kuhn-Tucker theorem shows that <span class="math inline">x</span> solves the constrained optimization problem ( <span class="math inline">\max_x F(x)</span> subject to <span class="math inline">x \in [a,b]</span>) only if it solves the complementarity problem <span class="math inline">CP(f, a, b)</span>, where <span class="math inline">f_i = \partial F/\partial x_i</span></p>
+<p>. . .</p>
+<p>Let’s use a linear <span class="math inline">f</span> to visualize what do we mean by a solution in complementarity problems</p>
+</section>
+<section id="complementarity-problems-4" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="complementarity-problems-4"><span class="header-section-number">8</span> Complementarity problems</h2>
+<div class="columns">
+<div class="column">
+<p><strong>Case 1</strong></p>
+<p>What is the solution?</p>
+<p><span class="math inline">x^{*} = a</span>, with <span class="math inline">f(x^{*}) &lt; 0</span></p>
+<p>Another way of seeing it: imagine we’re trying to maximize <span class="math inline">F</span></p>
+<p>What would <span class="math inline">F</span> look like between <span class="math inline">a</span> and <span class="math inline">b</span>?</p>
+<ul>
+<li>The decreasing part of a concave parabola</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/CP_case1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="complementarity-problems-5" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="complementarity-problems-5"><span class="header-section-number">9</span> Complementarity problems</h2>
+<div class="columns">
+<div class="column">
+<p><strong>Case 2</strong></p>
+<p>What is the solution?</p>
+<p><span class="math inline">x^{*} = b</span>, with <span class="math inline">f(x^{*}) &gt; 0</span></p>
+<p>Once again, imagine we’re trying to maximize <span class="math inline">F</span></p>
+<p>What would <span class="math inline">F</span> look like between <span class="math inline">a</span> and <span class="math inline">b</span>?</p>
+<ul>
+<li>The increasing part of a concave parabola</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/CP_case2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="complementarity-problems-6" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="complementarity-problems-6"><span class="header-section-number">10</span> Complementarity problems</h2>
+<div class="columns">
+<div class="column">
+<p><strong>Case 3</strong></p>
+<p>What is the solution?</p>
+<p>Some <span class="math inline">x^{*}</span> between <span class="math inline">a</span> and <span class="math inline">b</span>, with <span class="math inline">f(x^{*}) = 0</span></p>
+<p>What would <span class="math inline">F</span> look like between <span class="math inline">a</span> and <span class="math inline">b</span>?</p>
+<ul>
+<li>A concave parabola with an interior maximum</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/CP_case3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="complementarity-problems-7" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="complementarity-problems-7"><span class="header-section-number">11</span> Complementarity problems</h2>
+<div class="columns">
+<div class="column">
+<p><strong>Case 4</strong></p>
+<p>What is the solution?</p>
+<p>Actually, we have 3 solutions:</p>
+<ol type="1">
+<li><span class="math inline">x^{*} = a</span>, with <span class="math inline">f(x^{*}) &lt; 0</span></li>
+<li><span class="math inline">x^{*} = b</span>, with <span class="math inline">f(x^{*}) &gt; 0</span></li>
+<li>Some <span class="math inline">x^{*} \in (a,b)</span>, with <span class="math inline">f(x^{*}) = 0</span></li>
+</ol>
+<ul>
+<li>And this is an unstable solution</li>
+</ul>
+<p>What would <span class="math inline">F</span> look like between <span class="math inline">a</span> and <span class="math inline">b</span>?</p>
+<ul>
+<li>A convex parabola! So we end up with multiple local maxima that satisfy the 1st-order condition</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/CP_case4.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="solving-cps" class="level2" data-number="12">
+<h2 data-number="12" class="anchored" data-anchor-id="solving-cps"><span class="header-section-number">12</span> Solving CPs</h2>
+<p>A complementarity problem <span class="math inline">CP(f, a, b)</span> can be re-framed as a rootfinding problem</p>
+<p><span class="math display">
+\hat{f}(x) = min(max(f(x),a-x),b-x) = 0
+</span></p>
+<p>. . .</p>
+<p>Let’s revisit those 4 cases to understand why this works</p>
+</section>
+<section id="solving-cps-1" class="level2" data-number="13">
+<h2 data-number="13" class="anchored" data-anchor-id="solving-cps-1"><span class="header-section-number">13</span> Solving CPs</h2>
+<div class="columns">
+<div class="column">
+<p><strong>Case 1</strong></p>
+<p><span class="math inline">\hat{f}(x) = min(max(f(x),a-x),b-x) = 0</span></p>
+<ul>
+<li>Dashed lines are <span class="math inline">b-x</span> and <span class="math inline">a-x</span></li>
+<li>Thin solid line is <span class="math inline">f(x)</span></li>
+<li>Thick solid line is <span class="math inline">\hat{f}(x)</span></li>
+</ul>
+<p><span class="math inline">\rightarrow</span> The solution is <span class="math inline">x^{*} = a</span></p>
+<ul>
+<li>Note that <span class="math inline">f(x) &lt; 0</span> for all <span class="math inline">x \in [a,b]</span>, so this is still case 1</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/CP_sol_case1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="solving-cps-2" class="level2" data-number="14">
+<h2 data-number="14" class="anchored" data-anchor-id="solving-cps-2"><span class="header-section-number">14</span> Solving CPs</h2>
+<div class="columns">
+<div class="column">
+<p><strong>Case 2: </strong></p>
+<p><span class="math inline">\hat{f}(x) = min(max(f(x),a-x),b-x) = 0</span></p>
+<p>In this case, <span class="math inline">f(x) &gt; 0</span> for all <span class="math inline">x \in [a,b]</span></p>
+<p><span class="math inline">\rightarrow</span> The solution is <span class="math inline">x^{*} = b</span></p>
+</div><div class="column">
+<p><img src="figures/CP_sol_case2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="solving-cps-3" class="level2" data-number="15">
+<h2 data-number="15" class="anchored" data-anchor-id="solving-cps-3"><span class="header-section-number">15</span> Solving CPs</h2>
+<div class="columns">
+<div class="column">
+<p><strong>Case 3: </strong></p>
+<p><span class="math inline">\hat{f}(x) = min(max(f(x),a-x),b-x) = 0</span></p>
+<p>In this case, <span class="math inline">f(a) &gt; 0</span>, <span class="math inline">f(b) &lt; 0</span></p>
+<p><span class="math inline">\rightarrow</span> The solution is some <span class="math inline">x^{*} \in (a, b)</span></p>
+</div><div class="column">
+<p><img src="figures/CP_sol_case3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="solving-cps-4" class="level2" data-number="16">
+<h2 data-number="16" class="anchored" data-anchor-id="solving-cps-4"><span class="header-section-number">16</span> Solving CPs</h2>
+<div class="columns">
+<div class="column">
+<p><strong>Case 4: </strong></p>
+<p><span class="math inline">\hat{f}(x) = min(max(f(x),a-x),b-x) = 0</span></p>
+<p>In this case, <span class="math inline">f(a) &lt; 0</span>, <span class="math inline">f(b) &gt; 0</span></p>
+<p><span class="math inline">\rightarrow</span> We have the same 3 solutions</p>
+<ol type="1">
+<li><span class="math inline">x^{*} = a</span>, with <span class="math inline">f(x^{*}) &lt; 0</span></li>
+<li><span class="math inline">x^{*} = b</span>, with <span class="math inline">f(x^{*}) &gt; 0</span></li>
+<li>Some <span class="math inline">x^{*} \in (a,b)</span>, with <span class="math inline">f(x^{*}) = 0</span></li>
+</ol>
+</div><div class="column">
+<p><img src="figures/CP_sol_case4.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="solving-cps-5" class="level2" data-number="17">
+<h2 data-number="17" class="anchored" data-anchor-id="solving-cps-5"><span class="header-section-number">17</span> Solving CPs</h2>
+<p>Once <span class="math inline">\hat{f}</span> is defined, we can use Newton’s or quasi-Newton methods to solve a CP</p>
+<p>If using Newton, we need to define the Jacobian <span class="math inline">\hat{J}(x)</span> with row <span class="math inline">i</span> being</p>
+<ul>
+<li><span class="math inline">\hat{J}_i(x) = J_i(x)</span>, if <span class="math inline">a_i - x_i &lt; f_i(x) &lt; b_i - x_i</span></li>
+<li><span class="math inline">\hat{J}_i(x) = -I_i(x)</span>, otherwise</li>
+</ul>
+<p>where <span class="math inline">I</span> is the identity matrix</p>
+</section>
+<section id="solving-cps-6" class="level2" data-number="18">
+<h2 data-number="18" class="anchored" data-anchor-id="solving-cps-6"><span class="header-section-number">18</span> Solving CPs</h2>
+<p>Rootfinding with <span class="math inline">\hat{f}</span> works well in many cases but can be problematic in others</p>
+<p>One problem is that <span class="math inline">\hat{f}</span> has nondiferentiable kinks. This can lead to slower convergence, cycles, and incorrect answers<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>A workaround is to use an alternative function with smoother transitions, such as Fischer’s function</p>
+<p><span class="math display">
+\tilde{f}(x) = \phi^{-}(\phi^{+}(f(x), a-x), b-x)
+</span></p>
+<p>where <span class="math inline">\phi_i^\pm(u, v) = u_i + v_i \pm \sqrt{u_i^2 + v_i^2}</span></p>
+</section>
+<section id="solving-cps-7" class="level2" data-number="19">
+<h2 data-number="19" class="anchored" data-anchor-id="solving-cps-7"><span class="header-section-number">19</span> Solving CPs</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/CP_smooth.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="solving-cps-in-julia" class="level2" data-number="20">
+<h2 data-number="20" class="anchored" data-anchor-id="solving-cps-in-julia"><span class="header-section-number">20</span> Solving CPs in Julia</h2>
+<p>We can use <code>NLsolve.mcpsolve</code> to solve CPs for us.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> Let’s see an example of <span class="math inline">f:\mathbb{R}^2\rightarrow\mathbb{R}^2</span></p>
+<p><span class="math display">
+\begin{align*}
+f_1(x_1, x_2) &amp; = 3x_1^2 + 2x_1x_2 + 2x_2^2 + 4x_1 - 2 \\
+f_2(x_1, x_2) &amp; = 2x_1^2 + 5x_1x_2 - x_2^2 + x_2 + 1
+\end{align*}
+</span></p>
+<div id="e99ef1cd" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">f!</span>(F, x) <span class="co"># We need to program the memory-efficient version here</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    F[<span class="fl">1</span>] <span class="op">=</span> <span class="fl">3</span><span class="op">*</span>x[<span class="fl">1</span>]<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span>x[<span class="fl">1</span>]<span class="op">*</span>x[<span class="fl">2</span>] <span class="op">+</span> <span class="fl">2</span><span class="op">*</span>x[<span class="fl">2</span>]<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">4</span><span class="op">*</span>x[<span class="fl">1</span>] <span class="op">-</span> <span class="fl">2</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    F[<span class="fl">2</span>] <span class="op">=</span> <span class="fl">2</span><span class="op">*</span>x[<span class="fl">1</span>]<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">5</span><span class="op">*</span>x[<span class="fl">1</span>]<span class="op">*</span>x[<span class="fl">2</span>] <span class="op">-</span>   x[<span class="fl">2</span>]<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> x[<span class="fl">2</span>] <span class="op">+</span> <span class="fl">1</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="solving-cps-in-julia-1" class="level2" data-number="21">
+<h2 data-number="21" class="anchored" data-anchor-id="solving-cps-in-julia-1"><span class="header-section-number">21</span> Solving CPs in Julia</h2>
+<p>Let’s check the solution to the standard rootfinding problem using Newton’s method</p>
+<div id="375851e7" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">NLsolve;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>NLsolve.<span class="fu">nlsolve</span>(f!, [<span class="fl">1.0</span>; <span class="fl">1.0</span>], method<span class="op">=:</span>newton)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>Results of Nonlinear Solver Algorithm
+ * Algorithm: Newton with line-search
+ * Starting Point: [1.0, 1.0]
+ * Zero: [-0.13736984903421828, 1.1872338075744588]
+ * Inf-norm of residuals: 0.000000
+ * Iterations: 7
+ * Convergence: true
+   * |x - x'| &lt; 0.0e+00: false
+   * |f(x)| &lt; 1.0e-08: true
+ * Function Calls (f): 8
+ * Jacobian Calls (df/dx): 8</code></pre>
+</div>
+</div>
+</section>
+<section id="solving-cps-in-julia-2" class="level2" data-number="22">
+<h2 data-number="22" class="anchored" data-anchor-id="solving-cps-in-julia-2"><span class="header-section-number">22</span> Solving CPs in Julia</h2>
+<p>Getting back to CPs, let’s impose non-negativity bounds on <span class="math inline">x_1</span> and <span class="math inline">x_2</span> but no upper bounds (i.e., <span class="math inline">b = \infty</span>)</p>
+<div id="a172052b" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="fl">0.0</span>; <span class="fl">0.0</span>]; b <span class="op">=</span> [<span class="cn">Inf</span>; <span class="cn">Inf</span>];</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> NLsolve.<span class="fu">mcpsolve</span>(f!, a, b, [<span class="fl">1.0</span>; <span class="fl">1.0</span>], method<span class="op">=:</span>newton, reformulation<span class="op">=:</span>minmax)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>Results of Nonlinear Solver Algorithm
+ * Algorithm: Newton with line-search
+ * Starting Point: [1.0, 1.0]
+ * Zero: [0.3874258867227982, 0.0]
+ * Inf-norm of residuals: 0.000000
+ * Iterations: 10
+ * Convergence: true
+   * |x - x'| &lt; 0.0e+00: false
+   * |f(x)| &lt; 1.0e-08: true
+ * Function Calls (f): 17
+ * Jacobian Calls (df/dx): 10</code></pre>
+</div>
+</div>
+</section>
+<section id="solving-cps-in-julia-3" class="level2" data-number="23">
+<h2 data-number="23" class="anchored" data-anchor-id="solving-cps-in-julia-3"><span class="header-section-number">23</span> Solving CPs in Julia</h2>
+<p>We can get the value of the root using <code>r.zero</code>. Checking <span class="math inline">f(x^*)</span></p>
+<div id="67871135" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>r.zero</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<pre><code>2-element Vector{Float64}:
+ 0.3874258867227982
+ 0.0</code></pre>
+</div>
+</div>
+<div id="969e0b1a" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>return_f <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">2</span>);</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">f!</span>(return_f, r.zero);</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>return_f</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<pre><code>2-element Vector{Float64}:
+ 3.241851231905457e-14
+ 1.300197635405893</code></pre>
+</div>
+</div>
+<p>So the non-negativity constraint is binding for <span class="math inline">x_2</span> but not <span class="math inline">x_1</span></p>
+</section>
+<section id="solving-cps-in-julia-4" class="level2" data-number="24">
+<h2 data-number="24" class="anchored" data-anchor-id="solving-cps-in-julia-4"><span class="header-section-number">24</span> Solving CPs in Julia</h2>
+<p><code>mcpsolve</code> takes the same additional arguments <code>nlsolve</code> had: <code>xtol</code>, <code>ftol</code>, <code>iterations</code>, <code>autodiff</code>, <code>show_trace</code>, etc</p>
+<p>In addition, it accepts argument <code>reformulation</code>, which can be <code>smooth</code> (default) or <code>minmax</code></p>
+<div id="df78f2f7" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>NLsolve.<span class="fu">mcpsolve</span>(f!, a, b, [<span class="fl">1.0</span>; <span class="fl">1.0</span>], method<span class="op">=:</span>newton, reformulation<span class="op">=:</span>minmax, autodiff<span class="op">=:</span>forward)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>Results of Nonlinear Solver Algorithm
+ * Algorithm: Newton with line-search
+ * Starting Point: [1.0, 1.0]
+ * Zero: [0.38742588672279815, 0.0]
+ * Inf-norm of residuals: 0.000000
+ * Iterations: 10
+ * Convergence: true
+   * |x - x'| &lt; 0.0e+00: false
+   * |f(x)| &lt; 1.0e-08: true
+ * Function Calls (f): 17
+ * Jacobian Calls (df/dx): 10</code></pre>
+</div>
+</div>
+</section>
+<section id="solving-cps-in-julia-5" class="level2" data-number="25">
+<h2 data-number="25" class="anchored" data-anchor-id="solving-cps-in-julia-5"><span class="header-section-number">25</span> Solving CPs in Julia</h2>
+<p><strong>IMPORTANT NOTE</strong>. Miranda and Fackler’s textbook (and Matlab package) flip the sign convention for MCP problems. That’s because they are formulating it with an economic context in mind, where these problems arise from constrained optimization.</p>
+<p>. . .</p>
+<p>The conventional setup is (note the flipped inequalities)</p>
+<p><span class="math display">
+\begin{align*}
+  x_i &gt; a_i \Rightarrow f_i(x) \leq 0 \\
+  x_i &lt; b_i \Rightarrow f_i(x) \geq 0
+\end{align*}
+</span></p>
+<p>. . .</p>
+<p><strong>Solution. If you are using standard MCP solvers (like mcpsolve), flip the sign of your <span class="math inline">f</span> function</strong></p>
+<ul>
+<li>For more details, see Miranda and Fackler’s Bibliographic Notes after Chapter 3</li>
+</ul>
+</section>
+<section id="example-cournot-duopoly-with-capacity-constraints" class="level2" data-number="26">
+<h2 data-number="26" class="anchored" data-anchor-id="example-cournot-duopoly-with-capacity-constraints"><span class="header-section-number">26</span> Example: Cournot duopoly with capacity constraints</h2>
+<p>Let’s revisit our duopoly example from Lecture 3.2 and add capacity constraints</p>
+<p>. . .</p>
+<p>Same setup as before:</p>
+<ul>
+<li>Inverse demand: <span class="math inline">P(Q) = \theta Q^{-1/\epsilon}</span>, where we add <span class="math inline">\theta</span> as demand shifter</li>
+<li>Costs: <span class="math inline">C_i(q_i) = \frac{1}{2}c_i q_i^2</span></li>
+</ul>
+<p>. . .</p>
+<p><strong>New:</strong> each firm has a capacity constraint <span class="math inline">q_i \in [0, K_i]</span></p>
+<ul>
+<li>Firm <span class="math inline">i</span> maximizes <span class="math inline">\pi_i = P(Q)q_i - C_i(q_i)</span> subject to <span class="math inline">0 \leq q_i \leq K_i</span></li>
+</ul>
+</section>
+<section id="example-cournot-duopoly-as-a-cp" class="level2" data-number="27">
+<h2 data-number="27" class="anchored" data-anchor-id="example-cournot-duopoly-as-a-cp"><span class="header-section-number">27</span> Example: Cournot duopoly as a CP</h2>
+<p>The KKT conditions for firm <span class="math inline">i</span>’s problem are exactly the complementarity conditions</p>
+<p><span class="math display">
+\begin{align*}
+  q_i &gt; 0 &amp;\Rightarrow \frac{\partial \pi_i}{\partial q_i} \leq 0 \\
+  q_i &lt; K_i &amp;\Rightarrow \frac{\partial \pi_i}{\partial q_i} \geq 0
+\end{align*}
+</span></p>
+<p>. . .</p>
+<p>where marginal profit is</p>
+<p><span class="math display">
+f_i(q_1, q_2) = \theta Q^{-1/\epsilon} - \frac{\theta}{\epsilon} Q^{-1/\epsilon-1}q_i - c_i q_i
+</span></p>
+<p>. . .</p>
+<p>This is <span class="math inline">CP(f, a, b)</span> with <span class="math inline">a = (0, 0)</span> and <span class="math inline">b = (K_1, K_2)</span></p>
+</section>
+<section id="sign-convention-for-mcpsolve" class="level2" data-number="28">
+<h2 data-number="28" class="anchored" data-anchor-id="sign-convention-for-mcpsolve"><span class="header-section-number">28</span> Sign convention for <code>mcpsolve</code></h2>
+<p>Recall that <code>NLsolve.mcpsolve</code> uses the convention</p>
+<p><span class="math display">
+\begin{align*}
+  x_i &gt; a_i &amp;\Rightarrow f_i(x) \geq 0 \\
+  x_i &lt; b_i &amp;\Rightarrow f_i(x) \leq 0
+\end{align*}
+</span></p>
+<p>But our marginal profit <span class="math inline">f_i &gt; 0</span> means the firm <em>wants to increase</em> <span class="math inline">q_i</span>. At the upper bound <span class="math inline">q_i = K_i</span>, we expect <span class="math inline">f_i \geq 0</span> (wants to produce more but can’t)</p>
+<p>. . .</p>
+<p>The KKT convention has the <strong>opposite sign</strong>: <span class="math inline">q_i &lt; b_i \Rightarrow f_i \geq 0</span>, but <code>mcpsolve</code> expects <span class="math inline">f_i \leq 0</span></p>
+<p><strong>We need to pass <span class="math inline">-f</span> to <code>mcpsolve</code></strong></p>
+</section>
+<section id="example-best-responses-with-capacity-constraints" class="level2" data-number="29">
+<h2 data-number="29" class="anchored" data-anchor-id="example-best-responses-with-capacity-constraints"><span class="header-section-number">29</span> Example: best responses with capacity constraints</h2>
+<p>Without constraints, the Nash equilibrium is <span class="math inline">(q_1^*, q_2^*) \approx (0.84, 0.69)</span></p>
+<p>But firm 1 (the low-cost firm) can’t produce more than <span class="math inline">K_1 = 0.7</span>!</p>
+<p>. . .</p>
+<p>The constrained equilibrium: <span class="math inline">q_1^* = 0.7</span> (at capacity) and <span class="math inline">q_2^* \approx 0.70</span> (interior)</p>
+<ul>
+<li>Firm 1’s marginal profit is positive at <span class="math inline">q_1 = K_1</span>: it would produce more if it could</li>
+<li>Firm 2’s marginal profit is zero: it is at its unconstrained optimum</li>
+</ul>
+<p>. . .</p>
+<p>This is precisely the complementarity structure: firm 1 is at the upper bound with <span class="math inline">f_1 &gt; 0</span>, while firm 2 is interior with <span class="math inline">f_2 = 0</span></p>
+</section>
+<section id="example-defining-the-cp-with-nlsolve" class="level2" data-number="30">
+<h2 data-number="30" class="anchored" data-anchor-id="example-defining-the-cp-with-nlsolve"><span class="header-section-number">30</span> Example: defining the CP with <code>NLsolve</code></h2>
+<p>We define the functions kind of like before, but now using a vector of parameters <strong>and flipping the sign convention</strong></p>
+<div id="bc22697c" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>epsilon <span class="op">=</span> <span class="fl">1.6</span>; c <span class="op">=</span> [<span class="fl">0.6</span>; <span class="fl">0.8</span>]; theta <span class="op">=</span> <span class="fl">1.0</span>; K <span class="op">=</span> [<span class="fl">0.7</span>; <span class="fl">1.0</span>];</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">neg_foc!</span>(F, q)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    Q <span class="op">=</span> <span class="fu">sum</span>(q)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># </span><span class="al">NOTE</span><span class="co">: we flip the sign of f_i to match mcpsolve's convention</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        F[i] <span class="op">=</span> <span class="fu">-</span>(theta <span class="op">*</span> Q<span class="op">^</span>(<span class="op">-</span><span class="fl">1</span><span class="op">/</span>epsilon) <span class="op">-</span> (theta<span class="op">/</span>epsilon) <span class="op">*</span> Q<span class="op">^</span>(<span class="op">-</span><span class="fl">1</span><span class="op">/</span>epsilon <span class="op">-</span> <span class="fl">1</span>) <span class="op">*</span> q[i] <span class="op">-</span> c[i] <span class="op">*</span> q[i])</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>neg_foc! (generic function with 1 method)</code></pre>
+</div>
+</div>
+</section>
+<section id="example-solving-the-cp-with-nlsolve" class="level2" data-number="31">
+<h2 data-number="31" class="anchored" data-anchor-id="example-solving-the-cp-with-nlsolve"><span class="header-section-number">31</span> Example: solving the CP with <code>NLsolve</code></h2>
+<div id="6147197b" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">NLsolve</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="fl">0.0</span>; <span class="fl">0.0</span>]; b <span class="op">=</span> K;</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> NLsolve.<span class="fu">mcpsolve</span>(neg_foc!, a, b, [<span class="fl">0.2</span>, <span class="fl">0.2</span>], method<span class="op">=:</span>newton, autodiff<span class="op">=:</span>forward)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>Results of Nonlinear Solver Algorithm
+ * Algorithm: Newton with line-search
+ * Starting Point: [0.2, 0.2]
+ * Zero: [0.7000000005741004, 0.6976530167583798]
+ * Inf-norm of residuals: 0.000000
+ * Iterations: 5
+ * Convergence: true
+   * |x - x'| &lt; 0.0e+00: false
+   * |f(x)| &lt; 1.0e-08: true
+ * Function Calls (f): 6
+ * Jacobian Calls (df/dx): 5</code></pre>
+</div>
+</div>
+</section>
+<section id="interpreting-the-solution" class="level2" data-number="32">
+<h2 data-number="32" class="anchored" data-anchor-id="interpreting-the-solution"><span class="header-section-number">32</span> Interpreting the solution</h2>
+<p><strong>Remember to re-flip the sign of <span class="math inline">f</span> to match the KKT convention</strong></p>
+<div id="6f5627e4" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>F_check <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">2</span>); <span class="co"># Create a vector to store the value of f at the solution</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">neg_foc!</span>(F_check, r.zero); <span class="co"># Compute f at the solution</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"f(q*) = </span><span class="sc">$</span>(<span class="op">-</span>F_check)<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>f(q*) = [0.13727104736212875, -1.489608436600065e-11]</code></pre>
+</div>
+</div>
+<p>. . .</p>
+<ul>
+<li><span class="math inline">q_1^* = K_1 = 0.7</span> with <span class="math inline">f_1 &gt; 0</span>: firm 1 is capacity-constrained. Marginal profit is positive: it <em>wants</em> to produce more but can’t</li>
+<li><span class="math inline">q_2^* \approx 0.70 &lt; K_2</span> with <span class="math inline">f_2 \approx 0</span>: firm 2 is at its interior optimum</li>
+</ul>
+<p>. . .</p>
+<p>Compare with the unconstrained solution from Lecture 3.2: <code>[0.8396, 0.6888]</code></p>
+<p>Without the constraint, firm 1 would produce <span class="math inline">\approx 0.84 &gt; K_1</span></p>
+</section>
+<section id="best-responses-with-capacity-constraints" class="level2" data-number="33">
+<h2 data-number="33" class="anchored" data-anchor-id="best-responses-with-capacity-constraints"><span class="header-section-number">33</span> Best responses with capacity constraints</h2>
+<p>With capacity constraints, best response functions become <em>truncated</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/best_responses_cp.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="demand-shifts-and-capacity-constraints" class="level2" data-number="34">
+<h2 data-number="34" class="anchored" data-anchor-id="demand-shifts-and-capacity-constraints"><span class="header-section-number">34</span> Demand shifts and capacity constraints</h2>
+<p>Now let’s ask: <strong>what happens to the equilibrium as demand increases?</strong></p>
+<p>We vary <span class="math inline">\theta</span> from <span class="math inline">0.3</span> to <span class="math inline">3.0</span></p>
+<p>. . .</p>
+<p>As <span class="math inline">\theta</span> rises, both firms want to produce more. Three regimes emerge:</p>
+<ol type="1">
+<li><strong>Both interior</strong> (<span class="math inline">\theta &lt; 0.75</span>): neither constraint binds, both FOCs hold with equality</li>
+<li><strong>Firm 1 at capacity</strong> (<span class="math inline">0.75 \leq \theta &lt; 1.77</span>): firm 1 maxes out first (lower cost <span class="math inline">\rightarrow</span> higher desired output), firm 2 expands</li>
+<li><strong>Both at capacity</strong> (<span class="math inline">\theta \geq 1.77</span>): demand is so high that both firms are constrained</li>
+</ol>
+</section>
+<section id="equilibrium-locus" class="level2" data-number="35">
+<h2 data-number="35" class="anchored" data-anchor-id="equilibrium-locus"><span class="header-section-number">35</span> Equilibrium locus</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/equilibrium_locus.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="tracing-the-equilibrium-locus" class="level2" data-number="36">
+<h2 data-number="36" class="anchored" data-anchor-id="tracing-the-equilibrium-locus"><span class="header-section-number">36</span> Tracing the equilibrium locus</h2>
+<div id="1f7a1013" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Plots</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>thetas <span class="op">=</span> <span class="fu">range</span>(<span class="fl">0.3</span>, <span class="fl">3.0</span>, length<span class="op">=</span><span class="fl">100</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>q1_path <span class="op">=</span> <span class="dt">Float64</span>[]; q2_path <span class="op">=</span> <span class="dt">Float64</span>[];</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>q_init <span class="op">=</span> [<span class="fl">0.3</span>; <span class="fl">0.25</span>]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> θ <span class="kw">in</span> thetas</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> <span class="fu">neg_foc_theta!</span>(F, q)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        Q <span class="op">=</span> <span class="fu">sum</span>(q)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>            F[i] <span class="op">=</span> <span class="fu">-</span>(θ <span class="op">*</span> Q<span class="op">^</span>(<span class="op">-</span><span class="fl">1</span><span class="op">/</span>epsilon) <span class="op">-</span> (θ<span class="op">/</span>epsilon) <span class="op">*</span> Q<span class="op">^</span>(<span class="op">-</span><span class="fl">1</span><span class="op">/</span>epsilon <span class="op">-</span> <span class="fl">1</span>) <span class="op">*</span> q[i] <span class="op">-</span> c[i] <span class="op">*</span> q[i])</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> NLsolve.<span class="fu">mcpsolve</span>(neg_foc_theta!, a, b, q_init, method<span class="op">=:</span>newton, autodiff<span class="op">=:</span>forward)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(q1_path, r.zero[<span class="fl">1</span>])</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(q2_path, r.zero[<span class="fl">2</span>])</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    q_init <span class="op">=</span> r.zero  <span class="co"># warm start for next iteration</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="tracing-the-equilibrium-locus-1" class="level2" data-number="37">
+<h2 data-number="37" class="anchored" data-anchor-id="tracing-the-equilibrium-locus-1"><span class="header-section-number">37</span> Tracing the equilibrium locus</h2>
+<div id="0bb45794" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">collect</span>(thetas), q1_path, label<span class="op">=</span><span class="st">"q₁*"</span>, lw<span class="op">=</span><span class="fl">2</span>,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     xlabel<span class="op">=</span><span class="st">"θ (demand shifter)"</span>, ylabel<span class="op">=</span><span class="st">"Equilibrium output"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fu">collect</span>(thetas), q2_path, label<span class="op">=</span><span class="st">"q₂*"</span>, lw<span class="op">=</span><span class="fl">2</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">hline!</span>([<span class="fl">0.7</span>], label<span class="op">=</span><span class="st">"K₁"</span>, ls<span class="op">=:</span>dash, color<span class="op">=:</span>blue, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hline!</span>([<span class="fl">1.0</span>], label<span class="op">=</span><span class="st">"K₂"</span>, ls<span class="op">=:</span>dash, color<span class="op">=:</span>red, alpha<span class="op">=</span><span class="fl">0.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<!--?xml version="1.0" encoding="utf-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" width="672" height="480" viewbox="0 0 2688 1920">
+<defs>
+  <clippath id="clip800">
+    <rect x="0" y="0" width="2688" height="1920"></rect>
+  </clippath>
+</defs>
+<path clip-path="url(#clip800)" d="M0 1920 L2688 1920 L2688 0 L0 0  Z" fill="#ffffff" fill-rule="evenodd" fill-opacity="1"></path>
+<defs>
+  <clippath id="clip801">
+    <rect x="226" y="47" width="2416" height="1688"></rect>
+  </clippath>
+</defs>
+<path clip-path="url(#clip800)" d="M226.141 1734.12 L2640.76 1734.12 L2640.76 47.2441 L226.141 47.2441  Z" fill="#ffffff" fill-rule="evenodd" fill-opacity="1"></path>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="463.215,1734.12 463.215,47.2441 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="885.056,1734.12 885.056,47.2441 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="1306.9,1734.12 1306.9,47.2441 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="1728.74,1734.12 1728.74,47.2441 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="2150.58,1734.12 2150.58,47.2441 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="2572.42,1734.12 2572.42,47.2441 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="226.141,1516.58 2640.76,1516.58 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="226.141,1279.65 2640.76,1279.65 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="226.141,1042.72 2640.76,1042.72 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="226.141,805.784 2640.76,805.784 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="226.141,568.851 2640.76,568.851 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="226.141,331.918 2640.76,331.918 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:2; stroke-opacity:0.1; fill:none" points="226.141,94.9858 2640.76,94.9858 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,1734.12 2640.76,1734.12 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="463.215,1734.12 463.215,1715.22 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="885.056,1734.12 885.056,1715.22 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="1306.9,1734.12 1306.9,1715.22 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="1728.74,1734.12 1728.74,1715.22 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="2150.58,1734.12 2150.58,1715.22 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="2572.42,1734.12 2572.42,1715.22 "></polyline>
+<path clip-path="url(#clip800)" d="M441.097 1767.34 Q437.486 1767.34 435.657 1770.9 Q433.852 1774.45 433.852 1781.58 Q433.852 1788.68 435.657 1792.25 Q437.486 1795.79 441.097 1795.79 Q444.731 1795.79 446.537 1792.25 Q448.365 1788.68 448.365 1781.58 Q448.365 1774.45 446.537 1770.9 Q444.731 1767.34 441.097 1767.34 M441.097 1763.64 Q446.907 1763.64 449.963 1768.24 Q453.041 1772.83 453.041 1781.58 Q453.041 1790.3 449.963 1794.91 Q446.907 1799.49 441.097 1799.49 Q435.287 1799.49 432.208 1794.91 Q429.153 1790.3 429.153 1781.58 Q429.153 1772.83 432.208 1768.24 Q435.287 1763.64 441.097 1763.64 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M461.259 1792.94 L466.143 1792.94 L466.143 1798.82 L461.259 1798.82 L461.259 1792.94 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M476.375 1764.26 L494.731 1764.26 L494.731 1768.2 L480.657 1768.2 L480.657 1776.67 Q481.675 1776.32 482.694 1776.16 Q483.713 1775.97 484.731 1775.97 Q490.518 1775.97 493.898 1779.15 Q497.277 1782.32 497.277 1787.73 Q497.277 1793.31 493.805 1796.41 Q490.333 1799.49 484.013 1799.49 Q481.838 1799.49 479.569 1799.12 Q477.324 1798.75 474.916 1798.01 L474.916 1793.31 Q477 1794.45 479.222 1795 Q481.444 1795.56 483.921 1795.56 Q487.925 1795.56 490.263 1793.45 Q492.601 1791.34 492.601 1787.73 Q492.601 1784.12 490.263 1782.02 Q487.925 1779.91 483.921 1779.91 Q482.046 1779.91 480.171 1780.33 Q478.319 1780.74 476.375 1781.62 L476.375 1764.26 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M852.208 1794.89 L859.847 1794.89 L859.847 1768.52 L851.537 1770.19 L851.537 1765.93 L859.801 1764.26 L864.477 1764.26 L864.477 1794.89 L872.116 1794.89 L872.116 1798.82 L852.208 1798.82 L852.208 1794.89 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M881.56 1792.94 L886.444 1792.94 L886.444 1798.82 L881.56 1798.82 L881.56 1792.94 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M906.629 1767.34 Q903.018 1767.34 901.19 1770.9 Q899.384 1774.45 899.384 1781.58 Q899.384 1788.68 901.19 1792.25 Q903.018 1795.79 906.629 1795.79 Q910.264 1795.79 912.069 1792.25 Q913.898 1788.68 913.898 1781.58 Q913.898 1774.45 912.069 1770.9 Q910.264 1767.34 906.629 1767.34 M906.629 1763.64 Q912.44 1763.64 915.495 1768.24 Q918.574 1772.83 918.574 1781.58 Q918.574 1790.3 915.495 1794.91 Q912.44 1799.49 906.629 1799.49 Q900.819 1799.49 897.741 1794.91 Q894.685 1790.3 894.685 1781.58 Q894.685 1772.83 897.741 1768.24 Q900.819 1763.64 906.629 1763.64 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1274.55 1794.89 L1282.19 1794.89 L1282.19 1768.52 L1273.88 1770.19 L1273.88 1765.93 L1282.14 1764.26 L1286.82 1764.26 L1286.82 1794.89 L1294.45 1794.89 L1294.45 1798.82 L1274.55 1798.82 L1274.55 1794.89 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1303.9 1792.94 L1308.78 1792.94 L1308.78 1798.82 L1303.9 1798.82 L1303.9 1792.94 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1319.01 1764.26 L1337.37 1764.26 L1337.37 1768.2 L1323.3 1768.2 L1323.3 1776.67 Q1324.31 1776.32 1325.33 1776.16 Q1326.35 1775.97 1327.37 1775.97 Q1333.16 1775.97 1336.54 1779.15 Q1339.92 1782.32 1339.92 1787.73 Q1339.92 1793.31 1336.44 1796.41 Q1332.97 1799.49 1326.65 1799.49 Q1324.48 1799.49 1322.21 1799.12 Q1319.96 1798.75 1317.56 1798.01 L1317.56 1793.31 Q1319.64 1794.45 1321.86 1795 Q1324.08 1795.56 1326.56 1795.56 Q1330.56 1795.56 1332.9 1793.45 Q1335.24 1791.34 1335.24 1787.73 Q1335.24 1784.12 1332.9 1782.02 Q1330.56 1779.91 1326.56 1779.91 Q1324.69 1779.91 1322.81 1780.33 Q1320.96 1780.74 1319.01 1781.62 L1319.01 1764.26 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1699.98 1794.89 L1716.29 1794.89 L1716.29 1798.82 L1694.35 1798.82 L1694.35 1794.89 Q1697.01 1792.13 1701.6 1787.5 Q1706.2 1782.85 1707.38 1781.51 Q1709.63 1778.98 1710.51 1777.25 Q1711.41 1775.49 1711.41 1773.8 Q1711.41 1771.04 1709.47 1769.31 Q1707.54 1767.57 1704.44 1767.57 Q1702.24 1767.57 1699.79 1768.34 Q1697.36 1769.1 1694.58 1770.65 L1694.58 1765.93 Q1697.41 1764.79 1699.86 1764.21 Q1702.31 1763.64 1704.35 1763.64 Q1709.72 1763.64 1712.91 1766.32 Q1716.11 1769.01 1716.11 1773.5 Q1716.11 1775.63 1715.3 1777.55 Q1714.51 1779.45 1712.41 1782.04 Q1711.83 1782.71 1708.73 1785.93 Q1705.62 1789.12 1699.98 1794.89 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1726.11 1792.94 L1730.99 1792.94 L1730.99 1798.82 L1726.11 1798.82 L1726.11 1792.94 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1751.18 1767.34 Q1747.57 1767.34 1745.74 1770.9 Q1743.93 1774.45 1743.93 1781.58 Q1743.93 1788.68 1745.74 1792.25 Q1747.57 1795.79 1751.18 1795.79 Q1754.81 1795.79 1756.62 1792.25 Q1758.45 1788.68 1758.45 1781.58 Q1758.45 1774.45 1756.62 1770.9 Q1754.81 1767.34 1751.18 1767.34 M1751.18 1763.64 Q1756.99 1763.64 1760.04 1768.24 Q1763.12 1772.83 1763.12 1781.58 Q1763.12 1790.3 1760.04 1794.91 Q1756.99 1799.49 1751.18 1799.49 Q1745.37 1799.49 1742.29 1794.91 Q1739.23 1790.3 1739.23 1781.58 Q1739.23 1772.83 1742.29 1768.24 Q1745.37 1763.64 1751.18 1763.64 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2122.31 1794.89 L2138.63 1794.89 L2138.63 1798.82 L2116.69 1798.82 L2116.69 1794.89 Q2119.35 1792.13 2123.93 1787.5 Q2128.54 1782.85 2129.72 1781.51 Q2131.97 1778.98 2132.85 1777.25 Q2133.75 1775.49 2133.75 1773.8 Q2133.75 1771.04 2131.8 1769.31 Q2129.88 1767.57 2126.78 1767.57 Q2124.58 1767.57 2122.13 1768.34 Q2119.7 1769.1 2116.92 1770.65 L2116.92 1765.93 Q2119.74 1764.79 2122.2 1764.21 Q2124.65 1763.64 2126.69 1763.64 Q2132.06 1763.64 2135.25 1766.32 Q2138.45 1769.01 2138.45 1773.5 Q2138.45 1775.63 2137.64 1777.55 Q2136.85 1779.45 2134.74 1782.04 Q2134.17 1782.71 2131.06 1785.93 Q2127.96 1789.12 2122.31 1794.89 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2148.45 1792.94 L2153.33 1792.94 L2153.33 1798.82 L2148.45 1798.82 L2148.45 1792.94 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2163.56 1764.26 L2181.92 1764.26 L2181.92 1768.2 L2167.85 1768.2 L2167.85 1776.67 Q2168.86 1776.32 2169.88 1776.16 Q2170.9 1775.97 2171.92 1775.97 Q2177.71 1775.97 2181.09 1779.15 Q2184.47 1782.32 2184.47 1787.73 Q2184.47 1793.31 2180.99 1796.41 Q2177.52 1799.49 2171.2 1799.49 Q2169.03 1799.49 2166.76 1799.12 Q2164.51 1798.75 2162.1 1798.01 L2162.1 1793.31 Q2164.19 1794.45 2166.41 1795 Q2168.63 1795.56 2171.11 1795.56 Q2175.11 1795.56 2177.45 1793.45 Q2179.79 1791.34 2179.79 1787.73 Q2179.79 1784.12 2177.45 1782.02 Q2175.11 1779.91 2171.11 1779.91 Q2169.23 1779.91 2167.36 1780.33 Q2165.51 1780.74 2163.56 1781.62 L2163.56 1764.26 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2553.73 1780.19 Q2557.08 1780.9 2558.96 1783.17 Q2560.86 1785.44 2560.86 1788.77 Q2560.86 1793.89 2557.34 1796.69 Q2553.82 1799.49 2547.34 1799.49 Q2545.16 1799.49 2542.85 1799.05 Q2540.55 1798.64 2538.1 1797.78 L2538.1 1793.27 Q2540.05 1794.4 2542.36 1794.98 Q2544.67 1795.56 2547.2 1795.56 Q2551.6 1795.56 2553.89 1793.82 Q2556.2 1792.08 2556.2 1788.77 Q2556.2 1785.72 2554.05 1784.01 Q2551.92 1782.27 2548.1 1782.27 L2544.07 1782.27 L2544.07 1778.43 L2548.29 1778.43 Q2551.73 1778.43 2553.56 1777.06 Q2555.39 1775.67 2555.39 1773.08 Q2555.39 1770.42 2553.49 1769.01 Q2551.62 1767.57 2548.1 1767.57 Q2546.18 1767.57 2543.98 1767.99 Q2541.78 1768.4 2539.14 1769.28 L2539.14 1765.12 Q2541.8 1764.38 2544.12 1764.01 Q2546.46 1763.64 2548.52 1763.64 Q2553.84 1763.64 2556.94 1766.07 Q2560.05 1768.47 2560.05 1772.59 Q2560.05 1775.46 2558.4 1777.46 Q2556.76 1779.42 2553.73 1780.19 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2569.72 1792.94 L2574.61 1792.94 L2574.61 1798.82 L2569.72 1798.82 L2569.72 1792.94 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2594.79 1767.34 Q2591.18 1767.34 2589.35 1770.9 Q2587.54 1774.45 2587.54 1781.58 Q2587.54 1788.68 2589.35 1792.25 Q2591.18 1795.79 2594.79 1795.79 Q2598.42 1795.79 2600.23 1792.25 Q2602.06 1788.68 2602.06 1781.58 Q2602.06 1774.45 2600.23 1770.9 Q2598.42 1767.34 2594.79 1767.34 M2594.79 1763.64 Q2600.6 1763.64 2603.66 1768.24 Q2606.73 1772.83 2606.73 1781.58 Q2606.73 1790.3 2603.66 1794.91 Q2600.6 1799.49 2594.79 1799.49 Q2588.98 1799.49 2585.9 1794.91 Q2582.85 1790.3 2582.85 1781.58 Q2582.85 1772.83 2585.9 1768.24 Q2588.98 1763.64 2594.79 1763.64 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1160.81 1860.7 L1140.53 1860.7 Q1141.01 1870.22 1143.2 1874.26 Q1145.94 1879.23 1150.68 1879.23 Q1155.46 1879.23 1158.1 1874.23 Q1160.42 1869.84 1160.81 1860.7 M1160.71 1855.29 Q1159.82 1846.25 1158.1 1843.07 Q1155.36 1838.04 1150.68 1838.04 Q1145.81 1838.04 1143.24 1843.01 Q1141.2 1847.02 1140.59 1855.29 L1160.71 1855.29 M1150.68 1833.27 Q1158.32 1833.27 1162.68 1840.01 Q1167.04 1846.73 1167.04 1858.63 Q1167.04 1870.51 1162.68 1877.25 Q1158.32 1884.03 1150.68 1884.03 Q1143.01 1884.03 1138.68 1877.25 Q1134.32 1870.51 1134.32 1858.63 Q1134.32 1846.73 1138.68 1840.01 Q1143.01 1833.27 1150.68 1833.27 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1211.54 1833.84 Q1207.27 1841.16 1205.21 1848.32 Q1203.14 1855.48 1203.14 1862.84 Q1203.14 1870.19 1205.21 1877.41 Q1207.31 1884.61 1211.54 1891.89 L1206.45 1891.89 Q1201.67 1884.41 1199.29 1877.19 Q1196.93 1869.96 1196.93 1862.84 Q1196.93 1855.74 1199.29 1848.54 Q1201.64 1841.35 1206.45 1833.84 L1211.54 1833.84 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1246.36 1853.06 L1246.36 1833.78 L1252.22 1833.78 L1252.22 1883.3 L1246.36 1883.3 L1246.36 1877.95 Q1244.51 1881.14 1241.68 1882.7 Q1238.88 1884.22 1234.93 1884.22 Q1228.47 1884.22 1224.4 1879.07 Q1220.36 1873.91 1220.36 1865.51 Q1220.36 1857.11 1224.4 1851.95 Q1228.47 1846.79 1234.93 1846.79 Q1238.88 1846.79 1241.68 1848.35 Q1244.51 1849.88 1246.36 1853.06 M1226.4 1865.51 Q1226.4 1871.97 1229.05 1875.66 Q1231.72 1879.32 1236.37 1879.32 Q1241.01 1879.32 1243.69 1875.66 Q1246.36 1871.97 1246.36 1865.51 Q1246.36 1859.05 1243.69 1855.39 Q1241.01 1851.7 1236.37 1851.7 Q1231.72 1851.7 1229.05 1855.39 Q1226.4 1859.05 1226.4 1865.51 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1294.77 1864.01 L1294.77 1866.88 L1267.84 1866.88 Q1268.23 1872.92 1271.47 1876.11 Q1274.75 1879.26 1280.58 1879.26 Q1283.95 1879.26 1287.1 1878.43 Q1290.28 1877.6 1293.4 1875.95 L1293.4 1881.49 Q1290.25 1882.82 1286.94 1883.52 Q1283.63 1884.22 1280.23 1884.22 Q1271.7 1884.22 1266.7 1879.26 Q1261.73 1874.29 1261.73 1865.83 Q1261.73 1857.07 1266.44 1851.95 Q1271.19 1846.79 1279.21 1846.79 Q1286.4 1846.79 1290.57 1851.44 Q1294.77 1856.06 1294.77 1864.01 M1288.91 1862.29 Q1288.85 1857.49 1286.21 1854.62 Q1283.6 1851.76 1279.27 1851.76 Q1274.37 1851.76 1271.41 1854.53 Q1268.48 1857.3 1268.04 1862.33 L1288.91 1862.29 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1332.14 1854.5 Q1334.33 1850.55 1337.39 1848.67 Q1340.45 1846.79 1344.58 1846.79 Q1350.15 1846.79 1353.18 1850.71 Q1356.2 1854.59 1356.2 1861.78 L1356.2 1883.3 L1350.31 1883.3 L1350.31 1861.98 Q1350.31 1856.85 1348.5 1854.37 Q1346.68 1851.89 1342.96 1851.89 Q1338.41 1851.89 1335.77 1854.91 Q1333.12 1857.93 1333.12 1863.15 L1333.12 1883.3 L1327.24 1883.3 L1327.24 1861.98 Q1327.24 1856.82 1325.42 1854.37 Q1323.61 1851.89 1319.82 1851.89 Q1315.33 1851.89 1312.69 1854.94 Q1310.05 1857.97 1310.05 1863.15 L1310.05 1883.3 L1304.16 1883.3 L1304.16 1847.65 L1310.05 1847.65 L1310.05 1853.19 Q1312.05 1849.91 1314.86 1848.35 Q1317.66 1846.79 1321.51 1846.79 Q1325.39 1846.79 1328.1 1848.77 Q1330.83 1850.74 1332.14 1854.5 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1384.08 1865.38 Q1376.98 1865.38 1374.25 1867 Q1371.51 1868.63 1371.51 1872.54 Q1371.51 1875.66 1373.55 1877.51 Q1375.62 1879.32 1379.15 1879.32 Q1384.02 1879.32 1386.95 1875.88 Q1389.91 1872.42 1389.91 1866.69 L1389.91 1865.38 L1384.08 1865.38 M1395.76 1862.96 L1395.76 1883.3 L1389.91 1883.3 L1389.91 1877.89 Q1387.9 1881.14 1384.91 1882.7 Q1381.92 1884.22 1377.59 1884.22 Q1372.11 1884.22 1368.87 1881.17 Q1365.65 1878.08 1365.65 1872.92 Q1365.65 1866.91 1369.66 1863.85 Q1373.71 1860.8 1381.7 1860.8 L1389.91 1860.8 L1389.91 1860.23 Q1389.91 1856.18 1387.23 1853.99 Q1384.59 1851.76 1379.79 1851.76 Q1376.73 1851.76 1373.83 1852.49 Q1370.94 1853.22 1368.26 1854.69 L1368.26 1849.28 Q1371.48 1848.03 1374.5 1847.43 Q1377.53 1846.79 1380.39 1846.79 Q1388.12 1846.79 1391.94 1850.8 Q1395.76 1854.81 1395.76 1862.96 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1437.46 1861.78 L1437.46 1883.3 L1431.6 1883.3 L1431.6 1861.98 Q1431.6 1856.92 1429.63 1854.4 Q1427.66 1851.89 1423.71 1851.89 Q1418.97 1851.89 1416.23 1854.91 Q1413.49 1857.93 1413.49 1863.15 L1413.49 1883.3 L1407.6 1883.3 L1407.6 1847.65 L1413.49 1847.65 L1413.49 1853.19 Q1415.59 1849.98 1418.43 1848.39 Q1421.29 1846.79 1425.01 1846.79 Q1431.16 1846.79 1434.31 1850.61 Q1437.46 1854.4 1437.46 1861.78 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1472.6 1853.06 L1472.6 1833.78 L1478.45 1833.78 L1478.45 1883.3 L1472.6 1883.3 L1472.6 1877.95 Q1470.75 1881.14 1467.92 1882.7 Q1465.12 1884.22 1461.17 1884.22 Q1454.71 1884.22 1450.64 1879.07 Q1446.59 1873.91 1446.59 1865.51 Q1446.59 1857.11 1450.64 1851.95 Q1454.71 1846.79 1461.17 1846.79 Q1465.12 1846.79 1467.92 1848.35 Q1470.75 1849.88 1472.6 1853.06 M1452.64 1865.51 Q1452.64 1871.97 1455.28 1875.66 Q1457.96 1879.32 1462.6 1879.32 Q1467.25 1879.32 1469.92 1875.66 Q1472.6 1871.97 1472.6 1865.51 Q1472.6 1859.05 1469.92 1855.39 Q1467.25 1851.7 1462.6 1851.7 Q1457.96 1851.7 1455.28 1855.39 Q1452.64 1859.05 1452.64 1865.51 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1533.96 1848.7 L1533.96 1854.24 Q1531.48 1852.97 1528.81 1852.33 Q1526.13 1851.7 1523.27 1851.7 Q1518.91 1851.7 1516.71 1853.03 Q1514.55 1854.37 1514.55 1857.04 Q1514.55 1859.08 1516.11 1860.26 Q1517.67 1861.4 1522.38 1862.45 L1524.38 1862.9 Q1530.62 1864.24 1533.23 1866.69 Q1535.87 1869.11 1535.87 1873.47 Q1535.87 1878.43 1531.93 1881.33 Q1528.01 1884.22 1521.14 1884.22 Q1518.27 1884.22 1515.15 1883.65 Q1512.06 1883.11 1508.63 1882 L1508.63 1875.95 Q1511.87 1877.64 1515.02 1878.49 Q1518.18 1879.32 1521.26 1879.32 Q1525.4 1879.32 1527.63 1877.92 Q1529.86 1876.49 1529.86 1873.91 Q1529.86 1871.52 1528.23 1870.25 Q1526.64 1868.98 1521.2 1867.8 L1519.16 1867.32 Q1513.72 1866.18 1511.3 1863.82 Q1508.88 1861.43 1508.88 1857.3 Q1508.88 1852.27 1512.45 1849.53 Q1516.01 1846.79 1522.57 1846.79 Q1525.81 1846.79 1528.68 1847.27 Q1531.54 1847.75 1533.96 1848.7 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1574.83 1861.78 L1574.83 1883.3 L1568.97 1883.3 L1568.97 1861.98 Q1568.97 1856.92 1567 1854.4 Q1565.03 1851.89 1561.08 1851.89 Q1556.34 1851.89 1553.6 1854.91 Q1550.86 1857.93 1550.86 1863.15 L1550.86 1883.3 L1544.98 1883.3 L1544.98 1833.78 L1550.86 1833.78 L1550.86 1853.19 Q1552.96 1849.98 1555.8 1848.39 Q1558.66 1846.79 1562.39 1846.79 Q1568.53 1846.79 1571.68 1850.61 Q1574.83 1854.4 1574.83 1861.78 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1586.51 1847.65 L1592.37 1847.65 L1592.37 1883.3 L1586.51 1883.3 L1586.51 1847.65 M1586.51 1833.78 L1592.37 1833.78 L1592.37 1841.19 L1586.51 1841.19 L1586.51 1833.78 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1622.67 1833.78 L1622.67 1838.65 L1617.07 1838.65 Q1613.92 1838.65 1612.67 1839.92 Q1611.47 1841.19 1611.47 1844.5 L1611.47 1847.65 L1621.11 1847.65 L1621.11 1852.2 L1611.47 1852.2 L1611.47 1883.3 L1605.58 1883.3 L1605.58 1852.2 L1599.98 1852.2 L1599.98 1847.65 L1605.58 1847.65 L1605.58 1845.17 Q1605.58 1839.22 1608.35 1836.51 Q1611.12 1833.78 1617.13 1833.78 L1622.67 1833.78 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1632.22 1837.53 L1632.22 1847.65 L1644.28 1847.65 L1644.28 1852.2 L1632.22 1852.2 L1632.22 1871.56 Q1632.22 1875.92 1633.4 1877.16 Q1634.6 1878.4 1638.26 1878.4 L1644.28 1878.4 L1644.28 1883.3 L1638.26 1883.3 Q1631.49 1883.3 1628.91 1880.79 Q1626.33 1878.24 1626.33 1871.56 L1626.33 1852.2 L1622.03 1852.2 L1622.03 1847.65 L1626.33 1847.65 L1626.33 1837.53 L1632.22 1837.53 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1682.47 1864.01 L1682.47 1866.88 L1655.55 1866.88 Q1655.93 1872.92 1659.18 1876.11 Q1662.45 1879.26 1668.28 1879.26 Q1671.65 1879.26 1674.8 1878.43 Q1677.99 1877.6 1681.11 1875.95 L1681.11 1881.49 Q1677.96 1882.82 1674.64 1883.52 Q1671.33 1884.22 1667.93 1884.22 Q1659.4 1884.22 1654.4 1879.26 Q1649.44 1874.29 1649.44 1865.83 Q1649.44 1857.07 1654.15 1851.95 Q1658.89 1846.79 1666.91 1846.79 Q1674.1 1846.79 1678.27 1851.44 Q1682.47 1856.06 1682.47 1864.01 M1676.62 1862.29 Q1676.55 1857.49 1673.91 1854.62 Q1671.3 1851.76 1666.97 1851.76 Q1662.07 1851.76 1659.11 1854.53 Q1656.18 1857.3 1655.74 1862.33 L1676.62 1862.29 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1712.74 1853.13 Q1711.76 1852.55 1710.58 1852.3 Q1709.43 1852.01 1708.03 1852.01 Q1703.07 1852.01 1700.39 1855.26 Q1697.75 1858.47 1697.75 1864.52 L1697.75 1883.3 L1691.86 1883.3 L1691.86 1847.65 L1697.75 1847.65 L1697.75 1853.19 Q1699.6 1849.94 1702.56 1848.39 Q1705.52 1846.79 1709.75 1846.79 Q1710.36 1846.79 1711.09 1846.89 Q1711.82 1846.95 1712.71 1847.11 L1712.74 1853.13 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M1717.96 1833.84 L1723.06 1833.84 Q1727.83 1841.35 1730.19 1848.54 Q1732.57 1855.74 1732.57 1862.84 Q1732.57 1869.96 1730.19 1877.19 Q1727.83 1884.41 1723.06 1891.89 L1717.96 1891.89 Q1722.2 1884.61 1724.27 1877.41 Q1726.37 1870.19 1726.37 1862.84 Q1726.37 1855.48 1724.27 1848.32 Q1722.2 1841.16 1717.96 1833.84 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,1734.12 226.141,47.2441 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,1516.58 245.038,1516.58 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,1279.65 245.038,1279.65 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,1042.72 245.038,1042.72 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,805.784 245.038,805.784 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,568.851 245.038,568.851 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,331.918 245.038,331.918 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="226.141,94.9858 245.038,94.9858 "></polyline>
+<path clip-path="url(#clip800)" d="M128.159 1502.38 Q124.548 1502.38 122.719 1505.94 Q120.913 1509.49 120.913 1516.62 Q120.913 1523.72 122.719 1527.29 Q124.548 1530.83 128.159 1530.83 Q131.793 1530.83 133.599 1527.29 Q135.427 1523.72 135.427 1516.62 Q135.427 1509.49 133.599 1505.94 Q131.793 1502.38 128.159 1502.38 M128.159 1498.68 Q133.969 1498.68 137.025 1503.28 Q140.103 1507.87 140.103 1516.62 Q140.103 1525.34 137.025 1529.95 Q133.969 1534.53 128.159 1534.53 Q122.349 1534.53 119.27 1529.95 Q116.214 1525.34 116.214 1516.62 Q116.214 1507.87 119.27 1503.28 Q122.349 1498.68 128.159 1498.68 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M148.321 1527.98 L153.205 1527.98 L153.205 1533.86 L148.321 1533.86 L148.321 1527.98 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M176.237 1503.38 L164.432 1521.82 L176.237 1521.82 L176.237 1503.38 M175.01 1499.3 L180.89 1499.3 L180.89 1521.82 L185.821 1521.82 L185.821 1525.71 L180.89 1525.71 L180.89 1533.86 L176.237 1533.86 L176.237 1525.71 L160.636 1525.71 L160.636 1521.2 L175.01 1499.3 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M129.64 1265.45 Q126.029 1265.45 124.201 1269.01 Q122.395 1272.55 122.395 1279.68 Q122.395 1286.79 124.201 1290.35 Q126.029 1293.9 129.64 1293.9 Q133.275 1293.9 135.08 1290.35 Q136.909 1286.79 136.909 1279.68 Q136.909 1272.55 135.08 1269.01 Q133.275 1265.45 129.64 1265.45 M129.64 1261.74 Q135.45 1261.74 138.506 1266.35 Q141.585 1270.93 141.585 1279.68 Q141.585 1288.41 138.506 1293.02 Q135.45 1297.6 129.64 1297.6 Q123.83 1297.6 120.751 1293.02 Q117.696 1288.41 117.696 1279.68 Q117.696 1270.93 120.751 1266.35 Q123.83 1261.74 129.64 1261.74 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M149.802 1291.05 L154.686 1291.05 L154.686 1296.93 L149.802 1296.93 L149.802 1291.05 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M164.918 1262.37 L183.274 1262.37 L183.274 1266.3 L169.2 1266.3 L169.2 1274.78 Q170.219 1274.43 171.237 1274.27 Q172.256 1274.08 173.274 1274.08 Q179.061 1274.08 182.441 1277.25 Q185.821 1280.42 185.821 1285.84 Q185.821 1291.42 182.348 1294.52 Q178.876 1297.6 172.557 1297.6 Q170.381 1297.6 168.112 1297.23 Q165.867 1296.86 163.46 1296.12 L163.46 1291.42 Q165.543 1292.55 167.765 1293.11 Q169.987 1293.66 172.464 1293.66 Q176.469 1293.66 178.807 1291.56 Q181.145 1289.45 181.145 1285.84 Q181.145 1282.23 178.807 1280.12 Q176.469 1278.02 172.464 1278.02 Q170.589 1278.02 168.714 1278.43 Q166.862 1278.85 164.918 1279.73 L164.918 1262.37 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M128.483 1028.51 Q124.872 1028.51 123.043 1032.08 Q121.238 1035.62 121.238 1042.75 Q121.238 1049.86 123.043 1053.42 Q124.872 1056.96 128.483 1056.96 Q132.117 1056.96 133.923 1053.42 Q135.751 1049.86 135.751 1042.75 Q135.751 1035.62 133.923 1032.08 Q132.117 1028.51 128.483 1028.51 M128.483 1024.81 Q134.293 1024.81 137.349 1029.42 Q140.427 1034 140.427 1042.75 Q140.427 1051.48 137.349 1056.08 Q134.293 1060.67 128.483 1060.67 Q122.673 1060.67 119.594 1056.08 Q116.539 1051.48 116.539 1042.75 Q116.539 1034 119.594 1029.42 Q122.673 1024.81 128.483 1024.81 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M148.645 1054.12 L153.529 1054.12 L153.529 1060 L148.645 1060 L148.645 1054.12 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M174.293 1040.85 Q171.145 1040.85 169.293 1043.01 Q167.464 1045.16 167.464 1048.91 Q167.464 1052.64 169.293 1054.81 Q171.145 1056.96 174.293 1056.96 Q177.441 1056.96 179.27 1054.81 Q181.122 1052.64 181.122 1048.91 Q181.122 1045.16 179.27 1043.01 Q177.441 1040.85 174.293 1040.85 M183.575 1026.2 L183.575 1030.46 Q181.816 1029.63 180.01 1029.19 Q178.228 1028.75 176.469 1028.75 Q171.839 1028.75 169.385 1031.87 Q166.955 1035 166.608 1041.32 Q167.973 1039.3 170.034 1038.24 Q172.094 1037.15 174.571 1037.15 Q179.779 1037.15 182.788 1040.32 Q185.821 1043.47 185.821 1048.91 Q185.821 1054.23 182.672 1057.45 Q179.524 1060.67 174.293 1060.67 Q168.297 1060.67 165.126 1056.08 Q161.955 1051.48 161.955 1042.75 Q161.955 1034.56 165.844 1029.7 Q169.733 1024.81 176.284 1024.81 Q178.043 1024.81 179.825 1025.16 Q181.631 1025.51 183.575 1026.2 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M129.548 791.582 Q125.937 791.582 124.108 795.147 Q122.302 798.689 122.302 805.818 Q122.302 812.925 124.108 816.49 Q125.937 820.031 129.548 820.031 Q133.182 820.031 134.987 816.49 Q136.816 812.925 136.816 805.818 Q136.816 798.689 134.987 795.147 Q133.182 791.582 129.548 791.582 M129.548 787.879 Q135.358 787.879 138.413 792.485 Q141.492 797.068 141.492 805.818 Q141.492 814.545 138.413 819.152 Q135.358 823.735 129.548 823.735 Q123.738 823.735 120.659 819.152 Q117.603 814.545 117.603 805.818 Q117.603 797.068 120.659 792.485 Q123.738 787.879 129.548 787.879 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M149.71 817.184 L154.594 817.184 L154.594 823.064 L149.71 823.064 L149.71 817.184 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M163.598 788.504 L185.821 788.504 L185.821 790.494 L173.274 823.064 L168.39 823.064 L180.196 792.439 L163.598 792.439 L163.598 788.504 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M128.738 554.65 Q125.126 554.65 123.298 558.214 Q121.492 561.756 121.492 568.886 Q121.492 575.992 123.298 579.557 Q125.126 583.099 128.738 583.099 Q132.372 583.099 134.177 579.557 Q136.006 575.992 136.006 568.886 Q136.006 561.756 134.177 558.214 Q132.372 554.65 128.738 554.65 M128.738 550.946 Q134.548 550.946 137.603 555.552 Q140.682 560.136 140.682 568.886 Q140.682 577.613 137.603 582.219 Q134.548 586.802 128.738 586.802 Q122.927 586.802 119.849 582.219 Q116.793 577.613 116.793 568.886 Q116.793 560.136 119.849 555.552 Q122.927 550.946 128.738 550.946 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M148.899 580.251 L153.784 580.251 L153.784 586.131 L148.899 586.131 L148.899 580.251 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M173.969 569.719 Q170.635 569.719 168.714 571.501 Q166.816 573.284 166.816 576.409 Q166.816 579.534 168.714 581.316 Q170.635 583.099 173.969 583.099 Q177.302 583.099 179.223 581.316 Q181.145 579.511 181.145 576.409 Q181.145 573.284 179.223 571.501 Q177.325 569.719 173.969 569.719 M169.293 567.728 Q166.284 566.988 164.594 564.927 Q162.927 562.867 162.927 559.904 Q162.927 555.761 165.867 553.353 Q168.83 550.946 173.969 550.946 Q179.131 550.946 182.071 553.353 Q185.01 555.761 185.01 559.904 Q185.01 562.867 183.321 564.927 Q181.654 566.988 178.668 567.728 Q182.047 568.515 183.922 570.807 Q185.821 573.099 185.821 576.409 Q185.821 581.432 182.742 584.117 Q179.686 586.802 173.969 586.802 Q168.251 586.802 165.173 584.117 Q162.117 581.432 162.117 576.409 Q162.117 573.099 164.015 570.807 Q165.913 568.515 169.293 567.728 M167.58 560.344 Q167.58 563.029 169.247 564.534 Q170.936 566.039 173.969 566.039 Q176.978 566.039 178.668 564.534 Q180.381 563.029 180.381 560.344 Q180.381 557.659 178.668 556.154 Q176.978 554.65 173.969 554.65 Q170.936 554.65 169.247 556.154 Q167.58 557.659 167.58 560.344 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M128.83 317.717 Q125.219 317.717 123.39 321.282 Q121.585 324.824 121.585 331.953 Q121.585 339.06 123.39 342.624 Q125.219 346.166 128.83 346.166 Q132.464 346.166 134.27 342.624 Q136.099 339.06 136.099 331.953 Q136.099 324.824 134.27 321.282 Q132.464 317.717 128.83 317.717 M128.83 314.013 Q134.64 314.013 137.696 318.62 Q140.774 323.203 140.774 331.953 Q140.774 340.68 137.696 345.286 Q134.64 349.87 128.83 349.87 Q123.02 349.87 119.941 345.286 Q116.886 340.68 116.886 331.953 Q116.886 323.203 119.941 318.62 Q123.02 314.013 128.83 314.013 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M148.992 343.319 L153.876 343.319 L153.876 349.198 L148.992 349.198 L148.992 343.319 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M164.2 348.481 L164.2 344.222 Q165.96 345.055 167.765 345.495 Q169.571 345.935 171.307 345.935 Q175.936 345.935 178.367 342.833 Q180.821 339.708 181.168 333.365 Q179.825 335.356 177.765 336.421 Q175.705 337.485 173.205 337.485 Q168.02 337.485 164.987 334.361 Q161.978 331.212 161.978 325.773 Q161.978 320.449 165.126 317.231 Q168.274 314.013 173.506 314.013 Q179.501 314.013 182.649 318.62 Q185.821 323.203 185.821 331.953 Q185.821 340.124 181.932 345.009 Q178.066 349.87 171.515 349.87 Q169.756 349.87 167.95 349.522 Q166.145 349.175 164.2 348.481 M173.506 333.828 Q176.654 333.828 178.483 331.675 Q180.334 329.523 180.334 325.773 Q180.334 322.046 178.483 319.893 Q176.654 317.717 173.506 317.717 Q170.358 317.717 168.506 319.893 Q166.677 322.046 166.677 325.773 Q166.677 329.523 168.506 331.675 Q170.358 333.828 173.506 333.828 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M119.455 108.331 L127.094 108.331 L127.094 81.965 L118.784 83.6317 L118.784 79.3724 L127.048 77.7058 L131.724 77.7058 L131.724 108.331 L139.362 108.331 L139.362 112.266 L119.455 112.266 L119.455 108.331 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M148.807 106.386 L153.691 106.386 L153.691 112.266 L148.807 112.266 L148.807 106.386 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M173.876 80.7845 Q170.265 80.7845 168.436 84.3493 Q166.631 87.8909 166.631 95.0205 Q166.631 102.127 168.436 105.692 Q170.265 109.233 173.876 109.233 Q177.51 109.233 179.316 105.692 Q181.145 102.127 181.145 95.0205 Q181.145 87.8909 179.316 84.3493 Q177.51 80.7845 173.876 80.7845 M173.876 77.0808 Q179.686 77.0808 182.742 81.6872 Q185.821 86.2705 185.821 95.0205 Q185.821 103.747 182.742 108.354 Q179.686 112.937 173.876 112.937 Q168.066 112.937 164.987 108.354 Q161.932 103.747 161.932 95.0205 Q161.932 86.2705 164.987 81.6872 Q168.066 77.0808 173.876 77.0808 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M14.1184 1189.22 L14.1184 1159.17 L19.5293 1159.17 L19.5293 1182.79 L33.5975 1182.79 L33.5975 1160.16 L39.0084 1160.16 L39.0084 1182.79 L56.2276 1182.79 L56.2276 1158.6 L61.6384 1158.6 L61.6384 1189.22 L14.1184 1189.22 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M43.8463 1144.78 Q50.3075 1144.78 53.9996 1142.14 Q57.6599 1139.47 57.6599 1134.82 Q57.6599 1130.17 53.9996 1127.5 Q50.3075 1124.83 43.8463 1124.83 Q37.3851 1124.83 33.7248 1127.5 Q30.0327 1130.17 30.0327 1134.82 Q30.0327 1139.47 33.7248 1142.14 Q37.3851 1144.78 43.8463 1144.78 M56.2912 1124.83 Q59.4741 1126.67 61.0337 1129.51 Q62.5615 1132.31 62.5615 1136.25 Q62.5615 1142.71 57.4052 1146.79 Q52.249 1150.83 43.8463 1150.83 Q35.4436 1150.83 30.2873 1146.79 Q25.1311 1142.71 25.1311 1136.25 Q25.1311 1132.31 26.6907 1129.51 Q28.2185 1126.67 31.4013 1124.83 L25.9905 1124.83 L25.9905 1118.97 L75.1974 1118.97 L75.1974 1124.83 L56.2912 1124.83 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M47.5702 1107.51 L25.9905 1107.51 L25.9905 1101.66 L47.3474 1101.66 Q52.4082 1101.66 54.9545 1099.68 Q57.4689 1097.71 57.4689 1093.76 Q57.4689 1089.02 54.4452 1086.28 Q51.4215 1083.51 46.2016 1083.51 L25.9905 1083.51 L25.9905 1077.66 L61.6384 1077.66 L61.6384 1083.51 L56.1639 1083.51 Q59.4104 1085.65 61.0019 1088.48 Q62.5615 1091.28 62.5615 1095 Q62.5615 1101.15 58.742 1104.33 Q54.9226 1107.51 47.5702 1107.51 M25.1311 1092.78 L25.1311 1092.78 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M25.9905 1065.59 L25.9905 1059.74 L61.6384 1059.74 L61.6384 1065.59 L25.9905 1065.59 M12.1132 1065.59 L12.1132 1059.74 L19.5293 1059.74 L19.5293 1065.59 L12.1132 1065.59 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M12.1132 1047.48 L12.1132 1041.63 L61.6384 1041.63 L61.6384 1047.48 L12.1132 1047.48 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M25.9905 1029.37 L25.9905 1023.52 L61.6384 1023.52 L61.6384 1029.37 L25.9905 1029.37 M12.1132 1029.37 L12.1132 1023.52 L19.5293 1023.52 L19.5293 1029.37 L12.1132 1029.37 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M43.8463 985.673 Q37.3851 985.673 33.7248 988.346 Q30.0327 990.988 30.0327 995.635 Q30.0327 1000.28 33.7248 1002.96 Q37.3851 1005.6 43.8463 1005.6 Q50.3075 1005.6 53.9996 1002.96 Q57.6599 1000.28 57.6599 995.635 Q57.6599 990.988 53.9996 988.346 Q50.3075 985.673 43.8463 985.673 M31.4013 1005.6 Q28.2185 1003.75 26.6907 1000.95 Q25.1311 998.118 25.1311 994.203 Q25.1311 987.71 30.2873 983.668 Q35.4436 979.594 43.8463 979.594 Q52.249 979.594 57.4052 983.668 Q62.5615 987.71 62.5615 994.203 Q62.5615 998.118 61.0337 1000.95 Q59.4741 1003.75 56.2912 1005.6 L61.6384 1005.6 L61.6384 1011.49 L12.1132 1011.49 L12.1132 1005.6 L31.4013 1005.6 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M31.465 949.229 Q30.8921 950.216 30.6375 951.393 Q30.351 952.539 30.351 953.94 Q30.351 958.905 33.5975 961.579 Q36.8122 964.22 42.8596 964.22 L61.6384 964.22 L61.6384 970.109 L25.9905 970.109 L25.9905 964.22 L31.5287 964.22 Q28.2821 962.374 26.7225 959.414 Q25.1311 956.454 25.1311 952.221 Q25.1311 951.616 25.2266 950.884 Q25.2903 950.152 25.4494 949.261 L31.465 949.229 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M25.9905 943.086 L25.9905 937.23 L61.6384 937.23 L61.6384 943.086 L25.9905 943.086 M12.1132 943.086 L12.1132 937.23 L19.5293 937.23 L19.5293 943.086 L12.1132 943.086 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M47.5702 925.581 L25.9905 925.581 L25.9905 919.724 L47.3474 919.724 Q52.4082 919.724 54.9545 917.751 Q57.4689 915.777 57.4689 911.831 Q57.4689 907.088 54.4452 904.351 Q51.4215 901.582 46.2016 901.582 L25.9905 901.582 L25.9905 895.725 L61.6384 895.725 L61.6384 901.582 L56.1639 901.582 Q59.4104 903.714 61.0019 906.547 Q62.5615 909.348 62.5615 913.072 Q62.5615 919.215 58.742 922.398 Q54.9226 925.581 47.5702 925.581 M25.1311 910.844 L25.1311 910.844 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M32.8336 855.908 Q28.8869 853.712 27.009 850.656 Q25.1311 847.601 25.1311 843.463 Q25.1311 837.893 29.046 834.869 Q32.9291 831.845 40.1224 831.845 L61.6384 831.845 L61.6384 837.734 L40.3133 837.734 Q35.1889 837.734 32.7063 839.548 Q30.2237 841.362 30.2237 845.086 Q30.2237 849.638 33.2474 852.279 Q36.2711 854.921 41.491 854.921 L61.6384 854.921 L61.6384 860.809 L40.3133 860.809 Q35.1571 860.809 32.7063 862.624 Q30.2237 864.438 30.2237 868.226 Q30.2237 872.713 33.2792 875.355 Q36.3029 877.997 41.491 877.997 L61.6384 877.997 L61.6384 883.885 L25.9905 883.885 L25.9905 877.997 L31.5287 877.997 Q28.2503 875.992 26.6907 873.191 Q25.1311 870.39 25.1311 866.539 Q25.1311 862.656 27.1045 859.95 Q29.0779 857.213 32.8336 855.908 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M30.0964 785.63 Q30.0964 790.341 33.7885 793.078 Q37.4488 795.816 43.8463 795.816 Q50.2438 795.816 53.9359 793.11 Q57.5962 790.373 57.5962 785.63 Q57.5962 780.952 53.9041 778.214 Q50.212 775.477 43.8463 775.477 Q37.5124 775.477 33.8203 778.214 Q30.0964 780.952 30.0964 785.63 M25.1311 785.63 Q25.1311 777.992 30.0964 773.631 Q35.0616 769.271 43.8463 769.271 Q52.5991 769.271 57.5962 773.631 Q62.5615 777.992 62.5615 785.63 Q62.5615 793.301 57.5962 797.662 Q52.5991 801.99 43.8463 801.99 Q35.0616 801.99 30.0964 797.662 Q25.1311 793.301 25.1311 785.63 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M47.5702 760.168 L25.9905 760.168 L25.9905 754.311 L47.3474 754.311 Q52.4082 754.311 54.9545 752.338 Q57.4689 750.364 57.4689 746.418 Q57.4689 741.675 54.4452 738.938 Q51.4215 736.169 46.2016 736.169 L25.9905 736.169 L25.9905 730.312 L61.6384 730.312 L61.6384 736.169 L56.1639 736.169 Q59.4104 738.301 61.0019 741.134 Q62.5615 743.935 62.5615 747.659 Q62.5615 753.802 58.742 756.985 Q54.9226 760.168 47.5702 760.168 M25.1311 745.431 L25.1311 745.431 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M15.869 712.457 L25.9905 712.457 L25.9905 700.394 L30.542 700.394 L30.542 712.457 L49.8937 712.457 Q54.2542 712.457 55.4955 711.279 Q56.7368 710.07 56.7368 706.409 L56.7368 700.394 L61.6384 700.394 L61.6384 706.409 Q61.6384 713.189 59.124 715.767 Q56.5777 718.345 49.8937 718.345 L30.542 718.345 L30.542 722.642 L25.9905 722.642 L25.9905 718.345 L15.869 718.345 L15.869 712.457 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M56.2912 687.026 L75.1974 687.026 L75.1974 692.914 L25.9905 692.914 L25.9905 687.026 L31.4013 687.026 Q28.2185 685.18 26.6907 682.379 Q25.1311 679.546 25.1311 675.631 Q25.1311 669.138 30.2873 665.096 Q35.4436 661.022 43.8463 661.022 Q52.249 661.022 57.4052 665.096 Q62.5615 669.138 62.5615 675.631 Q62.5615 679.546 61.0337 682.379 Q59.4741 685.18 56.2912 687.026 M43.8463 667.101 Q37.3851 667.101 33.7248 669.775 Q30.0327 672.416 30.0327 677.063 Q30.0327 681.71 33.7248 684.384 Q37.3851 687.026 43.8463 687.026 Q50.3075 687.026 53.9996 684.384 Q57.6599 681.71 57.6599 677.063 Q57.6599 672.416 53.9996 669.775 Q50.3075 667.101 43.8463 667.101 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M47.5702 651.919 L25.9905 651.919 L25.9905 646.062 L47.3474 646.062 Q52.4082 646.062 54.9545 644.089 Q57.4689 642.116 57.4689 638.169 Q57.4689 633.426 54.4452 630.689 Q51.4215 627.92 46.2016 627.92 L25.9905 627.92 L25.9905 622.064 L61.6384 622.064 L61.6384 627.92 L56.1639 627.92 Q59.4104 630.053 61.0019 632.885 Q62.5615 635.686 62.5615 639.41 Q62.5615 645.553 58.742 648.736 Q54.9226 651.919 47.5702 651.919 M25.1311 637.182 L25.1311 637.182 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M15.869 604.208 L25.9905 604.208 L25.9905 592.145 L30.542 592.145 L30.542 604.208 L49.8937 604.208 Q54.2542 604.208 55.4955 603.03 Q56.7368 601.821 56.7368 598.16 L56.7368 592.145 L61.6384 592.145 L61.6384 598.16 Q61.6384 604.94 59.124 607.518 Q56.5777 610.096 49.8937 610.096 L30.542 610.096 L30.542 614.393 L25.9905 614.393 L25.9905 610.096 L15.869 610.096 L15.869 604.208 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><polyline clip-path="url(#clip801)" style="stroke:#009af9; stroke-linecap:round; stroke-linejoin:round; stroke-width:8; stroke-opacity:1; fill:none" points="294.479,1516.09 317.488,1463.94 340.498,1413.43 363.507,1364.39 386.517,1316.69 409.526,1270.19 432.536,1224.8 455.545,1180.42 478.555,1136.99 501.564,1094.42 524.574,1052.67 547.583,1011.67 570.593,971.386 593.602,931.769 616.612,892.782 639.621,854.39 662.63,816.562 685.64,805.784 708.649,805.784 731.659,805.784 754.668,805.784 777.678,805.784 800.687,805.784 823.697,805.784 846.706,805.784 869.716,805.784 892.725,805.784 915.735,805.784 938.744,805.784 961.754,805.784 984.763,805.784 1007.77,805.784 1030.78,805.784 1053.79,805.784 1076.8,805.784 1099.81,805.784 1122.82,805.784 1145.83,805.784 1168.84,805.784 1191.85,805.784 1214.86,805.784 1237.87,805.784 1260.88,805.784 1283.89,805.784 1306.9,805.784 1329.91,805.784 1352.92,805.784 1375.92,805.784 1398.93,805.784 1421.94,805.784 1444.95,805.784 1467.96,805.784 1490.97,805.784 1513.98,805.784 1536.99,805.784 1560,805.784 1583.01,805.784 1606.02,805.784 1629.03,805.784 1652.04,805.784 1675.05,805.784 1698.06,805.784 1721.07,805.784 1744.08,805.784 1767.09,805.784 1790.1,805.784 1813.1,805.784 1836.11,805.784 1859.12,805.784 1882.13,805.784 1905.14,805.784 1928.15,805.784 1951.16,805.784 1974.17,805.784 1997.18,805.784 2020.19,805.784 2043.2,805.784 2066.21,805.784 2089.22,805.784 2112.23,805.784 2135.24,805.784 2158.25,805.784 2181.26,805.784 2204.27,805.784 2227.28,805.784 2250.28,805.784 2273.29,805.784 2296.3,805.784 2319.31,805.784 2342.32,805.784 2365.33,805.784 2388.34,805.784 2411.35,805.784 2434.36,805.784 2457.37,805.784 2480.38,805.784 2503.39,805.784 2526.4,805.784 2549.41,805.784 2572.42,805.784 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#e26f46; stroke-linecap:round; stroke-linejoin:round; stroke-width:8; stroke-opacity:1; fill:none" points="294.479,1686.38 317.488,1643.58 340.498,1602.15 363.507,1561.92 386.517,1522.78 409.526,1484.63 432.536,1447.39 455.545,1410.99 478.555,1375.35 501.564,1340.43 524.574,1306.17 547.583,1272.54 570.593,1239.49 593.602,1206.99 616.612,1175 639.621,1143.5 662.63,1112.47 685.64,1080.03 708.649,1047.34 731.659,1015.13 754.668,983.392 777.678,952.091 800.687,921.214 823.697,890.742 846.706,860.659 869.716,830.95 892.725,801.6 915.735,772.596 938.744,743.924 961.754,715.574 984.763,687.534 1007.77,659.792 1030.78,632.34 1053.79,605.168 1076.8,578.267 1099.81,551.627 1122.82,525.242 1145.83,499.104 1168.84,473.205 1191.85,447.538 1214.86,422.097 1237.87,396.875 1260.88,371.867 1283.89,347.066 1306.9,322.468 1329.91,298.067 1352.92,273.857 1375.92,249.835 1398.93,225.995 1421.94,202.333 1444.95,178.845 1467.96,155.526 1490.97,132.373 1513.98,109.383 1536.99,94.9858 1560,94.9858 1583.01,94.9858 1606.02,94.9858 1629.03,94.9858 1652.04,94.9858 1675.05,94.9858 1698.06,94.9858 1721.07,94.9858 1744.08,94.9858 1767.09,94.9858 1790.1,94.9858 1813.1,94.9858 1836.11,94.9858 1859.12,94.9858 1882.13,94.9858 1905.14,94.9858 1928.15,94.9858 1951.16,94.9858 1974.17,94.9858 1997.18,94.9858 2020.19,94.9858 2043.2,94.9858 2066.21,94.9858 2089.22,94.9858 2112.23,94.9858 2135.24,94.9858 2158.25,94.9858 2181.26,94.9858 2204.27,94.9858 2227.28,94.9858 2250.28,94.9858 2273.29,94.9858 2296.3,94.9858 2319.31,94.9858 2342.32,94.9858 2365.33,94.9858 2388.34,94.9858 2411.35,94.9858 2434.36,94.9858 2457.37,94.9858 2480.38,94.9858 2503.39,94.9858 2526.4,94.9858 2549.41,94.9858 2572.42,94.9858 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#0000ff; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:0.5; fill:none" stroke-dasharray="16, 10" points="-2188.47,805.784 5055.37,805.784 "></polyline>
+<polyline clip-path="url(#clip801)" style="stroke:#ff0000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:0.5; fill:none" stroke-dasharray="16, 10" points="-2188.47,94.9858 5055.37,94.9858 "></polyline>
+<path clip-path="url(#clip800)" d="M2250.03 1677.89 L2560.27 1677.89 L2560.27 1418.69 L2250.03 1418.69  Z" fill="#ffffff" fill-rule="evenodd" fill-opacity="1"></path>
+<polyline clip-path="url(#clip800)" style="stroke:#000000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:1; fill:none" points="2250.03,1677.89 2560.27,1677.89 2560.27,1418.69 2250.03,1418.69 2250.03,1677.89 "></polyline>
+<polyline clip-path="url(#clip800)" style="stroke:#009af9; stroke-linecap:round; stroke-linejoin:round; stroke-width:8; stroke-opacity:1; fill:none" points="2276.86,1470.53 2437.84,1470.53 "></polyline>
+<path clip-path="url(#clip800)" d="M2469.07 1474.87 Q2469.07 1479.57 2470.99 1482.25 Q2472.93 1484.91 2476.31 1484.91 Q2479.69 1484.91 2481.63 1482.25 Q2483.58 1479.57 2483.58 1474.87 Q2483.58 1470.17 2481.63 1467.51 Q2479.69 1464.82 2476.31 1464.82 Q2472.93 1464.82 2470.99 1467.51 Q2469.07 1470.17 2469.07 1474.87 M2483.58 1483.92 Q2482.24 1486.23 2480.18 1487.37 Q2478.14 1488.48 2475.27 1488.48 Q2470.57 1488.48 2467.61 1484.73 Q2464.67 1480.98 2464.67 1474.87 Q2464.67 1468.76 2467.61 1465.01 Q2470.57 1461.26 2475.27 1461.26 Q2478.14 1461.26 2480.18 1462.39 Q2482.24 1463.5 2483.58 1465.82 L2483.58 1461.88 L2487.84 1461.88 L2487.84 1497.67 L2483.58 1497.67 L2483.58 1483.92 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2495.75 1485.26 L2500.48 1485.26 L2500.48 1471.12 L2495.31 1472.07 L2495.31 1469.38 L2500.64 1468.48 L2503.81 1468.48 L2503.81 1485.26 L2508.56 1485.26 L2508.56 1487.81 L2495.75 1487.81 L2495.75 1485.26 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2533.44 1458.94 L2525.13 1463.43 L2533.44 1467.95 L2532.1 1470.22 L2524.32 1465.52 L2524.32 1474.24 L2521.68 1474.24 L2521.68 1465.52 L2513.9 1470.22 L2512.56 1467.95 L2520.87 1463.43 L2512.56 1458.94 L2513.9 1456.65 L2521.68 1461.35 L2521.68 1452.62 L2524.32 1452.62 L2524.32 1461.35 L2532.1 1456.65 L2533.44 1458.94 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><polyline clip-path="url(#clip800)" style="stroke:#e26f46; stroke-linecap:round; stroke-linejoin:round; stroke-width:8; stroke-opacity:1; fill:none" points="2276.86,1522.37 2437.84,1522.37 "></polyline>
+<path clip-path="url(#clip800)" d="M2469.07 1526.71 Q2469.07 1531.41 2470.99 1534.09 Q2472.93 1536.75 2476.31 1536.75 Q2479.69 1536.75 2481.63 1534.09 Q2483.58 1531.41 2483.58 1526.71 Q2483.58 1522.01 2481.63 1519.35 Q2479.69 1516.66 2476.31 1516.66 Q2472.93 1516.66 2470.99 1519.35 Q2469.07 1522.01 2469.07 1526.71 M2483.58 1535.76 Q2482.24 1538.07 2480.18 1539.21 Q2478.14 1540.32 2475.27 1540.32 Q2470.57 1540.32 2467.61 1536.57 Q2464.67 1532.82 2464.67 1526.71 Q2464.67 1520.6 2467.61 1516.85 Q2470.57 1513.1 2475.27 1513.1 Q2478.14 1513.1 2480.18 1514.23 Q2482.24 1515.34 2483.58 1517.66 L2483.58 1513.72 L2487.84 1513.72 L2487.84 1549.51 L2483.58 1549.51 L2483.58 1535.76 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2498.35 1537.01 L2508.16 1537.01 L2508.16 1539.65 L2494.32 1539.65 L2494.32 1537.1 Q2495.11 1536.38 2496.56 1535.09 Q2504.53 1528.03 2504.53 1525.85 Q2504.53 1524.32 2503.32 1523.4 Q2502.12 1522.45 2500.15 1522.45 Q2498.95 1522.45 2497.54 1522.87 Q2496.13 1523.26 2494.46 1524.07 L2494.46 1521.22 Q2496.24 1520.57 2497.77 1520.25 Q2499.32 1519.93 2500.64 1519.93 Q2504 1519.93 2506.01 1521.45 Q2508.02 1522.98 2508.02 1525.48 Q2508.02 1528.7 2500.36 1535.27 Q2499.06 1536.38 2498.35 1537.01 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2533.44 1510.78 L2525.13 1515.27 L2533.44 1519.79 L2532.1 1522.06 L2524.32 1517.36 L2524.32 1526.08 L2521.68 1526.08 L2521.68 1517.36 L2513.9 1522.06 L2512.56 1519.79 L2520.87 1515.27 L2512.56 1510.78 L2513.9 1508.49 L2521.68 1513.19 L2521.68 1504.46 L2524.32 1504.46 L2524.32 1513.19 L2532.1 1508.49 L2533.44 1510.78 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><polyline clip-path="url(#clip800)" style="stroke:#0000ff; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:0.5; fill:none" stroke-dasharray="16, 10" points="2276.86,1574.21 2437.84,1574.21 "></polyline>
+<path clip-path="url(#clip800)" d="M2464.67 1556.93 L2469.34 1556.93 L2469.34 1571.53 L2484.85 1556.93 L2490.87 1556.93 L2473.72 1573.04 L2492.1 1591.49 L2485.94 1591.49 L2469.34 1574.84 L2469.34 1591.49 L2464.67 1591.49 L2464.67 1556.93 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2494.71 1588.94 L2499.44 1588.94 L2499.44 1574.8 L2494.27 1575.75 L2494.27 1573.06 L2499.6 1572.16 L2502.77 1572.16 L2502.77 1588.94 L2507.51 1588.94 L2507.51 1591.49 L2494.71 1591.49 L2494.71 1588.94 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><polyline clip-path="url(#clip800)" style="stroke:#ff0000; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; stroke-opacity:0.5; fill:none" stroke-dasharray="16, 10" points="2276.86,1626.05 2437.84,1626.05 "></polyline>
+<path clip-path="url(#clip800)" d="M2464.67 1608.77 L2469.34 1608.77 L2469.34 1623.37 L2484.85 1608.77 L2490.87 1608.77 L2473.72 1624.88 L2492.1 1643.33 L2485.94 1643.33 L2469.34 1626.68 L2469.34 1643.33 L2464.67 1643.33 L2464.67 1608.77 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path><path clip-path="url(#clip800)" d="M2497.31 1640.69 L2507.12 1640.69 L2507.12 1643.33 L2493.28 1643.33 L2493.28 1640.78 Q2494.06 1640.06 2495.52 1638.77 Q2503.49 1631.71 2503.49 1629.53 Q2503.49 1628 2502.28 1627.08 Q2501.08 1626.13 2499.11 1626.13 Q2497.91 1626.13 2496.5 1626.55 Q2495.08 1626.94 2493.42 1627.75 L2493.42 1624.9 Q2495.2 1624.25 2496.73 1623.93 Q2498.28 1623.61 2499.6 1623.61 Q2502.95 1623.61 2504.97 1625.13 Q2506.98 1626.66 2506.98 1629.16 Q2506.98 1632.38 2499.32 1638.95 Q2498.02 1640.06 2497.31 1640.69 Z" fill="#000000" fill-rule="nonzero" fill-opacity="1"></path></svg>
+</div>
+</div>
+<p>. . .</p>
+<p>The kinks in the equilibrium paths correspond to transitions between regimes where different capacity constraints become binding</p>
+</section>
+<section id="takeaways-from-this-example" class="level2" data-number="38">
+<h2 data-number="38" class="anchored" data-anchor-id="takeaways-from-this-example"><span class="header-section-number">38</span> Takeaways from this example</h2>
+<ol type="1">
+<li><strong>CP conditions arise naturally from constrained optimization</strong>: the KKT conditions of the firms’ problems are exactly the CP conditions</li>
+</ol>
+<p>. . .</p>
+<ol start="2" type="1">
+<li><strong>Sign conventions matter</strong>: <code>mcpsolve</code> uses a different sign convention from the standard KKT formulation. Always check the documentation and verify the solution makes economic sense</li>
+</ol>
+<p>. . .</p>
+<ol start="3" type="1">
+<li><strong>The CP framework handles regime changes automatically</strong>: as <span class="math inline">\theta</span> varies, the solver transitions between interior and corner solutions without us having to enumerate cases manually</li>
+</ol>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>See Miranda &amp; Fackler (2002) Ch. 3.8 for a pathological example that needs smoothing.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Because complementarity conditions are constraints, a more comprehensive way for larger systems is through <code>JuMP.jl</code> modeling interface. We will cover that in the Constrained Optimization unit.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
