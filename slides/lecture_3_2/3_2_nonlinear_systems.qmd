@@ -1266,23 +1266,20 @@ No `DomainError`. The solver explored negative $z$ values, and $e^z$ kept prices
 
 ## When to use each strategy
 
-[**Better initial guess**]{.blue}: simple, requires no code changes to $f$, but needs problem-specific insight
+1. **Better initial guess**: simple, requires no code changes to $f$, but needs problem-specific insight
 
-[**Different method**]{.blue}: Newton with autodiff is more robust than Broyden with finite differences, at the cost of more computation per step
+2. **Different method**: Newton with autodiff is more robust than Broyden with finite differences, at the cost of more computation per step
 
-[**Log transformation**]{.blue}: most robust, works from distant guesses, but adds a layer of indirection
-
-. . .
-
-**In practice**, combine both: solve a simplified problem, then use its log-transformed solution as initial guess for the full system
+3. **Log transformation**: most robust, works from distant guesses, but adds a layer of indirection and can lead to scaling issues if the solution is very large/small 
 
 . . .
 
-*A related transformation for variables in $(0,1)$ (e.g., probabilities or shares):*
+*Note: A related transformation for variables in $(0,1)$ (e.g., probabilities or shares):*
 
 $$
 z = \log\!\left(\frac{x}{1-x}\right), \quad x = \frac{1}{1+e^{-z}}
 $$
 
 This is the **logit transformation**: $z \in \mathbb{R}$ maps to $x \in (0,1)$
+
 
