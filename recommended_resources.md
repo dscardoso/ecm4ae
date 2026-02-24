@@ -88,7 +88,14 @@ If you have suggestions of materials, please share them with me.
 - [MF02] Chapter 3
 - [J98] Chapter 5
 
+
+### Examples
+
+- [Pluto.jl: Interactive visualization of Newton's Method](https://featured.plutojl.org/computational-thinking/newton.html)
+
+
 ### Technical references
 
 - [NLSolve](https://github.com/JuliaNLSolvers/NLsolve.jl)
+  
   
