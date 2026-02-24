@@ -11,4 +11,5 @@ Pkg.add("ForwardDiff"); Pkg.add("FiniteDifferences"); Pkg.add("Symbolics"); Pkg.
 Pkg.add("Distributions"); Pkg.add("QuantEcon") # Lecture 2.3
 Pkg.add("LinearAlgebra"); # Lecture 3.1
 Pkg.add("NLsolve"); Pkg.add("LinearAlgebra"); # Lecture 3.2
+Pkg.add("Optim"); Pkg.add("LineSearches"); # Lecture 4.1
 ```

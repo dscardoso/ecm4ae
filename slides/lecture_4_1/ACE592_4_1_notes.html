@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Diego S. Cardoso">
+
+<title>ACE 592 - Lecture 4.1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="4_1_unconstrained_optimization_files/libs/clipboard/clipboard.min.js"></script>
+<script src="4_1_unconstrained_optimization_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="4_1_unconstrained_optimization_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="4_1_unconstrained_optimization_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="4_1_unconstrained_optimization_files/libs/quarto-html/popper.min.js"></script>
+<script src="4_1_unconstrained_optimization_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="4_1_unconstrained_optimization_files/libs/quarto-html/anchor.min.js"></script>
+<link href="4_1_unconstrained_optimization_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="4_1_unconstrained_optimization_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="4_1_unconstrained_optimization_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="4_1_unconstrained_optimization_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="4_1_unconstrained_optimization_files/libs/bootstrap/bootstrap-0e5f40ec6cc387305998617d35d5b2e2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-axe-checker-options" type="text/plain">eyJvdXRwdXQiOiJkb2N1bWVudCJ9</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ACE592_4_1_slides.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ACE 592 - Lecture 4.1</h1>
+<p class="subtitle lead">Unconstrained optimization: introduction and derivative-free methods</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Diego S. Cardoso </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Illinois Urbana-Champaign
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="course-roadmap" class="level2" data-background-color="orange" data-number="0.1">
+<h2 data-background-color="orange" data-number="0.1" class="anchored" data-anchor-id="course-roadmap"><span class="header-section-number">0.1</span> Course Roadmap</h2>
+<ol type="1">
+<li><span class="gray">Introduction to Scientific Computing</span></li>
+<li><span class="gray">Fundamentals of numerical methods</span></li>
+<li><span class="gray">Systems of equations</span></li>
+<li>Optimization
+<ol type="1">
+<li><strong>Unconstrained optimization: intro</strong></li>
+<li>Unconstrained optimization: line search and trust region methods</li>
+<li>Constrained optimization: theory and methods</li>
+<li>Constrained optimization: modeling framework</li>
+</ol></li>
+<li>Function approximation</li>
+<li>Structural estimation</li>
+</ol>
+</section>
+<section id="agenda" class="level2" data-background-color="orange" data-number="0.2">
+<h2 data-background-color="orange" data-number="0.2" class="anchored" data-anchor-id="agenda"><span class="header-section-number">0.2</span> Agenda</h2>
+<ul>
+<li>Today we begin exploring one of the most important methods in numerical methods: optimization</li>
+<li>We start with an introduction and general aspects of numerical optimization</li>
+<li>Then, we will cover basic derivative-free optimization algorithms</li>
+</ul>
+</section>
+<section id="main-references-for-today" class="level2" data-background-color="orange" data-number="0.3">
+<h2 data-background-color="orange" data-number="0.3" class="anchored" data-anchor-id="main-references-for-today"><span class="header-section-number">0.3</span> Main references for today</h2>
+<ul>
+<li>Miranda &amp; Fackler (2002), Ch. 4</li>
+<li>Judd (1998), Ch. 4</li>
+<li>Nocedal &amp; Writght (2006), Ch. 2</li>
+<li>Lecture notes from Ivan Rudik (Cornell) and Florian Oswald (SciencesPo)</li>
+</ul>
+</section>
+<section id="optimization-problems" class="level2" data-number="0.4">
+<h2 data-number="0.4" class="anchored" data-anchor-id="optimization-problems"><span class="header-section-number">0.4</span> Optimization problems</h2>
+<p>Optimization problems are ubiquitous in economics. Examples?</p>
+<p>. . .</p>
+<ul>
+<li>Agent behavior
+<ul>
+<li>Consumer utility maximization</li>
+<li>Firm profit maximization</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Social planner maximizing welfare</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Econometrics
+<ul>
+<li>Minimization of squared errors (OLS)</li>
+<li>Minimization of empirical moment functions (GMM)</li>
+<li>Maximization of likelihood (MLE)</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<p>In this unit, we will review the fundamentals of optimization and cover the main algorithms in numerical optimization</p>
+</section>
+<section id="fundamentals-of-unconstrained-optimization" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Fundamentals of unconstrained optimization</h1>
+<section id="optimization-setup" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="optimization-setup"><span class="header-section-number">1.1</span> Optimization setup</h2>
+<p>We want to minimize an objective function <span class="math inline">f(x)</span></p>
+<p><span class="math display">\min_x f(x)</span></p>
+<p>where <span class="math inline">x \in \mathbb{R}^n</span> is a real vector with <span class="math inline">n \ge 1</span> components and <span class="math inline">f : \mathbb{R}^n \rightarrow \mathbb{R}</span> is smooth</p>
+<ul>
+<li>In unconstrained optimization, we impose no restrictions on <span class="math inline">x</span></li>
+</ul>
+</section>
+<section id="optimization-setup-1" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="optimization-setup-1"><span class="header-section-number">1.2</span> Optimization setup</h2>
+<p>We will focus on <em>minimization</em> problems</p>
+<ul>
+<li>That’s because the optimization literature and programming packages usually frame optimization as minimization</li>
+</ul>
+<p>But it’s simple to convert minimization into maximization problem. How?</p>
+<p>. . .</p>
+<ul>
+<li>Flip the sign of <span class="math inline">f(x)</span>!</li>
+</ul>
+<p><span class="math display">
+\min_x f(x) \Leftrightarrow \max_x g(x)
+</span></p>
+<p>where <span class="math inline">g(x) = -f(x)</span></p>
+</section>
+<section id="optimization-solutions-global-vs.-local-optima" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="optimization-solutions-global-vs.-local-optima"><span class="header-section-number">1.3</span> Optimization solutions: global vs.&nbsp;local optima</h2>
+<p>A point <span class="math inline">x^*</span> is a <strong>global minimizer (or optimum)</strong> of <span class="math inline">f</span> if</p>
+<p><span class="math display"> f(x^*) \le f(x) \;\; \forall x \in \mathbb{R}^n</span></p>
+<p>Since we can’t evaluate the function at infinite points, finding global optima is generally a difficult problem</p>
+<ul>
+<li>We can’t be sure if the function suddenly rises between two points we evaluate</li>
+<li>Most algorithms can only find <strong>local optima</strong></li>
+</ul>
+</section>
+<section id="optimization-solutions-global-vs.-local-optima-1" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="optimization-solutions-global-vs.-local-optima-1"><span class="header-section-number">1.4</span> Optimization solutions: global vs.&nbsp;local optima</h2>
+<p>A point <span class="math inline">x^*</span> is a <strong>local minimizer (or optimum)</strong> of <span class="math inline">f</span> if there is a neighborhood <span class="math inline">\mathcal{N}</span> of <span class="math inline">x^*</span> such that</p>
+<p><span class="math display"> f(x^*) \le f(x) \;\; \forall x \in \mathcal{N}</span></p>
+<ul>
+<li>A neighborhood of <span class="math inline">x^*</span> is an open set that contains <span class="math inline">x^*</span></li>
+</ul>
+<p>. . .</p>
+<p>We call <span class="math inline">x^*</span> a <strong>strict local minimizer</strong> if <span class="math inline">f(x^*) &lt; f(x) \;\; \forall x \in \mathcal{N}</span></p>
+</section>
+<section id="identifying-local-optima" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="identifying-local-optima"><span class="header-section-number">1.5</span> Identifying local optima</h2>
+<p>A first approach to checking whether a point is a local optimum is to evaluate the function at all points around it</p>
+<p>But if <span class="math inline">f</span> is <em>smooth</em>, calculus makes it much easier, especially if <span class="math inline">f</span> is twice continuously differentiable</p>
+<ul>
+<li>We only need to evaluate the <em>gradient</em> <span class="math inline">\nabla f(x^*)</span> (first derivative) and the <em>Hessian</em> <span class="math inline">\nabla^2 f(x^*)</span> (second derivative)</li>
+</ul>
+<p>There are four key theorems to help us<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</section>
+<section id="identifying-local-optima-1" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="identifying-local-optima-1"><span class="header-section-number">1.6</span> Identifying local optima</h2>
+<p><strong>Theorem 1: First-Order Necessary Conditions</strong></p>
+<blockquote class="blockquote">
+<p>If <span class="math inline">x^*</span> is a local minimizer and <span class="math inline">f</span> is continuously differentiable in an open neighborhood of <span class="math inline">x^*</span>, then <span class="math inline">\nabla f(x^*) = 0</span></p>
+</blockquote>
+<p>. . .</p>
+<ul>
+<li>If <span class="math inline">n = 1</span>, this means that <span class="math inline">f^{\prime}(x^*) = 0</span></li>
+</ul>
+<p>. . .</p>
+<p>Note that this is only a <strong>necessary</strong> condition</p>
+<p>So, we can look for points where the first derivative is zero (with rootfinding)</p>
+<p>But, once we find them, we can’t be sure yet if these points indeed are local minimizers</p>
+</section>
+<section id="identifying-local-optima-2" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="identifying-local-optima-2"><span class="header-section-number">1.7</span> Identifying local optima</h2>
+<p><strong>Theorem 2: Second-Order Necessary Conditions</strong></p>
+<blockquote class="blockquote">
+<p>If <span class="math inline">x^*</span> is a local minimizer of <span class="math inline">f</span> and <span class="math inline">\nabla^2 f</span> exists and is continuously differentiable in an open neighborhood of <span class="math inline">x^*</span>, then <span class="math inline">\nabla f(x^*) = 0</span> and <span class="math inline">\nabla^2 f(x^*)</span> is positive semidefinite</p>
+</blockquote>
+<p>. . .</p>
+<ul>
+<li>If <span class="math inline">n = 1</span>, this means that <span class="math inline">f^{\prime \prime}(x^*) \geq 0</span>, i.e., the function is locally convex
+<ul>
+<li>Positive semidefiniteness is the multidimensional analogous of convexity in 1D</li>
+<li>A matrix <span class="math inline">B</span> is positive semidefinite if <span class="math inline">p^\prime B p \geq 0</span> for all <span class="math inline">p</span></li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>For maximization problems, we check whether <span class="math inline">\nabla^2 f(x^*)</span> is negative semidefinite</li>
+</ul>
+</section>
+<section id="identifying-local-optima-3" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="identifying-local-optima-3"><span class="header-section-number">1.8</span> Identifying local optima</h2>
+<p><strong>Theorem 3: Second-Order Sufficient Conditions</strong></p>
+<blockquote class="blockquote">
+<p>Suppose <span class="math inline">\nabla^2 f</span> is continuous in an open neighborhood of <span class="math inline">x^*</span> and that <span class="math inline">\nabla f(x^*) = 0</span> and <span class="math inline">\nabla^2 f</span> is positive definite. Then <span class="math inline">x^*</span> is a strict local minimizer of <span class="math inline">f</span></p>
+</blockquote>
+<p>. . .</p>
+<ul>
+<li>Note that these are <em>sufficient</em> conditions, not necessary conditions
+<ul>
+<li>For example, <span class="math inline">f(x) = x^4</span> has a local minimizer at <span class="math inline">x^* = 0</span>. But this point does not satisfy the 2nd-order sufficient conditions</li>
+</ul></li>
+</ul>
+</section>
+<section id="conditions-for-global-optima" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="conditions-for-global-optima"><span class="header-section-number">1.9</span> Conditions for global optima</h2>
+<p>Another theorem can help us characterize global optima</p>
+<p><strong>Theorem 4: Second-Order Sufficient Conditions for Global Optima</strong></p>
+<blockquote class="blockquote">
+<p>When <span class="math inline">f</span> is convex, any local maximizer <span class="math inline">x^*</span> is a global minimizer of <span class="math inline">f</span>. If in addition <span class="math inline">f</span> is differentiable, then any point <span class="math inline">x^*</span> at which <span class="math inline">\nabla f(x^*) = 0</span> is a global minimizer of <span class="math inline">f</span></p>
+</blockquote>
+<ul>
+<li>If the function is globally convex, any local minimizer we find is also a global minimizer</li>
+</ul>
+</section>
+</section>
+<section id="optimization-algorithms" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Optimization algorithms</h1>
+<section id="optimization-algorithms-1" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="optimization-algorithms-1"><span class="header-section-number">2.1</span> Optimization algorithms</h2>
+<p>Optimization problems have many similarities to problems we’ve already seen in the course</p>
+<ul>
+<li>FOCs of an unconstrained optimization problem are similar to a rootfinding problem</li>
+<li>FOCs of a constrained optimization problem are similar to a complementarity problem</li>
+</ul>
+</section>
+<section id="optimization-algorithms-2" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="optimization-algorithms-2"><span class="header-section-number">2.2</span> Optimization algorithms</h2>
+<p>We typically want to find a global optimum of our objective function <span class="math inline">f</span></p>
+<p>Typically, analytic problems are set up to have a unique minimum so any local solver can generally find the global optimum</p>
+<ul>
+<li>But many problems in Economics don’t satisfy the typical sufficiency conditions for a unique minimum (strictly decreasing and convex), such as
+<ul>
+<li>Games with multiple equilibria</li>
+<li>Concave state transitions</li>
+<li>Certain types of estimation procedures</li>
+</ul></li>
+</ul>
+</section>
+<section id="optimization-algorithms-3" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="optimization-algorithms-3"><span class="header-section-number">2.3</span> Optimization algorithms</h2>
+<p>We make two initial distinctions between <strong>solvers</strong> (i.e., optimization algorithms):</p>
+<ul>
+<li><strong>Local vs global:</strong> are we finding an optimum in a local region, or globally?
+<ul>
+<li>Most solvers search local optima</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Derivative-using vs derivative-free:</strong> do we want to use higher-order information?</li>
+</ul>
+<p>. . .</p>
+<p>In this course, we’ll focus on local solvers</p>
+<ul>
+<li>Global solvers are usually stochastic or subdivide the search space and apply local solvers</li>
+<li>Common global solvers: genetic algorithms, simulated annealing, DIRECT, and Sto-go</li>
+</ul>
+</section>
+<section id="optimization-algorithms-4" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="optimization-algorithms-4"><span class="header-section-number">2.4</span> Optimization algorithms</h2>
+<p>How do we find a local minimum?</p>
+<p>Do we need to evaluate every single point?</p>
+<p>. . .</p>
+<p>Optimization algorithms typically have the following set up:</p>
+<ol type="1">
+<li>Start at some <span class="math inline">x_0</span></li>
+<li>Work through a series of iterates <span class="math inline">\{x^{(k)}\}_{k=1}^\infty</span> until it “converges” with sufficient accuracy</li>
+</ol>
+<p>. . .</p>
+<p>If the function is smooth, we can take advantage of that information about the function’s shape to figure out which direction to move in next</p>
+</section>
+<section id="solution-strategies-line-search-vs.-trust-region" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="solution-strategies-line-search-vs.-trust-region"><span class="header-section-number">2.5</span> Solution strategies: line search vs.&nbsp;trust region</h2>
+<p>When we move from <span class="math inline">x^{(k)}</span> to the next iteration, <span class="math inline">x^{(k+1)}</span>, we have to decide</p>
+<ul>
+<li>Which direction from <span class="math inline">x^{(k)}</span></li>
+<li>How far to go from <span class="math inline">x^{(k)}</span></li>
+</ul>
+<p>. . .</p>
+<p>There are two fundamental solution strategies that differ in the order of those decisions</p>
+<ul>
+<li><strong>Line search</strong> methods first choose a <em>direction</em> and then select the optimal <em>step size</em></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Trust region</strong> methods first choose a <em>step size</em> and then select the optimal <em>direction</em></li>
+</ul>
+<p>. . .</p>
+<p>We’ll see the details of each strategy later. Let’s start with two relatively simple, derivative-free methods</p>
+</section>
+<section id="derivative-free-optimization-golden-search" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="derivative-free-optimization-golden-search"><span class="header-section-number">2.6</span> Derivative-free optimization: golden search</h2>
+<p>Similar to bisection, <strong>golden search</strong> looks for a solution of a one-dimensional problem over smaller and smaller brackets</p>
+<p>. . .</p>
+<p>We have a continuous one dimensional function, <span class="math inline">f(x)</span>, and we want to find a local minimum in some interval <span class="math inline">[a,b]</span></p>
+</section>
+<section id="derivative-free-optimization-golden-search-1" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="derivative-free-optimization-golden-search-1"><span class="header-section-number">2.7</span> Derivative-free optimization: golden search</h2>
+<ol type="1">
+<li>Select points <span class="math inline">x_1,x_2 \in [a,b]</span> where <span class="math inline">x_2 &gt; x_1</span></li>
+<li>Compare <span class="math inline">f(x_1)</span> and <span class="math inline">f(x_2)</span></li>
+</ol>
+<ul>
+<li>If <span class="math inline">f(x_1) &lt; f(x_2)</span>, replace <span class="math inline">[a,b]</span> with <span class="math inline">[a,x_2]</span></li>
+<li>Else, replace <span class="math inline">[a,b]</span> with <span class="math inline">[x_1,b]</span></li>
+</ul>
+<ol start="3" type="1">
+<li>Repeat until a convergence criterion is met</li>
+</ol>
+<p>. . .</p>
+<p>Replace the endpoint of the interval next to the evaluated point with the highest value</p>
+<p><span class="math inline">\rightarrow</span> keep the lower evaluated point in the interval</p>
+<p><span class="math inline">\rightarrow</span> guarantees that a local minimum still exists</p>
+</section>
+<section id="derivative-free-optimization-golden-search-2" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="derivative-free-optimization-golden-search-2"><span class="header-section-number">2.8</span> Derivative-free optimization: golden search</h2>
+<p>How do we pick <span class="math inline">x_1</span> and <span class="math inline">x_2</span>?</p>
+<p>. . .</p>
+<p>Achievable goal for selection process:</p>
+<ul>
+<li>New interval is independent of whether the upper or lower bound is replaced</li>
+<li>Only requires one function evaluation per iteration</li>
+</ul>
+<p>. . .</p>
+<p>There’s one algorithm that satisfies this</p>
+</section>
+<section id="derivative-free-optimization-golden-search-3" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="derivative-free-optimization-golden-search-3"><span class="header-section-number">2.9</span> Derivative-free optimization: golden search</h2>
+<p>Golden search algorithm for point selection:</p>
+<p><span class="math display">
+\begin{gather}
+    x_i = a + \alpha_i (b-a) \notag \\
+    \alpha_1 = \frac{3-\sqrt{5}}{2}, \qquad \alpha_2 = \frac{\sqrt{5} - 1}{2}
+\end{gather}
+</span></p>
+<p>. . .</p>
+<p>The value of <span class="math inline">\alpha_2</span> is called the golden ratio, from where the algorithm gets its name</p>
+</section>
+<section id="golden-search-in-practice" class="level2" data-number="2.10">
+<h2 data-number="2.10" class="anchored" data-anchor-id="golden-search-in-practice"><span class="header-section-number">2.10</span> Golden search in practice</h2>
+<p>Let’s write a function to perform the golden search algorithm <code>golden_search(f, lower_bound, upper_bound)</code>, then use it to find the minimizer of <span class="math inline">f(x) = 2x^2 - 4x</span> between -4 and 4.</p>
+<p>Steps:</p>
+<ol type="1">
+<li>Calculate points <span class="math inline">x_1,x_2 \in [a,b]</span></li>
+</ol>
+<ul>
+<li><span class="math inline">x_1 = a + \frac{3-\sqrt{5}}{2} (b-a)</span> and <span class="math inline">x_2 = a + \frac{\sqrt{5} - 1}{2} (b-a)</span></li>
+</ul>
+<ol start="2" type="1">
+<li>Compare <span class="math inline">f(x_1)</span> and <span class="math inline">f(x_2)</span></li>
+</ol>
+<ul>
+<li>If <span class="math inline">f(x_1) &lt; f(x_2)</span>, replace <span class="math inline">[a,b]</span> with <span class="math inline">[a,x_2]</span></li>
+<li>Else, replace <span class="math inline">[a,b]</span> with <span class="math inline">[x_1,b]</span></li>
+</ul>
+<ol start="3" type="1">
+<li>Repeat until a convergence criterion is met</li>
+</ol>
+</section>
+<section id="golden-search-in-julia" class="level2" data-number="2.11">
+<h2 data-number="2.11" class="anchored" data-anchor-id="golden-search-in-julia"><span class="header-section-number">2.11</span> Golden search in Julia</h2>
+<div id="34e8fac5" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">golden_search</span>(f, lower_bound, upper_bound)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    alpha_1 <span class="op">=</span> (<span class="fl">3</span> <span class="op">-</span> <span class="fu">sqrt</span>(<span class="fl">5</span>))<span class="op">/</span><span class="fl">2</span>  <span class="co"># GS parameter 1</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    alpha_2 <span class="op">=</span> (<span class="fu">sqrt</span>(<span class="fl">5</span>) <span class="op">-</span> <span class="fl">1</span>)<span class="op">/</span><span class="fl">2</span>  <span class="co"># GS parameter 2</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    tolerance <span class="op">=</span> <span class="fl">1e-2</span>           <span class="co"># tolerance for convergence</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    difference <span class="op">=</span> <span class="fl">1e10</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> difference <span class="op">&gt;</span> tolerance</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        x_1 <span class="op">=</span> lower_bound <span class="op">+</span> <span class="fu">alpha_1*</span>(upper_bound <span class="op">-</span> lower_bound)  <span class="co"># new x_1</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        x_2 <span class="op">=</span> lower_bound <span class="op">+</span> <span class="fu">alpha_2*</span>(upper_bound <span class="op">-</span> lower_bound)  <span class="co"># new x_2</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="fu">f</span>(x_1) <span class="op">&lt;</span> <span class="fu">f</span>(x_2)  <span class="co"># update bounds</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            upper_bound <span class="op">=</span> x_2</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            lower_bound <span class="op">=</span> x_1</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        difference <span class="op">=</span> x_2 <span class="op">-</span> x_1</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"Minimum is at x = </span><span class="sc">$</span>((lower_bound<span class="op">+</span>upper_bound)<span class="op">/</span><span class="fl">2</span>)<span class="st">."</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="golden-search-in-julia-1" class="level2" data-number="2.12">
+<h2 data-number="2.12" class="anchored" data-anchor-id="golden-search-in-julia-1"><span class="header-section-number">2.12</span> Golden search in Julia</h2>
+<div id="8f529160" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(x) <span class="op">=</span> <span class="fl">2</span>x<span class="op">^</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">4</span>x;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">golden_search</span>(f, <span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Minimum is at x = 0.996894379984858.</code></pre>
+</div>
+</div>
+</section>
+<section id="golden-search-in-julia-2" class="level2" data-number="2.13">
+<h2 data-number="2.13" class="anchored" data-anchor-id="golden-search-in-julia-2"><span class="header-section-number">2.13</span> Golden search in Julia</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/golden_search.gif" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="derivative-free-optimization-nelder-mead" class="level2" data-number="2.14">
+<h2 data-number="2.14" class="anchored" data-anchor-id="derivative-free-optimization-nelder-mead"><span class="header-section-number">2.14</span> Derivative-free optimization: Nelder-Mead</h2>
+<p>Golden search is nice and simple but only works in one dimension</p>
+<p>There are several derivative free methods for minimization that work in multiple dimensions. The most commonly used one is the <strong>Nelder-Mead</strong> (NM) algorithm</p>
+<p>. . .</p>
+<p>NM works by first constructing a simplex: we evaluate the function at <span class="math inline">n+1</span> points in an <span class="math inline">n</span> dimensional problem</p>
+<p>It then manipulates the highest value point, similar to golden search</p>
+</section>
+<section id="derivative-free-optimization-nelder-mead-1" class="level2" data-number="2.15">
+<h2 data-number="2.15" class="anchored" data-anchor-id="derivative-free-optimization-nelder-mead-1"><span class="header-section-number">2.15</span> Derivative-free optimization: Nelder-Mead</h2>
+<p>There are six operations:</p>
+<p>. . .</p>
+<ul>
+<li><strong>Order:</strong> order the value at the vertices of the simplex <span class="math inline">f(x_1)\leq \dots \leq f(x_{n+1})</span></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li><strong>Centroid:</strong> calculate <span class="math inline">x_0</span>, the centroid of the non - <span class="math inline">x_{n+1}</span> points</li>
+</ul>
+</section>
+<section id="derivative-free-optimization-nelder-mead-2" class="level2" data-number="2.16">
+<h2 data-number="2.16" class="anchored" data-anchor-id="derivative-free-optimization-nelder-mead-2"><span class="header-section-number">2.16</span> Derivative-free optimization: Nelder-Mead</h2>
+<div class="columns">
+<div class="column">
+<ol type="a">
+<li><strong>Reflection</strong>: reflect <span class="math inline">x_{n+1}</span> through the opposite face of the simplex and evaluate the new point: <span class="math inline">x_r = x_0 + \alpha(x_0 - x_{n+1})</span>, <span class="math inline">\alpha &gt; 0</span></li>
+</ol>
+<ul>
+<li>If this improves upon the second-highest but is not the lowest value point, replace <span class="math inline">x_{n+1}</span> with <span class="math inline">x_r</span> and restart</li>
+<li>If this is the lowest value point so far, <strong>expand</strong></li>
+<li>If <span class="math inline">f(x_r) &gt; f(x_n)</span>, <strong>contract</strong></li>
+</ul>
+</div><div class="column">
+<p><img src="figures/nelder-mead_a.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="derivative-free-optimization-nelder-mead-3" class="level2" data-number="2.17">
+<h2 data-number="2.17" class="anchored" data-anchor-id="derivative-free-optimization-nelder-mead-3"><span class="header-section-number">2.17</span> Derivative-free optimization: Nelder-Mead</h2>
+<div class="columns">
+<div class="column">
+<ol start="2" type="a">
+<li><p><strong>Expansion:</strong> push the reflected point further in the same direction</p></li>
+<li><p><strong>Contraction:</strong> Contract the highest value point toward the middle</p></li>
+</ol>
+<ul>
+<li>Compute <span class="math inline">x_c = x_0 + \gamma(x_0 - x_{n+1})</span>, <span class="math inline">0 &lt; \gamma \leq 0.5</span></li>
+<li>If <span class="math inline">x_c</span> is better than the worst point, replace <span class="math inline">x_{n+1}</span> with <span class="math inline">x_c</span> and restart</li>
+<li>Else, <strong>shrink</strong></li>
+</ul>
+</div><div class="column">
+<p><img src="figures/nelder-mead_c.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="derivative-free-optimization-nelder-mead-4" class="level2" data-number="2.18">
+<h2 data-number="2.18" class="anchored" data-anchor-id="derivative-free-optimization-nelder-mead-4"><span class="header-section-number">2.18</span> Derivative-free optimization: Nelder-Mead</h2>
+<div class="columns">
+<div class="column">
+<ol start="4" type="a">
+<li><strong>Shrinkage:</strong> shrink the simplex toward the best point</li>
+</ol>
+<ul>
+<li>Replace all points but the best one with <span class="math inline">x_i = x_1 + \sigma(x_i - x_1)</span></li>
+</ul>
+</div><div class="column">
+<p><img src="figures/nelder-mead_d.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="nelder-mead-illustration" class="level2" data-number="2.19">
+<h2 data-number="2.19" class="anchored" data-anchor-id="nelder-mead-illustration"><span class="header-section-number">2.19</span> Nelder-Mead illustration</h2>
+<div class="columns">
+<div class="column">
+<p>Let’s see NM in action minimizing a classic function in the optimization literature: the <em>Rosenbrock (or banana) function</em></p>
+<p><span class="math display">
+f(x, y) = (a - x)^2  + b(y - x^2)^2
+</span></p>
+<p>Its global minimizer is <span class="math inline">(x, y) = (a, a^2 )</span></p>
+</div><div class="column">
+<p><em>a = 1, b = 100</em></p>
+<p><img src="figures/Rosenbrock-contour.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="nelder-mead-illustration-1" class="level2" data-number="2.20">
+<h2 data-number="2.20" class="anchored" data-anchor-id="nelder-mead-illustration-1"><span class="header-section-number">2.20</span> Nelder-Mead illustration</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/Nelder-Mead_Rosenbrock.gif" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="nelder-mead-in-julia" class="level2" data-number="2.21">
+<h2 data-number="2.21" class="anchored" data-anchor-id="nelder-mead-in-julia"><span class="header-section-number">2.21</span> Nelder-Mead in Julia</h2>
+<p>Nelder-Mead is a pain to code efficiently: don’t spend the time doing it yourself!</p>
+<p>For unconstrained optimization, Julia’s most mature package is <code>Optim.jl</code>, which includes NM</p>
+<p>. . .</p>
+<div id="4fbe9759" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Optim;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Define Rosenbrock function with a = 1, b = 100</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(x) <span class="op">=</span> (<span class="fl">1.0</span> <span class="op">-</span> x[<span class="fl">1</span>])<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">100.0</span> <span class="op">*</span> (x[<span class="fl">2</span>] <span class="op">-</span> x[<span class="fl">1</span>]<span class="op">^</span><span class="fl">2</span>)<span class="op">^</span><span class="fl">2</span>; </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>x0 <span class="op">=</span> [<span class="fl">0.0</span>, <span class="fl">0.0</span>]; <span class="co"># initial guess</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="nelder-mead-in-julia-1" class="level2" data-number="2.22">
+<h2 data-number="2.22" class="anchored" data-anchor-id="nelder-mead-in-julia-1"><span class="header-section-number">2.22</span> Nelder-Mead in Julia</h2>
+<div id="f750be6e" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>soln <span class="op">=</span> Optim.<span class="fu">optimize</span>(f, x0, <span class="fu">NelderMead</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code> * Status: success
+
+ * Candidate solution
+    Final objective value:     3.525527e-09
+
+ * Found with
+    Algorithm:     Nelder-Mead
+
+ * Convergence measures
+    √(Σ(yᵢ-ȳ)²)/n ≤ 1.0e-08
+
+ * Work counters
+    Seconds run:   0  (vs limit Inf)
+    Iterations:    60
+    f(x) calls:    117</code></pre>
+</div>
+</div>
+</section>
+<section id="nelder-mead-in-julia-2" class="level2" data-number="2.23">
+<h2 data-number="2.23" class="anchored" data-anchor-id="nelder-mead-in-julia-2"><span class="header-section-number">2.23</span> Nelder-Mead in Julia</h2>
+<p>We can check the solution and the minimum value attained using</p>
+<div id="db134809" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>soln.minimizer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>2-element Vector{Float64}:
+ 0.9999634355313174
+ 0.9999315506115275</code></pre>
+</div>
+</div>
+<div id="dbc47c41" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>soln.minimum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>3.5255270584829996e-9</code></pre>
+</div>
+</div>
+</section>
+<section id="nelder-mead-in-julia-3" class="level2" data-number="2.24">
+<h2 data-number="2.24" class="anchored" data-anchor-id="nelder-mead-in-julia-3"><span class="header-section-number">2.24</span> Nelder-Mead in Julia</h2>
+<p>If you want to check the steps, run <code>Optim.optimize</code> with option <code>store_trace = true</code></p>
+<div id="27e9b9a0" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>soln <span class="op">=</span> Optim.<span class="fu">optimize</span>(f, x0, <span class="fu">NelderMead</span>(), Optim.<span class="fu">Options</span>(store_trace<span class="op">=</span><span class="cn">true</span>));</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Optim.<span class="fu">trace</span>(soln)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>61-element Vector{OptimizationState{Float64, NelderMead{Optim.AffineSimplexer, Optim.AdaptiveParameters}}}:
+      0     9.506641e-01     4.576214e-02
+ * time: 9.5367431640625e-7
+
+      1     9.506641e-01     2.023096e-02
+ * time: 6.9141387939453125e-6
+
+      2     9.506641e-01     2.172172e-02
+ * time: 7.867813110351562e-6
+
+      3     9.262175e-01     5.243757e-02
+ * time: 7.867813110351562e-6
+
+      4     8.292372e-01     4.259749e-02
+ * time: 9.775161743164062e-6
+
+      5     8.292372e-01     4.265507e-02
+ * time: 9.775161743164062e-6
+
+      6     8.138907e-01     3.109209e-02
+ * time: 9.775161743164062e-6
+
+      7     7.569606e-01     3.215435e-02
+ * time: 9.775161743164062e-6
+
+      8     7.382898e-01     2.418419e-02
+ * time: 1.0967254638671875e-5
+
+      9     6.989376e-01     2.426367e-02
+ * time: 1.0967254638671875e-5
+
+     10     6.800415e-01     2.124416e-02
+ * time: 1.0967254638671875e-5
+
+     11     6.475000e-01     1.809652e-02
+ * time: 1.1920928955078125e-5
+
+     12     6.377042e-01     2.151280e-02
+ * time: 1.1920928955078125e-5
+
+ ⋮
+     49     3.589907e-05     1.447031e-05
+ * time: 2.8848648071289062e-5
+
+     50     1.331661e-05     1.424732e-05
+ * time: 2.8848648071289062e-5
+
+     51     1.565213e-06     4.917747e-06
+ * time: 2.8848648071289062e-5
+
+     52     1.565213e-06     3.456266e-06
+ * time: 2.8848648071289062e-5
+
+     53     1.565213e-06     9.104041e-07
+ * time: 2.9802322387695312e-5
+
+     54     1.565213e-06     6.870496e-07
+ * time: 2.9802322387695312e-5
+
+     55     4.966342e-07     5.777837e-07
+ * time: 2.9802322387695312e-5
+
+     56     2.272707e-07     1.307209e-07
+ * time: 2.9802322387695312e-5
+
+     57     2.120249e-07     7.108936e-08
+ * time: 3.0994415283203125e-5
+
+     58     6.942358e-08     8.182068e-08
+ * time: 3.0994415283203125e-5
+
+     59     1.876334e-08     2.129210e-08
+ * time: 3.0994415283203125e-5
+
+     60     1.876334e-08     9.270314e-09
+ * time: 3.0994415283203125e-5</code></pre>
+</div>
+</div>
+</section>
+<section id="final-comments-on-nelder-mead" class="level2" data-number="2.25">
+<h2 data-number="2.25" class="anchored" data-anchor-id="final-comments-on-nelder-mead"><span class="header-section-number">2.25</span> Final comments on Nelder-Mead</h2>
+<ul>
+<li>Nelder-Mead is commonly used in optimization packages but it’s slow and unreliable
+<ul>
+<li>It has no real useful convergence properties</li>
+</ul></li>
+<li>Only use Nelder-Mead if you’re solving a problem with derivatives that are costly to calculate or approximate</li>
+</ul>
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>See proofs in Nocedal &amp; Wright (2006), chapter 2<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
