@@ -25,6 +25,10 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
   - Lecture 3.2 - Nonlinear Systems: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_3_2/ACE592_3_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_3_2/ACE592_3_2_notes.html)
   - Lecture 3.3 - Complementarity Problems: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_3_3/ACE592_3_3_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_3_3/ACE592_3_3_notes.html)
 
+- Unit 4 - Optimization
+  - Lecture 4.1 - Unconstrained optimization: introduction and derivative-free methods: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_1/ACE592_4_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_1/ACE592_4_1_notes.html)
+
+
 
 ## Recommended additional resources
 
