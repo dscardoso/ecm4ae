@@ -99,3 +99,32 @@ If you have suggestions of materials, please share them with me.
 - [NLSolve](https://github.com/JuliaNLSolvers/NLsolve.jl)
   
   
+
+## Unit 4: Optimization
+
+### Readings
+
+**Unconstrained optimization**
+
+- [MF02] Chapter 4
+- [NW06] Chapter 2
+- Line search methods: [NW06] Chapter 3
+- Trust region methods: [NW06] Chapter 4
+- [J98] Chapter 4
+- [CT05] Chapter 10
+
+**Constrained optimization**
+
+- [MF02] Chapter 4
+- [NW06] Chapters 12, 15
+- Penalty methods: [NW06] Chapter 17
+- Interior point methods: [NW06] Chapter 19
+- [J98] Chapter 4
+- Dixit, Avinash K. (1990) Optimization in Economic Theory, 2nd Edition
+
+
+### Technical references
+
+- [Optim.jl documentation and tutorials](https://julianlsolvers.github.io/Optim.jl/stable/)
+- [JuMP.jl documentation and tutorials](https://jump.dev/)
+- [Ipopt Documentation](https://coin-or.github.io/Ipopt/index.html)
