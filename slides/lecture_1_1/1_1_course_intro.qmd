@@ -9,8 +9,8 @@ format:
     toc: false
     code-fold: true
     number-sections: true
-    axe:
-      output: document # Accessibility check
+    # axe:
+    #   output: document # Accessibility check
   revealjs: 
     output-file: ACE592_1_1_slides.html
     theme: [white, ./../ace_592_style.css]

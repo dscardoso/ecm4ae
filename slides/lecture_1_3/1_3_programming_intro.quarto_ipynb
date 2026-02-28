@@ -1,0 +1,2244 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"ACE 592 - Lecture 1.3\"\n",
+        "subtitle: \"An introduction to programming with Julia\"\n",
+        "author: \"Diego S. Cardoso\"\n",
+        "institute: \"University of Illinois Urbana-Champaign\"\n",
+        "execute:\n",
+        "  echo: true\n",
+        "  cache: true\n",
+        "editor:\n",
+        "  render-on-save: false  \n",
+        "format:\n",
+        "  revealjs: \n",
+        "    output-file: ACE592_1_3_slides.html\n",
+        "    theme: [white, ./../ace_592_style.css]\n",
+        "    slide-number: c\n",
+        "    show-slide-number: all\n",
+        "    code-block-bg: true\n",
+        "    code-block-border-left: \"#31BAE9\"\n",
+        "    code-copy: hover\n",
+        "    fig-width: 8\n",
+        "    fig-height: 4\n",
+        "    chalkboard:\n",
+        "      theme: whiteboard\n",
+        "      chalk-effect: 0.1\n",
+        "  html:\n",
+        "    output-file: ACE592_1_3_notes.html\n",
+        "    toc: false\n",
+        "    number-sections: true\n",
+        "    # axe:\n",
+        "    #   output: document # Accessibility check\n",
+        "    code-fold: true\n",
+        "    html-math-method: katex\n",
+        "\n",
+        "---\n",
+        "\n",
+        "## Course Roadmap {background-color=\"orange\"}\n",
+        "\n",
+        "1.  Introduction to Scientific Computing\n",
+        "    1.  [Motivation]{.gray}\n",
+        "    2.  [Best practices]{.gray}\n",
+        "    3.  **Intro to programming**\n",
+        "2.  Fundamentals of numerical methods\n",
+        "3.  Systems of equations\n",
+        "4.  Optimization\n",
+        "5.  Function approximation\n",
+        "6.  Structural estimation\n",
+        "\n",
+        "## Agenda {background-color=\"orange\"}\n",
+        "\n",
+        "- Today we start a crash course on programming using Julia\n",
+        "- We will cover the main features to get you started...\n",
+        "- Of course, we'll be just scratching the surface. You'll learn a lot more as we go\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- Unless you told me you are using a different language, by now you hopefully have installed\n",
+        "  - Julia\n",
+        "  - Visual Studio Code with Julia extension\n",
+        "\n",
+        "\n",
+        "## Relevant sources for this lecture  {background-color=\"orange\"}\n",
+        "\n",
+        "-   Software Carpentry\n",
+        "-   QuantEcon\n",
+        "-   Lecture notes for Grant McDermott's *Data Science for Economists* (Oregon) and Ivan Rudik's *Dynamic Optimization* (Cornell) \n",
+        "-   Julia documentation\n",
+        "\n",
+        "\n",
+        "## Why learn Julia?\n",
+        "\n",
+        "**Reason 1: It is easy to learn and use**\n",
+        "\n",
+        "Julia is a *high-level* language\n",
+        "\n",
+        "- Low-level = you write instructions are closer to what the hardware understands (Assembly, C++, Fortran)\n",
+        "  - These are usually the fastest because there is little to translate (what a compiler does) and you can optimize your code depending on your hardware\n",
+        "- High-level means you write in closer to human language (Julia, R, Python)\n",
+        "  - The compiler has to do a lot more work to translate your instructions\n",
+        "\n",
+        "\n",
+        "## Why learn Julia?\n",
+        "\n",
+        "**Reason 2: Julia delivers C++ and Fortran speed**\n",
+        "\n",
+        "Sounds like magic, but it's just a clever combination of design choices targeting numerical methods\n",
+        "\n",
+        "![](figures/julia_speed_2.png){fig-align=\"center\"}\n",
+        "\n",
+        "[*In this graph, time to execute in C++ is 1*]{.small_text}\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Why learn Julia?\n",
+        "\n",
+        "**Reason 3: Julia is free, open-source, and popular**\n",
+        "\n",
+        "- You don't need expensive licenses to use (unlike Matlab)\n",
+        "- The people who want to use or verify what you did also don't have to pay\n",
+        "- There is a large and active community of users and developers\n",
+        "  - So it's easy to get help and new packages\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Tools for programming in Julia\n",
+        "\n",
+        "There are 2 *Integrated Development Environments (IDEs)* I generally recommend\n",
+        "\n",
+        "1. Visual Studio (VS) code\n",
+        "2. Jupyter Lab notebooks\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "In this course, we will only program plain `.jl` files, so I highly recommend you get familiarized with VS code\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- At the end of this unit, we will talk about using AI tools to help you learn to code and become a more productive programmer\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Intro to programming\n",
+        "\n",
+        "**Programming** $\\equiv$ **writing a set of instructions**\n",
+        "\n",
+        "- There are hard rules you can't break if you want your code to work\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- There are elements of style (e.g. Strunk and White) that make your code easier to read, modify, and maintain\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- There are elements that make your code more efficient\n",
+        "  - Using less time or space (memory)\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Intro to programming\n",
+        "\n",
+        "If you will be doing computational work, there are:\n",
+        "\n",
+        "1. Language-independent coding basics you should know\n",
+        "    - Arrays are stored in memory in particular ways\n",
+        "    \n",
+        "2. Language-independent best practices you should use\n",
+        "    - Indent to convey program structure, naming conventions\n",
+        "    \n",
+        "3. Language-dependent idiosyncracies that matter for function, speed, etc\n",
+        "    - Vectorizing, memory management\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Intro to programming\n",
+        "\n",
+        "Learning these early will:\n",
+        "\n",
+        "1. Make coding a lot easier\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "2. Reduce total programmer time\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "3. Reduce total computer time\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "4. Make your code understandable by someone else or your future self\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "5. Make your code flexible\n",
+        "\n",
+        "\n",
+        "\n",
+        "## A broad view of programming\n",
+        "\n",
+        "Your goal is to make a **program**\n",
+        "\n",
+        "A program is made of different components and sub-components\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "The most basic component is a **statement**, more commonly called a **line of code**\n",
+        "\n",
+        "\n",
+        "## A broad view of programming\n",
+        "\n",
+        "Here is an example of a pseudoprogram:"
+      ],
+      "id": "6d9ab37c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| eval: false\n",
+        "#| code-line-numbers: \"|1\"\n",
+        "deck = [\"4 of hearts\", \"King of clubs\", \"Ace of spades\"]\n",
+        "shuffled_deck = shuffle(deck)\n",
+        "first_card = shuffled_deck[1]\n",
+        "println(\"The first drawn card was \" * shuffled_deck \".\")"
+      ],
+      "id": "84adf990",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This program is very simple:\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "1. Create a deck of cards\n",
+        "\n",
+        "\n",
+        "## A broad view of programming\n",
+        "\n",
+        "Here is an example of a pseudoprogram:"
+      ],
+      "id": "62b97661"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| eval: false\n",
+        "#| code-line-numbers: \"2\"\n",
+        "deck = [\"4 of hearts\", \"King of clubs\", \"Ace of spades\"]\n",
+        "shuffled_deck = shuffle(deck)\n",
+        "first_card = shuffled_deck[1]\n",
+        "println(\"The first drawn card was \" * shuffled_deck \".\")"
+      ],
+      "id": "d55b218a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This program is very simple:\n",
+        "\n",
+        "1. Create a deck of cards\n",
+        "\n",
+        "2. Shuffle the deck\n",
+        "\n",
+        "\n",
+        "## A broad view of programming\n",
+        "\n",
+        "Here is an example of a pseudoprogram:"
+      ],
+      "id": "464591d7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| eval: false\n",
+        "#| code-line-numbers: \"3\"\n",
+        "deck = [\"4 of hearts\", \"King of clubs\", \"Ace of spades\"]\n",
+        "shuffled_deck = shuffle(deck)\n",
+        "first_card = shuffled_deck[1]\n",
+        "println(\"The first drawn card was \" * shuffled_deck \".\")"
+      ],
+      "id": "d7d2b627",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This program is very simple:\n",
+        "\n",
+        "1. Create a deck of cards\n",
+        "\n",
+        "2. Shuffle the deck\n",
+        "\n",
+        "3. Draw the top card\n",
+        "\n",
+        "\n",
+        "## A broad view of programming\n",
+        "\n",
+        "Here is an example of a pseudoprogram:"
+      ],
+      "id": "8da1550b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| eval: false\n",
+        "#| code-line-numbers: \"4\"\n",
+        "deck = [\"4 of hearts\", \"King of clubs\", \"Ace of spades\"]\n",
+        "shuffled_deck = shuffle(deck)\n",
+        "first_card = shuffled_deck[1]\n",
+        "println(\"The first drawn card was \" * shuffled_deck \".\")"
+      ],
+      "id": "059d6a68",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This program is very simple:\n",
+        "\n",
+        "1. Create a deck of cards\n",
+        "\n",
+        "2. Shuffle the deck\n",
+        "\n",
+        "3. Draw the top card\n",
+        "\n",
+        "4. Print it\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## A broad view of programming\n",
+        "\n",
+        "```julia\n",
+        "deck = [\"4 of hearts\", \"King of clubs\", \"Ace of spades\"]\n",
+        "shuffled_deck = shuffle(deck)\n",
+        "first_card = shuffled_deck[1]\n",
+        "println(\"The first drawn card was \" * shuffled_deck \".\")\n",
+        "```\n",
+        "\n",
+        "What are the parentheses and why are they different from square brackets?\n",
+        "\n",
+        "How does shuffle work?\n",
+        "\n",
+        "What’s `println`?\n",
+        "\n",
+        "It’s important to know that a **good program has understandable code**\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Julia specifics\n",
+        "\n",
+        "We will discuss coding in the context of Julia but a lot of this ports to Python, MATLAB, etc^[See [https://cheatsheets.quantecon.org](https://cheatsheets.quantecon.org)]\n",
+        "\n",
+        "We will review\n",
+        "\n",
+        "1. Types\n",
+        "2. Functions\n",
+        "3. Iterating\n",
+        "4. Broadcasting/vectorization\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "And some slightly more advanced aspects to help you debug\n",
+        "\n",
+        "5. Scope\n",
+        "6. Multiple dispatch\n",
+        "\n",
+        "\n",
+        "\n",
+        "# 1. Types\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: boolean\n",
+        "\n",
+        "All languages have some kind of **variable types** like *integers* or *arrays*\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "The first type you will often use is a boolean (`Bool`) variable that takes on a value of `true` or `false`:"
+      ],
+      "id": "2bb59f71"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x = true"
+      ],
+      "id": "ecd1573b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "typeof(x)"
+      ],
+      "id": "7b3abdef",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Types: boolean\n",
+        "\n",
+        "We can save the boolean value of actual statements in variables this way:"
+      ],
+      "id": "4fa2a9b6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "@show y = 1 > 2"
+      ],
+      "id": "32c4d994",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "- `@show` is a Julia macro for showing the operation. \n",
+        "- You can think of a macro as a shortcut name that calls a bunch of other things to run\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Quick detour: logical operators\n",
+        "\n",
+        "Logical operators work like you'd think\n",
+        "\n",
+        "`==` (equal equal) tests for equality"
+      ],
+      "id": "14ddbd81"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "1 == 1"
+      ],
+      "id": "03ad83b4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "`!=` (exclaimation point equal) tests for inequality"
+      ],
+      "id": "cbcf0246"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "2 != 2"
+      ],
+      "id": "e7e41751",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Quick detour: logical operators\n",
+        "\n",
+        "\n",
+        "You can also test for approximate equality with $\\approx$ (type `\\approx<TAB>`)\n"
+      ],
+      "id": "d90c294a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "1.00000001 ≈ 1"
+      ],
+      "id": "7752943e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "- We will see why this can be super useful in the next unit\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "Now back to types\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: numbers\n",
+        "\n",
+        "Two other data types you will use frequently are integers"
+      ],
+      "id": "6106fd7e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "typeof(1)"
+      ],
+      "id": "f29ac906",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "and floating point numbers"
+      ],
+      "id": "1addf362"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "typeof(1.0)"
+      ],
+      "id": "6d165794",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "- 64 means 64 bits of storage for the number, which is probably the default on your machine\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: numbers\n",
+        "\n",
+        "You can always instantiate alternative floating point number types"
+      ],
+      "id": "67a28ea4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "converted_int = convert(Float32, 1.0);\n",
+        "typeof(converted_int)"
+      ],
+      "id": "32e67c21",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Types: numbers\n",
+        "\n",
+        "**Math works like you would expect:**"
+      ],
+      "id": "834bfc87"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a = 2"
+      ],
+      "id": "90726d9e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "b = 1.0"
+      ],
+      "id": "c8324efb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a * b"
+      ],
+      "id": "c40aebb1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . ."
+      ],
+      "id": "a85561d9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a^2"
+      ],
+      "id": "fa008023",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Types: numbers"
+      ],
+      "id": "78662c11"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "2a - 4b"
+      ],
+      "id": "32b9f9b2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . ."
+      ],
+      "id": "f1b702fd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "@show 4a + 3b^2"
+      ],
+      "id": "dc988a72",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "**In Julia, you dont need `*` in between numeric literals (numbers) and variables**\n",
+        "\n",
+        "- But I advise you use the explicit notation anyway to avoid bugs\n",
+        "\n",
+        "\n",
+        "## Types: strings\n",
+        "\n",
+        "Strings store sequences of characters\n",
+        "\n",
+        "You implement them with double quotations:"
+      ],
+      "id": "6a6fc9c7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x = \"Hello World!\";\n",
+        "typeof(x)"
+      ],
+      "id": "967b13ed",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "- Note that `;` is used to suppress output for that line of code\n",
+        "- Unlike some other languages, in Julia you don't need to add `;` after every command\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: strings\n",
+        "\n",
+        "It's easy to work with strings. Use `$` to interpolate a variable/expression"
+      ],
+      "id": "72c503a2"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x = 10; y = 20; println(\"x + y =  $(x+y).\")"
+      ],
+      "id": "4b285840",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "Use `*` to concatenate strings"
+      ],
+      "id": "f85dff81"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a = \"Aww\"; b = \"Yeah!!!\"; println(a * \" \" * b)"
+      ],
+      "id": "84ff0d99",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "You probably won't use strings too often unless you're working with text data or printing output. \n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- Note that `;` can also be used to type multiple commands in the same line. I'm doing it make all fit in one slide, but you should avoid it\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: containers\n",
+        "\n",
+        "Containers are types that store collections of data\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "The most basic container is the `Array` which is denoted by square brackets\n",
+        "\n",
+        ". . .\n"
+      ],
+      "id": "f0272f4a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a1 = [1 2; 3 4]; typeof(a1)"
+      ],
+      "id": "b9fe2ee1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "Arrays are **mutable**, which means you can change their values\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "aa56aa84"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a1[1,1] = 5; a1"
+      ],
+      "id": "301119ad",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "You reference elements in a container with square brackets\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: containers\n",
+        "\n",
+        "An alternative to the `Array` is the `Tuple`, which is denoted by parentheses\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "7d3a6e20"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a2 = (1, 2, 3, 4); typeof(a2)"
+      ],
+      "id": "7ceaf8dc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "`a2` is a `Tuple` of 4 `Int64`s. Tuples have no dimension\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: containers\n",
+        "\n",
+        "Tuples are **immutable** which means you **can't** change their values"
+      ],
+      "id": "260c5c54"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "try\n",
+        "  a2[1] = 5;\n",
+        "catch\n",
+        "  println(\"Error, can't change value of a tuple.\")\n",
+        "end"
+      ],
+      "id": "08dc03e0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Types: containers\n",
+        "\n",
+        "Tuples don't need parentheses (but it's probably best practice for clarity)"
+      ],
+      "id": "7a0a1aab"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a3 = 5, 6; typeof(a3)"
+      ],
+      "id": "2c0dd17d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Types: containers\n",
+        "\n",
+        "Tuples can be **unpacked** \n",
+        "\n",
+        ". . ."
+      ],
+      "id": "f3ee69f5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a3_x, a3_y = a3;\n",
+        "a3_x"
+      ],
+      "id": "bfb78be9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "a3_y"
+      ],
+      "id": "7f740480",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "**This is basically how functions return multiple outputs when you call them!**\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: containers\n",
+        "\n",
+        "But an alternative and more efficient container is the  [`NamedTuple`](https://docs.julialang.org/en/v1/manual/types/#Named-Tuple-Types-1) "
+      ],
+      "id": "66de54c9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "nt = (x = 10, y = 11); typeof(nt)"
+      ],
+      "id": "235ce872",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "nt.x"
+      ],
+      "id": "8330318c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "nt.y"
+      ],
+      "id": "0babfe22",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Another way of accessing `x` and `y` inside the NamedTuple is"
+      ],
+      "id": "1da353eb"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "nt[:x]"
+      ],
+      "id": "5bb977d9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "nt[:y];"
+      ],
+      "id": "a12291cc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Types: containers\n",
+        "\n",
+        "A `Dictionary` is the last main container type\n",
+        "\n",
+        "- They are like arrays but are indexed by keys (names) instead of numbers\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "18fc8d1d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "d1 = Dict(\"class\" => \"ACE592\", \"grade\" => 97);\n",
+        "typeof(d1)"
+      ],
+      "id": "6b75d6ee",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "`d1` is a dictionary where the key are strings and the values are any kind of type\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Types: containers\n",
+        "\n",
+        "Reference specific values you want in the dictionary by referencing the key\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "3736b32b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "d1[\"class\"]"
+      ],
+      "id": "de5e9b22",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "d1[\"grade\"]"
+      ],
+      "id": "c4d722f8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Types: containers\n",
+        "\n",
+        "If you just want all the keys or all the values, you can use these base functions"
+      ],
+      "id": "bef3efac"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "keys_d1 = keys(d1)"
+      ],
+      "id": "36e22c79",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "values_d1 = values(d1)"
+      ],
+      "id": "73427ed0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Creating new types\n",
+        "\n",
+        "We can actually create new composite types using `struct`\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "0997fb32"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "struct FoobarNoType # This will be immutable by default\n",
+        "  a\n",
+        "  b\n",
+        "  c\n",
+        "end"
+      ],
+      "id": "6b0aa78e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This creates a new type called `FoobarNoType`\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Creating new types\n",
+        "\n",
+        "We can generate a variable of type `FoobarNoType` using its **constructor** which will have the same name\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "08c9febd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "newfoo = FoobarNoType(1.3, 2, \"plzzz\");\n",
+        "typeof(newfoo)"
+      ],
+      "id": "4d69599a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "newfoo.a"
+      ],
+      "id": "173c362b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Creating new types\n",
+        "\n",
+        "Custom types are a *handy and elegant way of organizing your program*\n",
+        "\n",
+        "- You can define a type `ModelParameters` to contain all your model parameters\n",
+        "\n",
+        "- Each variable you instantiate represents a single scenario\n",
+        "\n",
+        "- Then, instead of having a function call\n",
+        "\n",
+        "```julia\n",
+        "RunMyModel(param1, param2, param3, param4, param5);\n",
+        "```\n",
+        "\n",
+        "- You call\n",
+        "\n",
+        "```julia\n",
+        "RunMyModel(modelParameters);\n",
+        "```\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Creating new types\n",
+        "\n",
+        "**You should always declare types for the fields of a new composite type**\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "You can declare types with the double colon\n"
+      ],
+      "id": "e2fcd61e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "struct FoobarType # This will be immutable by default\n",
+        "  a::Float64\n",
+        "  b::Int\n",
+        "  c::String\n",
+        "end"
+      ],
+      "id": "a6ce8fed",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Creating new types"
+      ],
+      "id": "bd8e36c7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "newfoo_typed = FoobarType(1.3, 2, \"plzzz\");\n",
+        "typeof(newfoo_typed)"
+      ],
+      "id": "dbb50f24",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "newfoo.a"
+      ],
+      "id": "ee882f7a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This lets the compiler generate efficient code because it knows the types of the fields when you construct a `FoobarType`\n",
+        "\n",
+        "\n",
+        "\n",
+        "# 2. Functions\n",
+        "\n",
+        "## Functions: why?\n",
+        "\n",
+        "\n",
+        "Functions are an essential part of programming. But why use functions?\n",
+        "\n",
+        "1. To avoid duplicating code\n",
+        "   - If you have the same set of instructions repeated in multiple parts of your code, whenever you need to change something, you have to search through the code and change in many places. This is prone to bugs!\n",
+        "   - Rule of thumb: if you are using same (or a very similar) block of the instructions more than twice, turn that block into a function\n",
+        "\n",
+        "## Functions: why?\n",
+        "\n",
+        "2. To make our program more efficient\n",
+        "   - Julia optimizes functions in the background, but not code outside functions (more on that soon)\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "3. To make our code easier to read\n",
+        "  - Functions can give meaninful names to a block of code that does a specific tasks\n",
+        "  - Also, it can generalize the operation, letting that block take in different values\n",
+        "\n",
+        "\n",
+        "## Functions: defining them\n",
+        "\n",
+        "Creating functions in Julia is easy"
+      ],
+      "id": "15b31a8a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "function my_function(argument_1, argument_2)\n",
+        "  # Do something here\n",
+        "end;\n",
+        "typeof(my_function)"
+      ],
+      "id": "f5a46098",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "You can also define functions with no arguments. This can be, for example, for some calculation that will print results or save them in a file or manipulate objects somewhere in memory"
+      ],
+      "id": "a60900be"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "function my_other_function()\n",
+        "  # Add something here\n",
+        "end;"
+      ],
+      "id": "cea93cb7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Functions: defining them\n",
+        "\n",
+        "If you have a simple mathematical function, like $F(x) = \\sin(x^2)$,  you can use shorthand notation like this"
+      ],
+      "id": "417b4d18"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "F(x) = sin(x^2)"
+      ],
+      "id": "cee076c6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "This is the same as"
+      ],
+      "id": "f4dd86e7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "function F(x)\n",
+        "  sin(x^2)\n",
+        "end"
+      ],
+      "id": "5249f226",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Functions: return values\n",
+        "\n",
+        "```julia\n",
+        "function F(x)\n",
+        "  sin(x^2)\n",
+        "end\n",
+        "```\n",
+        "\n",
+        "By default, a function will return the last value it evaluated"
+      ],
+      "id": "7726cf5c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "F(1)"
+      ],
+      "id": "16bfd81f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Functions: return values\n",
+        "\n",
+        "But it's a good practice to make the return value explicit"
+      ],
+      "id": "d47556b3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "function F(x)\n",
+        "  result = sin(x^2)\n",
+        "  return result\n",
+        "end;\n",
+        "F(1)"
+      ],
+      "id": "1bb08e8e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Functions: return values\n",
+        "\n",
+        "Specifying a return is a must if you want to return multiple values. You can do that with tuples!"
+      ],
+      "id": "5b5615be"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "function flip_coordinates(lat, long)\n",
+        "  flipped_lat = -lat\n",
+        "  flipped_long = -long\n",
+        "  return flipped_lat, flipped_long\n",
+        "end;\n",
+        "x1, x2 = flip_coordinates(45, -60)"
+      ],
+      "id": "cc5e1b30",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## *Tangent: JIT*\n",
+        "\n",
+        "- *Just-in-time compilation* (JIT) is one of the tricks Julia does to make things run faster\n",
+        "  - It translates your code to processor language the first time you run it and uses the translated version every time you call it again\n",
+        "  - When we run the function for the first time, it may take longer because of this compilation step\n",
+        "  - When we run it again, it will be much faster\n",
+        "- This is one of the reasons why putting your code inside functions is important: Julia can optimize functions better than code outside functions\n",
+        "\n",
+        "# 3. Iteration\n",
+        "\n",
+        "\n",
+        "## Iterating\n",
+        "\n",
+        "As in other languages we have loops at our disposal:\n",
+        "\n",
+        "`for` loops iterate over containers"
+      ],
+      "id": "266d57b5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for count in 1:10\n",
+        "  random_number = rand()\n",
+        "  if random_number > 0.2\n",
+        "    println(\"We drew a $random_number.\")\n",
+        "  end\n",
+        "end"
+      ],
+      "id": "15e0cd5a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Iterating\n",
+        "\n",
+        "`while` loops iterate until a logical expression is false"
+      ],
+      "id": "aa47fd80"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x = 1;\n",
+        "while x < 50\n",
+        "  x = x * 2\n",
+        "  println(\"After doubling, x is now equal to $x.\")\n",
+        "end"
+      ],
+      "id": "476c5dd2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Iterating\n",
+        "\n",
+        "An `Iterable` is something you can loop over, like arrays\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "bb74fcc6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "actions = [\"codes well\", \"skips class\"];\n",
+        "for action in actions\n",
+        "    println(\"Charlie $action\")\n",
+        "end"
+      ],
+      "id": "f72c20fb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Iterating\n",
+        "\n",
+        "The type `Iterator` is a particularly convenient subset of Iterables\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "These include things like the dictionary keys:"
+      ],
+      "id": "02195a1e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for key in keys(d1)\n",
+        "  println(d1[key])\n",
+        "end"
+      ],
+      "id": "1fb38f63",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Iterating\n",
+        "\n",
+        "Iterating on `Iterator`s is more *memory efficient* than iterating on arrays\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "Here's a **very** simple example. The top function iterates on an `Array`, the bottom function iterates on an `Iterator`:\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "2bbaea50"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "function show_array_speed()\n",
+        "  m = 1\n",
+        "  for i = [1, 2, 3, 4, 5, 6]\n",
+        "    m = m*i\n",
+        "  end\n",
+        "end;\n",
+        "\n",
+        "function show_iterator_speed()\n",
+        "  m = 1\n",
+        "  for i = 1:6\n",
+        "    m = m*i\n",
+        "  end\n",
+        "end;"
+      ],
+      "id": "5f391f76",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Iterating\n"
+      ],
+      "id": "9f38c852"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "using BenchmarkTools\n",
+        "@btime show_array_speed()\n",
+        "@btime show_iterator_speed()"
+      ],
+      "id": "fa9276d7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The `Iterator` approach is faster and allocates no memory\n",
+        "\n",
+        "- `@btime` is a macro from package `BenchmarkTools` that shows you the elasped time and memory allocation\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Neat looping\n",
+        "\n",
+        "A nice thing about Julia: your loops can be much neater because you don't need to index when you just want the container elements\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "62d743a1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "f(x) = x^2;\n",
+        "x_values = 0:20:100;\n",
+        "for x in x_values\n",
+        "  println(f(x))\n",
+        "end"
+      ],
+      "id": "f766a304",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Neat looping\n",
+        "\n",
+        "This loop directly assigns the elements of `x_values` to `x` instead of having to do something clumsy like `x_values[i]`\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "`0:20:100` creates something called a `StepRange` (a type of `Iterator`) which starts at `0`, steps up by `20` and ends at `100`\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Neat looping\n",
+        "\n",
+        "You can also pull out an index and the element value by enumerating"
+      ],
+      "id": "5f5823e8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "f(x) = x^2;\n",
+        "x_values = 0:20:100;\n",
+        "for (index, x) in enumerate(x_values)\n",
+        "  println(\"f(x) at value $index is $(f(x)).\")\n",
+        "end"
+      ],
+      "id": "41b2dd19",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "`enumerate` basically assigns an index vector\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Neat looping\n",
+        "\n",
+        "Nested loops can also be made very neatly\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "f61ccfb1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for x in 1:3, y in 3:-1:1\n",
+        "  println(\"$x minus $y is $(x-y)\")\n",
+        "end"
+      ],
+      "id": "2f5cfbb2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The first loop is the *outer* loop, the second loop is the *inner* loop\n",
+        "\n",
+        "## Neat looping\n",
+        "\n",
+        "But the \"traditional\" way of nesting loops also works\n",
+        "\n",
+        "- Just remember to include an `end` for each `for` nest"
+      ],
+      "id": "b4b0ae12"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for x in 1:3\n",
+        "  for y in 3:-1:1\n",
+        "    println(\"$x minus $y is $(x-y)\")\n",
+        "  end\n",
+        "end"
+      ],
+      "id": "f89bf48b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Comprehensions\n",
+        "\n",
+        "Comprehensions are an elegant way to use iterables that makes your code cleaner and more compact\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "97a8c6a3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "squared = [y^2 for y in 1:2:11]"
+      ],
+      "id": "e34dc24b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This created a 1-dimension `Array` using one line\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Comprehensions\n",
+        "\n",
+        "We can also use nested loops for comprehensions\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "ee7b7c2c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "squared_2 = [(y+z)^2 for y in 1:2:11, z in 1:6]"
+      ],
+      "id": "c48129fa",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This created a 2-dimensional `Array`\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- Use this (and the compact nested loop) sparingly since it's hard to read and understand\n",
+        "\n",
+        "\n",
+        "# 4. Broadcating/Vectorization\n",
+        "\n",
+        "## Vectorization\n",
+        "\n",
+        "Iterated operations element by element is usually an inefficient approach\n",
+        "\n",
+        "Another way is to do operations over an entire array. This is called **vectorization**\n",
+        "\n",
+        "![](figures/vectorization.png){fig-align=\"center\"}\n",
+        "\n",
+        "- It's faster because your processor can do some operations over multiple values with one instruction\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Dot syntax: broadcasting/vectorization\n",
+        "\n",
+        "Vectorizing operations is easy in Julia: just use *dot syntax* (like in MATLAB)\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "40394683"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "g(x) = x^2;\n",
+        "squared_2 = g.(1:2:11)"
+      ],
+      "id": "515aabb1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "This is actually called **broadcasting** in Julia\n",
+        "\n",
+        "\n",
+        "## Dot syntax: math intuition\n",
+        "\n",
+        "There is a mathematical intuition to make a distinction\n",
+        "\n",
+        "- $g(x) = x^2$ is a function $\\mathbb{R} \\rightarrow \\mathbb{R}$, i.e., mapping a scalar to a scalar\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- But if $z$ is, say, a $6 \\times 1$  vector: $z \\in \\mathbb{R}^6$, it's unclear what $g(z)$ is\n",
+        "  - What does the square of a $6 \\times 1$ vector even mean? Is it the square of each element? Is it a dot product with the vector itself? Something else?\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- When you use the dot syntax `g.(1:2:11)`, you are telling Julia: **apply function** `g` **to each element in vector** `[1, 3, 5, 7, 9, 11]`\n",
+        "  - If we needed a function to do something else with the whole vector, we need to write a different function for that\n",
+        "\n",
+        "## Dot syntax: we must pay attention to definitions!\n",
+        "\n",
+        "- Julia will generally be picky about this: if you call a function that is defined for a scalar and give it a vector, you will get an error message\n",
+        "  - This strictness (called \"strong typed language\") is actually one of the reasons it gets so fast: it doesn't need to spend time figuring out what kind of variable you give to it"
+      ],
+      "id": "0f5c8382"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "try\n",
+        "  g(1:2:11)\n",
+        "catch e\n",
+        "  println(e)\n",
+        "end"
+      ],
+      "id": "e7e3d3ca",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "- The `try`/`catch` block let's you handle error messages within your program\n",
+        "  - If anything fails, you can program ways to handle errors\n",
+        "  - We won't be using it in the course; it's here just because I have to handle it this way to generate slides. If you run this code, Julia REPL will give you a more informative error message\n",
+        "\n",
+        "\n",
+        "# 5. Scope\n",
+        "\n",
+        "## Scope\n",
+        "\n",
+        "The **scope** of a variable name determines when it is valid to refer to that variable\n",
+        "\n",
+        "- E.g.: if you create a variable inside a function, can you reference that variable outside the function?\n",
+        "- You can think of scope as different contexts within your program\n",
+        "\n",
+        ". . .\n",
+        "  \n",
+        "The two basic scopes are **local** and **global**\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "Scope can be a frustrating concept to grasp at first. But understanding how scopes work can save you a lot of debugging time\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "Let's walk through some simple examples to see how it works\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Scope\n",
+        "\n",
+        "First, functions have their own **local scope**\n",
+        "\n",
+        ". . ."
+      ],
+      "id": "b6c9407d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "ff(xx) = xx^2;\n",
+        "yy = 5;\n",
+        "ff(yy)"
+      ],
+      "id": "b0c2c091",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "`xx` isn't bound to any values outside the function `ff`\n",
+        "\n",
+        "- It is only used inside the function\n",
+        "\n",
+        "\n",
+        "## Scope\n",
+        "\n",
+        "Locally scoped functions allow us to do things like:"
+      ],
+      "id": "55dd9ea2"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "xx = 10;\n",
+        "fff(xx) = xx^2;\n",
+        "fff(5)"
+      ],
+      "id": "fb824b79",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "Although `xx` was declared equal to 10 *outside the function*, the function still evaluated `xx` within its own scope at 5 (the value passed as argument)\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Scope\n",
+        "\n",
+        "But this type of scoping also has (initially) counterintuitive results like:"
+      ],
+      "id": "f4e2f6af"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "zz = 0;\n",
+        "function do_some_iteration()\n",
+        "  for ii = 1:10\n",
+        "    zz = ii\n",
+        "  end\n",
+        "end\n",
+        "do_some_iteration()\n",
+        "println(\"zz = $zz\")"
+      ],
+      "id": "99a577a5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "**What happened?**\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Scope\n",
+        "\n",
+        "**What happened?**\n",
+        "\n",
+        "The `zz` *outside* the for loop has a different scope: it's in the **global scope**\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "The global scope is the outermost scope, outside all functions\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "The `zz` *inside* the function has a scope *local* to the loop\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "Since the outside `zz` has global scope, the locally scoped variables in the loop can't change it\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Scope\n",
+        "\n",
+        "But hold on. If try the same loop outside a function, it will actually return 10, not 0. $^{*}$ \n",
+        "\n",
+        "![](figures/scope_vscode.png\"){fig-align=\"center\"}"
+      ],
+      "id": "34858b4f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "zz = 0;\n",
+        "for ii = 1:10\n",
+        "  zz = ii\n",
+        "end\n",
+        "println(\"zz = $zz\")"
+      ],
+      "id": "1fc67acc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ". . .\n",
+        "\n",
+        "That's because this `for` loop sits in *global scope* \n",
+        "\n",
+        "  - It can get more complicated than that because there are soft and hard local scopes... but we don't need to dwell on that\n",
+        "  - The documentation has the details about the [scope of variables](https://docs.julialang.org/en/v1/manual/variables-and-scoping/)\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Scope\n",
+        "\n",
+        "Generally, you want to avoid global scope because it can cause conflicts, slowness, etc. But you can use `global` to force it if you want something to have global scope \n",
+        "\n",
+        "- This is almost always a bad practice, though!\n"
+      ],
+      "id": "dd206e64"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "zz = 0;\n",
+        "function do_some_iteration()\n",
+        "  for ii = 1:10\n",
+        "    global zz = ii\n",
+        "  end\n",
+        "end\n",
+        "do_some_iteration()\n",
+        "println(\"zz = $zz\")"
+      ],
+      "id": "4bb3c389",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Scope\n",
+        "\n",
+        "Local scope kicks in whenever you are defining variables inside a function\n",
+        "\n",
+        "Global variables inside a local scope are inherited for **reading**, not writing"
+      ],
+      "id": "e90b42c7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x, y = 1, 2;\n",
+        "function foo()\n",
+        "  x = 2        # assignment introduces a new local\n",
+        "  return x + y # y refers to the global\n",
+        "end;\n",
+        "foo()\n",
+        "x"
+      ],
+      "id": "2ba60686",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Scope\n",
+        "\n",
+        "We can fix looping issues with global scope by using a *wrapper function* that doesn't do anything but change the parent scope so it is not global"
+      ],
+      "id": "c3867515"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "zzz = 1;\n",
+        "function wrapper()\n",
+        "  zzz = 0;\n",
+        "  for iii = 1:10\n",
+        "    zzz = iii\n",
+        "  end\n",
+        "  println(\"zzz = $zzz\")\n",
+        "end\n",
+        "wrapper()"
+      ],
+      "id": "5093aa4e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 6. Multiple dispatch\n",
+        "\n",
+        "## Multiple dispatch\n",
+        "\n",
+        "Julia lets you define multiple functions with the same name but different types of input variables\n",
+        "\n",
+        "This is useful because some operations have different steps depending on the context. For example\n",
+        "\n",
+        "- Multiplication (`*`) can work on scalars, vectors, matrices, and more complex types\n",
+        "  - By allowing different instructions depending on what type of variable is given, Julia makes it easier for user to use functions consistently\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- But if you try to call a function with types of input variables it doesn't know how to handle, it will throw an error\n",
+        "  - This is usually the most common error you will encounter while learning Julia\n",
+        "\n",
+        "\n",
+        "## Multiple dispatch\n",
+        "\n",
+        "\n",
+        "`/` has MANY different methods for division depending on the input types! Each of these is a function specialized function that treats the inputs differently"
+      ],
+      "id": "d4cd48fd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "length(methods(/))"
+      ],
+      "id": "ce76e0d4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "methods(/)[1:4]"
+      ],
+      "id": "b826976e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# General programming advice\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Some concluding words on programming\n",
+        "\n",
+        "There is really only one way to effectively get better at programming: **PRACTICE**\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "Yes, reading *can help*, especially by making you aware of tools and resources. But it's no substitute for actually solving problems with the computer\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Some concluding words on programming\n",
+        "\n",
+        "**How to get started with your practice?**\n",
+        "\n",
+        "My suggestion of an intuitive way: **practice writing programs to solve problems you would know how to solve by hand**\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- The computer follows a strict logic that very often is different from yours\n",
+        "- Learning how to tell the computer to follow instructions and get to a destination you already know is a great way of learning\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "My personal favorite: [Project Euler](https://projecteuler.net) \n",
+        "\n",
+        "\n",
+        "\n",
+        "## Some concluding words on programming\n",
+        "\n",
+        "> *Project Euler is a series of challenging mathematical/computer programming problems that will require more than just mathematical insights to solve. Although mathematics will help you arrive at elegant and efficient methods, the use of a computer and programming skills will be required to solve most problems.*\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "Example of problems\n",
+        "1. If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23. *Find the sum of all the multiples of 3 or 5 below 1000.*\n",
+        ". . .\n",
+        "\n",
+        "2. The prime factors of 13195 are 5, 7, 13 and 29. *What is the largest prime factor of the number 600851475143 ?*\n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "You can type in your answer and it will tell you if it's correct\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Some concluding words on programming\n",
+        "\n",
+        "More on coding practices and efficiency:\n",
+        "\n",
+        "- See [JuliaPraxis](https://github.com/JuliaPraxis) for best practices for naming, spacing, comments, etc\n",
+        "\n",
+        "- See more [Performance tips](https://docs.julialang.org/en/v1/manual/performance-tips) from Julia Documentation\n",
+        "\n",
+        "\n",
+        "\n",
+        "## What about ChatGPT, Claude, and other LLMs?\n",
+        "\n",
+        "- You are lucky! You're among the first cohorts learning these methods with available AI language models that are advanced enough to **understand, explain, and generate** code\n",
+        "\n",
+        "**But hold on. Don't use this powerful resource without careful consideration**\n",
+        "\n",
+        "\n",
+        "## What about ChatGPT, Claude, and other LLMs?\n",
+        "\n",
+        "*But hold on. Don't use this powerful resource without careful consideration*\n",
+        "\n",
+        "- **This must be a complement, not a substitute for your programming skills**\n",
+        "\n",
+        "Why? \n",
+        "\n",
+        ". . .\n",
+        "\n",
+        "- For especialized scientific use, AI often produces buggy or incomplete, and sometimes outright incorrect solutions \n",
+        "  - Before you use it accurately, you need to be familiar enough with programming logic and the methods you are using to know when things are wrong\n",
+        "- These tools are improving fast, but they will always be imperfect\n",
+        "  - There is an inherent limitation in translating ambiguous (natural) languages to non-ambiguous (formal) languages\n",
+        "- Treat it like a very smart intern who can do well-defined tasks very quickly\n",
+        "  - But, to correctly supervise an intern, you need to know the job well yourself!\n"
+      ],
+      "id": "d6768ad1"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "julia-1.12",
+      "language": "julia",
+      "display_name": "Julia 1.12",
+      "path": "/home/diego/.local/share/jupyter/kernels/julia-1.12"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
