@@ -1283,3 +1283,258 @@ $$
 This is the **logit transformation**: $z \in \mathbb{R}$ maps to $x \in (0,1)$
 
 
+
+
+
+## When solvers fail: convergence problems
+
+We've seen that Newton's method converges *if* the initial guess is sufficiently close to a root where $f'$ is invertible
+
+But what does failure look like in practice?
+
+Three classic failure modes:
+
+1. **Cycling**: iterates bounce back and forth without approaching the root
+2. **Divergence**: iterates move farther and farther from the root
+3. **Slow convergence**: iterates approach the root, but VERY slowly
+
+
+
+## Failure mode 1: Cycling
+
+Consider $f(x) = x^3 - 2x + 2$
+
+Starting at $x^{(0)} = 0$:
+
+- $f(0) = 2$, $f'(0) = -2$ $\Rightarrow x^{(1)} = 0 - \frac{2}{-2} = 1$
+- $f(1) = 1$, $f'(1) = 1$ $\Rightarrow x^{(2)} = 1 - \frac{1}{1} = 0$
+
+The method enters a perfect 2-cycle: the tangent at $x = 0$ hits zero at $x = 1$, and the tangent at $x = 1$ hits zero at $x = 0$
+
+The actual root is at $x^* \approx -1.77$, which Newton never reaches from this starting point
+
+
+
+## Failure mode 1: Cycling
+
+Let's verify with a modified version of our `newtons_method` function
+
+```{julia}
+f(x) = x^3 - 2*x + 2;
+f_prime(x) = 3*x^2 - 2;
+```
+
+We need to add a maximum iteration count so the loop terminates
+
+```{julia}
+function newtons_method_maxiter(f, f_prime, initial_guess; maxiter=20)
+  tolerance = 1e-3   # tolerance for solution
+  difference = Inf   # initialize difference
+  x = initial_guess  # initialize current value
+  
+  for k in 1:maxiter
+      println("Iteration $k: x = $(round(x, digits=6))")
+      x_prev = x
+      x = x_prev - f(x_prev)/f_prime(x_prev)
+      difference = x - x_prev
+      abs(difference) < tolerance && return x
+  end
+  println("Did not converge after $maxiter iterations")
+  return x
+end;
+```
+
+## Failure mode 1: Cycling
+
+The iterates alternate between 0.0 and 1.0 indefinitely
+
+```{julia}
+newtons_method_maxiter(f, f_prime, 0.0; maxiter=10);
+```
+
+
+## Failure mode 1: Cycling
+
+```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
+using Plots; gr()
+
+f(x) = x^3 - 2*x + 2;
+f_prime(x) = 3*x^2 - 2;
+
+xgrid = range(-2.5, 2.0, length=300)
+p = plot(xgrid, f.(xgrid), label="f(x) = x³ - 2x + 2", color=:black, linewidth=2)
+hline!([0], color=:gray, linestyle=:dash, label=nothing)
+
+# Newton steps: tangent from (0, f(0)) to (1, 0), then (1, f(1)) to (0, 0)
+xs_cycle = [0.0, 1.0, 0.0, 1.0, 0.0]
+colors_cycle = [:royalblue, :crimson]
+for k in 1:4
+    xk = xs_cycle[k]; xk1 = xs_cycle[k+1]
+    plot!([xk, xk1], [f(xk), 0.0], color=colors_cycle[mod1(k,2)],
+          linestyle=:dot, linewidth=1.5, label=nothing)
+    plot!([xk1, xk1], [0.0, f(xk1)], color=colors_cycle[mod1(k,2)],
+          linestyle=:dot, linewidth=1.5, label=nothing)
+end
+scatter!([0.0, 1.0], [f(0.0), f(1.0)], color=:red, markersize=6, label="Iterates")
+title!("Cycling: Newton bounces between x = 0 and x = 1")
+xlabel!("x"); ylabel!("f(x)")
+p
+```
+
+
+
+## Failure mode 2: Divergence
+
+Consider $f(x) = \text{sign}(x)|x|^{1/3}$ (the cube root)
+
+The root is at $x^* = 0$, with $f'(x) = \frac{1}{3}|x|^{-2/3}$. The Newton update simplifies to:
+
+$$
+x^{(k+1)} = x^{(k)} - \frac{x^{(k)^{1/3}}}{\frac{1}{3}x^{(k)^{-2/3}}} = x^{(k)} - 3x^{(k)} = -2x^{(k)}
+$$
+
+Each step **doubles** the distance to the root and flips the sign
+
+The function is too flat near the root: the tangent line always overshoots
+
+
+
+## Failure mode 2: Divergence
+
+The iterates grow geometrically: $0.5, -1, 2, -4, 8, \ldots$
+
+```{julia}
+f(x) = sign(x) * abs(x)^(1/3);
+f_prime(x) = (1/3) * abs(x)^(-2/3);
+
+newtons_method_maxiter(f, f_prime, 0.5; maxiter=8);
+```
+
+
+## Failure mode 2: Divergence
+
+```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
+f(x) = sign(x) * abs(x)^(1/3);
+f_prime(x) = (1/3) * abs(x)^(-2/3);
+
+# Collect iterates
+xs_div = [0.5]
+for k in 1:6
+    xk = xs_div[end]
+    push!(xs_div, xk - f(xk)/f_prime(xk))
+end
+
+xlim = maximum(abs.(xs_div)) * 1.2
+xgrid = range(-xlim, xlim, length=500)
+p = plot(xgrid, f.(xgrid), label="f(x) = sign(x)|x|^(1/3)", color=:black, linewidth=2)
+hline!([0], color=:gray, linestyle=:dash, label=nothing)
+
+for k in 1:min(length(xs_div)-1, 5)
+    xk = xs_div[k]; xk1 = xs_div[k+1]
+    plot!([xk, xk1], [f(xk), 0.0], color=:royalblue,
+          linestyle=:dot, linewidth=1.5, label=nothing, alpha=0.4+0.12*k)
+    plot!([xk1, xk1], [0.0, f(xk1)], color=:royalblue,
+          linestyle=:dot, linewidth=1.5, label=nothing, alpha=0.4+0.12*k)
+end
+scatter!(xs_div[1:6], f.(xs_div[1:6]), color=:red, markersize=5, label="Iterates")
+title!("Divergence: each step doubles the distance from the root")
+xlabel!("x"); ylabel!("f(x)")
+p
+```
+
+
+
+## Failure mode 3: Slow convergence
+
+Consider $f(x) = x^3$, which has a root at $x^* = 0$
+
+But this is a root with **multiplicity 3**: $f'(0) = 0$
+
+The Newton update simplifies to:
+
+$$
+x^{(k+1)} = x^{(k)} - \frac{(x^{(k)})^3}{3(x^{(k)})^2} = \frac{2}{3}x^{(k)}
+$$
+
+So the error only shrinks by a factor of $2/3$ each step: **linear convergence** instead of the quadratic convergence we expect from Newton's method
+
+
+
+## Failure mode 3: Slow convergence
+
+```{julia}
+f(x) = x^3;
+f_prime(x) = 3*x^2;
+
+newtons_method_maxiter(f, f_prime, 1.0; maxiter=50);
+```
+
+
+
+## Failure mode 3: Slow convergence
+
+Compare with a well-behaved case: $f(x) = x^3 - 1$ has a simple root at $x^* = 1$
+
+```{julia}
+#| code-fold: true
+#| code-summary: "Show the code"
+# Collect errors for x^3 (repeated root)
+f_slow(x) = x^3; fp_slow(x) = 3*x^2;
+x = 1.0; errors_slow = [abs(x)]
+for k in 1:50
+    x = x - f_slow(x)/fp_slow(x)
+    push!(errors_slow, abs(x))
+end
+
+# Collect errors for x^3 - 1 (simple root)
+f_fast(x) = x^3 - 1; fp_fast(x) = 3*x^2;
+x = 2.0; errors_fast = [abs(x - 1.0)]
+for k in 1:15
+    x = x - f_fast(x)/fp_fast(x)
+    push!(errors_fast, abs(x - 1.0))
+end
+
+p = plot(0:length(errors_slow)-1, errors_slow, marker=:circle, markersize=3,
+     color=:crimson, label="x³ (repeated root, linear rate)",
+     yscale=:log10, xlabel="Iteration", ylabel="Error (log scale)",
+     ylims=(1e-16, 10), linewidth=1.5)
+plot!(0:length(errors_fast)-1, errors_fast, marker=:diamond, markersize=3,
+     color=:royalblue, label="x³ - 1 (simple root, quadratic rate)", linewidth=1.5)
+title!("Convergence comparison: repeated vs simple root")
+p
+```
+
+
+
+## Failure mode 3: Slow convergence
+
+The simple root reaches machine precision in about 7 iterations
+
+The repeated root (level and 1st derivative) is still crawling after 50 iterations. **Why?**
+
+. . .
+
+**Why?** Newton's quadratic convergence requires $f'(x^*) \neq 0$
+
+When $f'(x^*) = 0$ (repeated root), the method degrades to linear convergence!
+
+
+## Summary: convergence failures
+
+| Failure mode | Example | What goes wrong | Root cause |
+|---|---|---|---|
+| Cycling | $x^3 - 2x + 2$ at $x_0=0$ | Iterates form a periodic orbit | Tangent lines create a closed loop from this starting point |
+| Divergence | $x^{1/3}$ at any $x_0 \neq 0$ | Iterates grow without bound | $\|f/f'\|$ grows near the root: steps get larger, not smaller |
+| Slow convergence | $x^3$ near $x^*=0$ | Linear instead of quadratic rate | $f'(x^*) = 0$ (repeated root): steps shrink, but only linearly |
+
+## Summary: convergence failures
+
+So, all three cases violate assumptions of Newton's convergence theorem.
+
+1. Cycling: bad starting point relative to the function's geometry
+2. Divergence: $f'$ is not continuously differentiable (at the root) and grows unboundedly near the root
+3. Slow convergence: $f'$ is singular at the root
