@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Diego S. Cardoso">
+
+<title>ACE 592 - Lecture 4.3</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="4_3_constrained_optimization_algorithms_files/libs/clipboard/clipboard.min.js"></script>
+<script src="4_3_constrained_optimization_algorithms_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="4_3_constrained_optimization_algorithms_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="4_3_constrained_optimization_algorithms_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="4_3_constrained_optimization_algorithms_files/libs/quarto-html/popper.min.js"></script>
+<script src="4_3_constrained_optimization_algorithms_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="4_3_constrained_optimization_algorithms_files/libs/quarto-html/anchor.min.js"></script>
+<link href="4_3_constrained_optimization_algorithms_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="4_3_constrained_optimization_algorithms_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="4_3_constrained_optimization_algorithms_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="4_3_constrained_optimization_algorithms_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="4_3_constrained_optimization_algorithms_files/libs/bootstrap/bootstrap-0e5f40ec6cc387305998617d35d5b2e2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-axe-checker-options" type="text/plain">eyJvdXRwdXQiOiJkb2N1bWVudCJ9</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ACE592_4_3_slides.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ACE 592 - Lecture 4.3</h1>
+<p class="subtitle lead">Constrained optimization: theory and methods</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Diego S. Cardoso </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Illinois Urbana-Champaign
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="course-roadmap" class="level2" data-background-color="orange" data-number="0.1">
+<h2 data-background-color="orange" data-number="0.1" class="anchored" data-anchor-id="course-roadmap"><span class="header-section-number">0.1</span> Course Roadmap</h2>
+<ol type="1">
+<li><span class="gray">Introduction to Scientific Computing</span></li>
+<li><span class="gray">Fundamentals of numerical methods</span></li>
+<li><span class="gray">Systems of equations</span></li>
+<li>Optimization
+<ol type="1">
+<li><span class="gray">Unconstrained optimization: intro</span></li>
+<li><span class="gray">Unconstrained optimization: line search and trust region methods</span></li>
+<li><strong>Constrained optimization: theory and methods</strong></li>
+<li>Constrained optimization: modeling framework</li>
+</ol></li>
+<li>Function approximation</li>
+<li>Structural estimation</li>
+</ol>
+</section>
+<section id="agenda" class="level2" data-background-color="orange" data-number="0.2">
+<h2 data-background-color="orange" data-number="0.2" class="anchored" data-anchor-id="agenda"><span class="header-section-number">0.2</span> Agenda</h2>
+<ul>
+<li>In this lecture, we will review the theory underlying constrained optimization</li>
+<li>Then, we will survey general families of methods</li>
+<li>Programming constrained optimization solvers is a difficult task. Next lecture we will see packages to help us with that</li>
+</ul>
+</section>
+<section id="main-references-for-today" class="level2" data-background-color="orange" data-number="0.3">
+<h2 data-background-color="orange" data-number="0.3" class="anchored" data-anchor-id="main-references-for-today"><span class="header-section-number">0.3</span> Main references for today</h2>
+<ul>
+<li>Miranda &amp; Fackler (2002), Ch. 4</li>
+<li>Judd (1998), Ch. 4</li>
+<li>Nocedal &amp; Writght (2006), Chs. 12, 15, 17–19</li>
+<li>Lecture notes from Ivan Rudik (Cornell) and Florian Oswald (SciencesPo)</li>
+<li>A.K. Dixit (1990), <em>Optimization in Economic Theory</em></li>
+</ul>
+</section>
+<section id="constrained-optimization-theory" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Constrained optimization theory</h1>
+<section id="constrained-optimization-setup" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="constrained-optimization-setup"><span class="header-section-number">1.1</span> Constrained optimization setup</h2>
+<p>We want to solve</p>
+<p><span class="math display">\min_x f(x)</span></p>
+<p>subject to</p>
+<p><span class="math display">
+\begin{gather}
+  g(x) = 0\\
+  h(x) \leq 0
+\end{gather}
+</span></p>
+<p>where <span class="math inline">f:\mathbb{R}^n \rightarrow \mathbb{R}</span>, <span class="math inline">g:\mathbb{R}^n \rightarrow \mathbb{R}^m</span>, <span class="math inline">h:\mathbb{R}^n \rightarrow \mathbb{R}^l</span>, and <span class="math inline">f, g</span>, and <span class="math inline">h</span> are twice continuously differentiable</p>
+<ul>
+<li>We have <span class="math inline">m</span> <em>equality constraints</em> and <span class="math inline">l</span> <em>inequality constraints</em></li>
+</ul>
+</section>
+<section id="constraint-types" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="constraint-types"><span class="header-section-number">1.2</span> Constraint types</h2>
+<p>Constraints come in two types: equality or inequality</p>
+<p>Let’s see a an illustration with a single constraint. Consider the optimization problem</p>
+<p><span class="math display">
+\min_x -exp\left(-(x_1 x_2 - 1.5)^2 - (x_2 - 1.5)^2 \right)
+</span></p>
+<p>subject to <span class="math inline">x_1 - x_2^2 = 0</span></p>
+<ul>
+<li>The equality constraint limits solutions along the curve where <span class="math inline">x_1 = x_2^2</span></li>
+</ul>
+</section>
+<section id="constraint-types-1" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="constraint-types-1"><span class="header-section-number">1.3</span> Constraint types</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/equality_constraint.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="constraint-types-2" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="constraint-types-2"><span class="header-section-number">1.4</span> Constraint types</h2>
+<p>The problem can also be formulated with an inequality constraint</p>
+<p><span class="math display">
+\min_x -exp\left(-(x_1 x_2 - 1.5)^2 - (x_2 - 1.5)^2 \right)
+</span></p>
+<p>subject to <span class="math inline">-x_1 + x_2^2 \leq 0</span></p>
+<p>. . .</p>
+<p>How would that change feasible set compared to the equality constraint?</p>
+</section>
+<section id="constraint-types-3" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="constraint-types-3"><span class="header-section-number">1.5</span> Constraint types</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>The feasible set is in blue
+<ul>
+<li>It extends below and to the right</li>
+</ul></li>
+<li>The solution in this case is along the boundaries of the feasible set
+<ul>
+<li>It coincides with the equality constraint</li>
+<li>In those cases, we say the constraint is <strong>binding</strong> or <strong>active</strong></li>
+</ul></li>
+</ul>
+</div><div class="column">
+<p><img src="figures/inequality_constraint_binding.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="constraint-types-4" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="constraint-types-4"><span class="header-section-number">1.6</span> Constraint types</h2>
+<div class="columns">
+<div class="column">
+<p>If the solution is <em>interior</em> to the feasible set, we say the constraint is <strong>slack</strong> or <strong>inactive</strong></p>
+<ul>
+<li>The solution to the constrained optimization problem is the same as the unconstrained one</li>
+</ul>
+</div><div class="column">
+<p><img src="figures/inequality_constraint_slack.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="solving-constrained-optimization-problems" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="solving-constrained-optimization-problems"><span class="header-section-number">1.7</span> Solving constrained optimization problems</h2>
+<p>You may recall from Math Econ courses that, under certain conditions, we can solve a constrained optimization problem by solving instead the corresponding <em>mixed complementary problem</em> using the first order conditions</p>
+<p>That trick follows from the <strong>Karush-Kuhn-Tucker (KKT) Theorem</strong></p>
+<p>What does it say?</p>
+</section>
+<section id="karush-kuhn-tucker-theorem" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="karush-kuhn-tucker-theorem"><span class="header-section-number">1.8</span> Karush-Kuhn-Tucker Theorem</h2>
+<blockquote class="blockquote">
+<p>If <span class="math inline">x^*</span> is a local minimizer and the constraint qualification<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> holds, then there are multipliers <span class="math inline">\lambda^* \in \mathbb{R}^m</span> and <span class="math inline">\mu^* \in \mathbb{R}^l</span> such that <span class="math inline">x^*</span> is a stationary point of <span class="math inline">\mathcal{L}</span>, the <em>Lagrangian</em></p>
+</blockquote>
+<p><span class="math display">
+\mathcal{L}(x, \lambda, \mu) = f(x) + \lambda^T g(x) + \mu^T h(x)
+</span></p>
+<ul>
+<li>Variables <span class="math inline">\lambda</span> and <span class="math inline">\mu</span> are called <em>Lagrange multipliers</em> and in Economics have the intepretation of shadow prices</li>
+</ul>
+<p>. . .</p>
+<p>How does this theorem help us?</p>
+</section>
+<section id="karush-kuhn-tucker-theorem-1" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="karush-kuhn-tucker-theorem-1"><span class="header-section-number">1.9</span> Karush-Kuhn-Tucker Theorem</h2>
+<p>Put another way, the theorem states that <span class="math inline">\mathcal{L}_x(x^*, \lambda^*, \mu^*) = 0</span></p>
+<p>. . .</p>
+<p>So, it tell us that <span class="math inline">(x^*, \lambda^*, \mu^*)</span> solve the system</p>
+<p><span class="math display">
+\begin{gather}
+  f_x + \lambda^T g_x + \mu^T h_x = 0 \\
+  \mu_i h^i(x) = 0, \; i = 1, \dots, l \\
+  g(x) = 0 \\
+  h(x) \leq 0 \\
+  \mu \leq 0
+\end{gather}
+</span></p>
+<ul>
+<li>Subscripts ( <span class="math inline">_x</span>) denote derivatives w.r.t. <span class="math inline">x</span> (it’s a vector)</li>
+<li><span class="math inline">h^i(x)</span> is the <span class="math inline">i</span>-th element of <span class="math inline">h(x)</span></li>
+</ul>
+</section>
+<section id="the-kkt-approach" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="the-kkt-approach"><span class="header-section-number">1.10</span> The KKT approach</h2>
+<p>The KKT theorem gives us a first approach to solving unconstrained optimization problems</p>
+<ul>
+<li>If the problem has box constraints ( <span class="math inline">a \leq x \leq b</span>), we can solve the corresponding <em>mixed complementarity problem</em> <span class="math inline">CP(f^\prime, a, b)</span> as we saw in unit 3</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>If constraints are more elaborated and multidimensional, we need to solve a series of nonlinear systems: one for each possible combination of binding inequality constraints
+<ul>
+<li>This is probably how you learned to solve utility maximization with a budget constraint</li>
+</ul></li>
+</ul>
+</section>
+<section id="the-kkt-approach-1" class="level2" data-number="1.11">
+<h2 data-number="1.11" class="anchored" data-anchor-id="the-kkt-approach-1"><span class="header-section-number">1.11</span> The KKT approach</h2>
+<p>Let <span class="math inline">\mathcal{I}</span> be the set of <span class="math inline">{1, 2, ..., l}</span> inequality constraints. For a subset <span class="math inline">\mathcal{P} \in \mathcal{I}</span>, we define the <span class="math inline">\mathcal{P}</span> problem as the nonlinear system of equations</p>
+<p><span class="math display">
+\begin{gather}
+  f_x + \lambda^T g_x + \mu^T h_x = 0 \\
+  h^i(x) = 0, \; i \in \mathcal{P} \\
+  \mu_i = 0, \; i \in \mathcal{I} - \mathcal{P} \\
+  g(x) = 0
+\end{gather}
+</span></p>
+<p>. . .</p>
+<p>We solve this system for every possible combination of binding constraints <span class="math inline">\mathcal{P}</span></p>
+<ul>
+<li>There might not be a solution for some combinations. That’s OK</li>
+<li>Compare the solutions of all combinations and pick the optimal (where <span class="math inline">f</span> attains the smallest value, in this case)</li>
+</ul>
+</section>
+<section id="the-kkt-approach-2" class="level2" data-number="1.12">
+<h2 data-number="1.12" class="anchored" data-anchor-id="the-kkt-approach-2"><span class="header-section-number">1.12</span> The KKT approach</h2>
+<ul>
+<li>When we have a good intuition about the problem, we may know ahead of time which constraints will bind</li>
+<li>For example, with monotonically increasing utility functions, we know the budget constraint binds</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>But as the number of constraints grows, we have an even larger number of possible combinations</li>
+<li>More combinations = more nonlinear systems to solve and compare</li>
+</ul>
+</section>
+<section id="other-solution-approaches" class="level2" data-number="1.13">
+<h2 data-number="1.13" class="anchored" data-anchor-id="other-solution-approaches"><span class="header-section-number">1.13</span> Other solution approaches</h2>
+<p>The combinatorial nature of the KKT approach is not that desirable from a computational perspective</p>
+<p>However, if the resulting nonlinear systems are simple to solve, we may still favor KKT</p>
+<p>There are computational alternatives to KKT. We’ll discuss three types of algorithms</p>
+<ul>
+<li>Penalty methods</li>
+<li>Active set methods</li>
+<li>Interior point methods</li>
+</ul>
+</section>
+</section>
+<section id="constrained-optimization-algorithms" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Constrained optimization algorithms</h1>
+<section id="penalty-methods" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="penalty-methods"><span class="header-section-number">2.1</span> Penalty methods</h2>
+<p>Suppose we wish to minimize some function subject to equality constraints (easily generalizes to inequality) <span class="math display">
+\min_x f(x) \,\,\, \text{s. t.} \,\, g(x) = 0
+</span></p>
+<p>. . .</p>
+<p>How does an algorithm know to not violate the constraint?</p>
+<p>. . .</p>
+<p>One way is to introduce a <strong>penalty function</strong> into our objective and remove the constraint</p>
+<p><span class="math display">
+Q(x;\rho) = f(x) + \rho P(g(x))
+</span></p>
+<p>where <span class="math inline">\rho</span> is the penalty parameter</p>
+</section>
+<section id="penalty-methods-1" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="penalty-methods-1"><span class="header-section-number">2.2</span> Penalty methods</h2>
+<p>With this, we transformed it into an unconstrained optimization problem <span class="math display">
+\min_x Q(x; \rho) = f(x) + \rho P(g(x))
+</span></p>
+<p>. . .</p>
+<p>How do we pick <span class="math inline">P</span> and <span class="math inline">\rho</span>?</p>
+<p>. . .</p>
+<p>A first idea is to penalize a candidate solution as much as possible whenever it leaves the feasible set: infinite penalty!</p>
+<p><span class="math display">Q(x) = f(x) + \infty \mathbf{1}(g(x) \neq 0)</span> where <span class="math inline">\mathbf{1}</span> is an indicator function</p>
+<ul>
+<li>This is the <strong>infinity step</strong> method</li>
+</ul>
+</section>
+<section id="penalty-methods-2" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="penalty-methods-2"><span class="header-section-number">2.3</span> Penalty methods</h2>
+<p>However, the infinite step method is a pretty bad idea</p>
+<ul>
+<li><span class="math inline">Q</span> becomes discontinuous and non-differentiable: it’s very hard for algorithms to iterate near the region where the constraint binds</li>
+<li>Any really large value of <span class="math inline">\rho</span> leads to the same practical problem</li>
+</ul>
+<p>. . .</p>
+<p>So we might instead use a more forgiving penalty function</p>
+</section>
+<section id="penalty-methods-3" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="penalty-methods-3"><span class="header-section-number">2.4</span> Penalty methods</h2>
+<p>A widely-used choice is the quadratic penalty function</p>
+<p><span class="math display">Q(x;\rho) = f(x) + \frac{\rho}{2} \sum_i g_i^2(x)</span></p>
+<ul>
+<li>For inequality constraint <span class="math inline">h(x) \leq 0</span>, we can use <span class="math inline">[\max(0, h_i(x))]^2</span></li>
+</ul>
+<p>. . .</p>
+<p>The second term increases the value of the function</p>
+<ul>
+<li>bigger <span class="math inline">\rho \rightarrow</span> bigger penalty from violating the constraint</li>
+</ul>
+<p>. . .</p>
+<p>The penalty terms are smooth <span class="math inline">\rightarrow</span> use unconstrained optimization techniques<br>
+to solve the problem by searching for iterates of <span class="math inline">x_k</span></p>
+</section>
+<section id="penalty-methods-4" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="penalty-methods-4"><span class="header-section-number">2.5</span> Penalty methods</h2>
+<p>Algorithms generally iterate on sequences of <span class="math inline">\rho_k \rightarrow \infty</span> as <span class="math inline">k \rightarrow \infty</span>, to require satisfying the constraints as we close in</p>
+<p>. . .</p>
+<p>There are also <em>Augmented Lagrangian methods</em> that take the quadratic penalty method and add explicit estimates of Lagrange multipliers to help force binding constraints to bind precisely</p>
+</section>
+<section id="penalty-method-example" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="penalty-method-example"><span class="header-section-number">2.6</span> Penalty method example</h2>
+<p>Example: <span class="math display">
+\min x_1 + x_2 \,\,\,\,\,\text{      subject to:    } \,\,\, x_1^2 + x_2^2 - 2 = 0
+</span></p>
+<p>. . .</p>
+<p>Solution is pretty easy to show to be <span class="math inline">(-1, -1)</span></p>
+<p>. . .</p>
+<p>The penalty method function <span class="math inline">Q(x_1, x_2; \rho)</span> is</p>
+<p><span class="math display">
+Q(x_1, x_2; \rho) = x_1 + x_2 + \frac{\rho}{2} (x_1^2 + x_2^2 - 2)^2
+</span></p>
+<p>. . .</p>
+<p>Let’s ramp up <span class="math inline">\rho</span> and see what happens to how the function looks</p>
+</section>
+<section id="penalty-method-example-1" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="penalty-method-example-1"><span class="header-section-number">2.7</span> Penalty method example</h2>
+<p><span class="math inline">\rho = 1</span>, solution is around <span class="math inline">(-1.1, -1.1)</span></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/penalty_method_1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="penalty-method-example-2" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="penalty-method-example-2"><span class="header-section-number">2.8</span> Penalty method example</h2>
+<p><span class="math inline">\rho = 10</span>, solution is very close to <span class="math inline">(-1, -1)</span>. Notice how quickly value increases outside <span class="math inline">x_1^2 + x_2^2 = 2</span> circle</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/penalty_method_2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="active-set-methods" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="active-set-methods"><span class="header-section-number">2.9</span> Active set methods</h2>
+<p>The KKT method can lead to too many combinations of constraints to evaluate</p>
+<p>Penalty methods don’t have the same problem but still require us to evaluate every constraint, even if they are not binding</p>
+<p>. . .</p>
+<p>Improving on the KKT approach, <strong>active set methods</strong> strategically pick a sequence of combinations of constraints</p>
+</section>
+<section id="active-set-methods-1" class="level2" data-number="2.10">
+<h2 data-number="2.10" class="anchored" data-anchor-id="active-set-methods-1"><span class="header-section-number">2.10</span> Active set methods</h2>
+<p>Instead of trying all possible combinations, like in KKT, active set methods start with an initial guess of the binding constraints set</p>
+<p>Then, iterate by periodically checking constraints</p>
+<ul>
+<li>Add or keep the ones that are active (binding)</li>
+<li>Drop the ones that are inactive (slack)</li>
+</ul>
+<p>. . .</p>
+<p>If an appropriate strategy of picking sets is chosen, active set algorithms converge to the optimal solution</p>
+</section>
+<section id="interior-point-methods" class="level2" data-number="2.11">
+<h2 data-number="2.11" class="anchored" data-anchor-id="interior-point-methods"><span class="header-section-number">2.11</span> Interior point methods</h2>
+<p>Interior point methods are also called <strong>barrier methods</strong></p>
+<ul>
+<li>These are typically used for inequality constrained problems</li>
+<li>The name <strong>interior point</strong> comes from the algorithm traversing the domain along the interior of the inequality constraints</li>
+</ul>
+<p>. . .</p>
+<p><strong>Issue:</strong> how do we ensure we are on the interior of the feasible set?</p>
+<p>. . .</p>
+<p><strong>Main idea:</strong> impose a <strong>barrier</strong> to stop the solver from letting a constraint bind</p>
+</section>
+<section id="interior-point-methods-1" class="level2" data-number="2.12">
+<h2 data-number="2.12" class="anchored" data-anchor-id="interior-point-methods-1"><span class="header-section-number">2.12</span> Interior point methods</h2>
+<p>Consider the following constrained optimization problem</p>
+<p><span class="math display">
+\begin{gather}
+    \min_{x} f(x) \notag\\
+    \text{subject to:  } g(x) = 0, h(x) \leq 0
+\end{gather}
+</span></p>
+<p>. . .</p>
+<p>Reformulate this problem as</p>
+<p><span class="math display">
+\begin{gather}
+    \min_{x,s} f(x) \notag\\
+    \text{subject to:  } g(x) = 0, h(x) + s = 0, s \geq 0
+\end{gather}
+</span></p>
+<p>where <span class="math inline">s</span> is a vector of slack variables for the constraints</p>
+</section>
+<section id="interior-point-methods-2" class="level2" data-number="2.13">
+<h2 data-number="2.13" class="anchored" data-anchor-id="interior-point-methods-2"><span class="header-section-number">2.13</span> Interior point methods</h2>
+<p>Final step: introduce a <strong>barrier function</strong> to eliminate the inequality constraint,</p>
+<p><span class="math display">
+\begin{gather}
+    \min_{x,s} f(x) - \mu \sum_{i=1}^l log(s_i) \notag\\
+    \text{subject to:  } g(x) = 0, h(x) + s = 0
+\end{gather}
+</span></p>
+<p>where <span class="math inline">\mu &gt; 0</span> is a barrier parameter</p>
+</section>
+<section id="interior-point-methods-3" class="level2" data-number="2.14">
+<h2 data-number="2.14" class="anchored" data-anchor-id="interior-point-methods-3"><span class="header-section-number">2.14</span> Interior point methods</h2>
+<p>The barrier function prevents the components of <span class="math inline">s</span> from approaching zero by imposing a logarithmic barrier <span class="math inline">\rightarrow</span> it maintains slack in the constraints</p>
+<ul>
+<li>Another common barrier function is <span class="math inline">\sum_{i=1}^l (1/s_i)</span></li>
+</ul>
+<p>Interior point methods solve a sequence of barrier problems until <span class="math inline">\mu_k</span> converges to zero</p>
+<p>The solution to the barrier problem converges to that of the original problem</p>
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Constraint qualification, or regularity conditions, can be formulated depending on the nature of the constraint. We tend to overlook those in Economics, though.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

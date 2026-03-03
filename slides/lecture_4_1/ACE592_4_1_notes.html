@@ -190,6 +190,8 @@ window.Quarto = {
 <li>Miranda &amp; Fackler (2002), Ch. 4</li>
 <li>Judd (1998), Ch. 4</li>
 <li>Nocedal &amp; Writght (2006), Ch. 2</li>
+<li>A.K. Dixit (1990), <em>Optimization in Economic Theory</em><br>
+</li>
 <li>Lecture notes from Ivan Rudik (Cornell) and Florian Oswald (SciencesPo)</li>
 </ul>
 </section>
@@ -482,7 +484,7 @@ window.Quarto = {
 </section>
 <section id="golden-search-in-julia" class="level2" data-number="2.11">
 <h2 data-number="2.11" class="anchored" data-anchor-id="golden-search-in-julia"><span class="header-section-number">2.11</span> Golden search in Julia</h2>
-<div id="34e8fac5" class="cell" data-execution_count="1">
+<div id="34e8fac5" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">golden_search</span>(f, lower_bound, upper_bound)</span>
@@ -507,7 +509,7 @@ window.Quarto = {
 </section>
 <section id="golden-search-in-julia-1" class="level2" data-number="2.12">
 <h2 data-number="2.12" class="anchored" data-anchor-id="golden-search-in-julia-1"><span class="header-section-number">2.12</span> Golden search in Julia</h2>
-<div id="8f529160" class="cell" data-execution_count="2">
+<div id="8f529160" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(x) <span class="op">=</span> <span class="fl">2</span>x<span class="op">^</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">4</span>x;</span>
@@ -624,7 +626,7 @@ f(x, y) = (a - x)^2  + b(y - x^2)^2
 <p>Nelder-Mead is a pain to code efficiently: don’t spend the time doing it yourself!</p>
 <p>For unconstrained optimization, Julia’s most mature package is <code>Optim.jl</code>, which includes NM</p>
 <p>. . .</p>
-<div id="4fbe9759" class="cell" data-execution_count="3">
+<div id="4fbe9759" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Optim;</span></span>
@@ -637,7 +639,7 @@ f(x, y) = (a - x)^2  + b(y - x^2)^2
 </section>
 <section id="nelder-mead-in-julia-1" class="level2" data-number="2.22">
 <h2 data-number="2.22" class="anchored" data-anchor-id="nelder-mead-in-julia-1"><span class="header-section-number">2.22</span> Nelder-Mead in Julia</h2>
-<div id="f750be6e" class="cell" data-execution_count="4">
+<div id="f750be6e" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>soln <span class="op">=</span> Optim.<span class="fu">optimize</span>(f, x0, <span class="fu">NelderMead</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -664,7 +666,7 @@ f(x, y) = (a - x)^2  + b(y - x^2)^2
 <section id="nelder-mead-in-julia-2" class="level2" data-number="2.23">
 <h2 data-number="2.23" class="anchored" data-anchor-id="nelder-mead-in-julia-2"><span class="header-section-number">2.23</span> Nelder-Mead in Julia</h2>
 <p>We can check the solution and the minimum value attained using</p>
-<div id="db134809" class="cell" data-execution_count="5">
+<div id="db134809" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>soln.minimizer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -675,7 +677,7 @@ f(x, y) = (a - x)^2  + b(y - x^2)^2
  0.9999315506115275</code></pre>
 </div>
 </div>
-<div id="dbc47c41" class="cell" data-execution_count="6">
+<div id="dbc47c41" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>soln.minimum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -688,7 +690,7 @@ f(x, y) = (a - x)^2  + b(y - x^2)^2
 <section id="nelder-mead-in-julia-3" class="level2" data-number="2.24">
 <h2 data-number="2.24" class="anchored" data-anchor-id="nelder-mead-in-julia-3"><span class="header-section-number">2.24</span> Nelder-Mead in Julia</h2>
 <p>If you want to check the steps, run <code>Optim.optimize</code> with option <code>store_trace = true</code></p>
-<div id="27e9b9a0" class="cell" data-execution_count="7">
+<div id="27e9b9a0" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>soln <span class="op">=</span> Optim.<span class="fu">optimize</span>(f, x0, <span class="fu">NelderMead</span>(), Optim.<span class="fu">Options</span>(store_trace<span class="op">=</span><span class="cn">true</span>));</span>
