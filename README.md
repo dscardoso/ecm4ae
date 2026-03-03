@@ -27,6 +27,7 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
 
 - Unit 4 - Optimization
   - Lecture 4.1 - Unconstrained optimization: introduction and derivative-free methods: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_1/ACE592_4_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_1/ACE592_4_1_notes.html)
+  - Lecture 4.2 - Unconstrained optimization: Unconstrained optimization: line search and trust region methods: [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_2/ACE592_4_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_2/ACE592_4_2_notes.html)
 
 
 
