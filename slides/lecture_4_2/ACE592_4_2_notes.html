@@ -265,8 +265,17 @@ window.Quarto = {
 <li>Step 3 checks the <em>Armijo condition</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, which checks for a <em>sufficient decrease</em> for convergence</li>
 </ul>
 </section>
-<section id="line-search-direction-choice" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="line-search-direction-choice"><span class="header-section-number">2.5</span> Line search: direction choice</h2>
+<section id="armijo-condition-illustraion" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="armijo-condition-illustraion"><span class="header-section-number">2.5</span> Armijo condition illustraion</h2>
+<p><span class="math inline">\phi(\alpha) \equiv f(x_k + \alpha p_k) \leq f(x_k) + c\alpha\nabla f_k^T p_k \equiv l(\alpha)</span></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/Armijo.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="line-search-direction-choice" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="line-search-direction-choice"><span class="header-section-number">2.6</span> Line search: direction choice</h2>
 <p><strong>We still haven’t answered, what direction <span class="math inline">p_k</span> do we decide to move in?</strong></p>
 <p>What’s an obvious choice for <span class="math inline">p_k</span>?</p>
 <p>. . .</p>
@@ -277,16 +286,16 @@ window.Quarto = {
 <li><span class="math inline">k</span> indicates we are evaluating <span class="math inline">f</span> at iteration <span class="math inline">k</span></li>
 </ul>
 </section>
-<section id="steepest-descent-method" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="steepest-descent-method"><span class="header-section-number">2.6</span> Steepest descent method</h2>
+<section id="steepest-descent-method" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="steepest-descent-method"><span class="header-section-number">2.7</span> Steepest descent method</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figures/steepest_descent.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
 </section>
-<section id="steepest-descent-method-1" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="steepest-descent-method-1"><span class="header-section-number">2.7</span> Steepest descent method</h2>
+<section id="steepest-descent-method-1" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="steepest-descent-method-1"><span class="header-section-number">2.8</span> Steepest descent method</h2>
 <p>We can verify this is the direction of steepest descent by referring to Taylor’s theorem</p>
 <p>. . .</p>
 <p>For any direction <span class="math inline">p</span> and step length <span class="math inline">\alpha</span>, we have that</p>
@@ -296,8 +305,8 @@ f(x_k + \alpha p) = f(x_k) + \alpha p^T \nabla f_k + \frac{1}{2!}\alpha^2 p^T\na
 <p>. . .</p>
 <p>The rate of change in <span class="math inline">f</span> along <span class="math inline">p</span> at <span class="math inline">x_k</span> <span class="math inline">(\alpha = 0)</span> is <span class="math inline">p^T \, \nabla\,f_k</span></p>
 </section>
-<section id="steepest-descent-method-2" class="level2" data-number="2.8">
-<h2 data-number="2.8" class="anchored" data-anchor-id="steepest-descent-method-2"><span class="header-section-number">2.8</span> Steepest descent method</h2>
+<section id="steepest-descent-method-2" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="steepest-descent-method-2"><span class="header-section-number">2.9</span> Steepest descent method</h2>
 <p>The the unit vector of quickest descent solves</p>
 <p><span class="math display">
 \min_p p^T\,\nabla\,f_k \,\,\,\,\, \text{subject to:    }||p|| = 1
@@ -311,8 +320,8 @@ f(x_k + \alpha p) = f(x_k) + \alpha p^T \nabla f_k + \frac{1}{2!}\alpha^2 p^T\na
 <p>. . .</p>
 <p>The minimum is attained when <span class="math inline">cos\,\theta = -1</span> and <span class="math inline">p = -\frac{\nabla\,f_k}{||\nabla\,f_k||},</span> so the direction of steepest descent is simply <span class="math inline">-\nabla\,f_k</span></p>
 </section>
-<section id="steepest-descent-method-3" class="level2" data-number="2.9">
-<h2 data-number="2.9" class="anchored" data-anchor-id="steepest-descent-method-3"><span class="header-section-number">2.9</span> Steepest descent method</h2>
+<section id="steepest-descent-method-3" class="level2" data-number="2.10">
+<h2 data-number="2.10" class="anchored" data-anchor-id="steepest-descent-method-3"><span class="header-section-number">2.10</span> Steepest descent method</h2>
 <p>The <strong>steepest descent method</strong> searches along this direction at every iteration <span class="math inline">k</span></p>
 <ul>
 <li>It may select the step length <span class="math inline">\alpha_k</span> in several different ways</li>
@@ -320,8 +329,8 @@ f(x_k + \alpha p) = f(x_k) + \alpha p^T \nabla f_k + \frac{1}{2!}\alpha^2 p^T\na
 <li>However it can be very slow</li>
 </ul>
 </section>
-<section id="line-search-alternative-directions" class="level2" data-number="2.10">
-<h2 data-number="2.10" class="anchored" data-anchor-id="line-search-alternative-directions"><span class="header-section-number">2.10</span> Line search: alternative directions</h2>
+<section id="line-search-alternative-directions" class="level2" data-number="2.11">
+<h2 data-number="2.11" class="anchored" data-anchor-id="line-search-alternative-directions"><span class="header-section-number">2.11</span> Line search: alternative directions</h2>
 <div class="columns">
 <div class="column">
 <p>We can always use search directions other than the steepest descent</p>
@@ -336,8 +345,8 @@ f(x_k + \alpha p) = f(x_k) + \alpha p^T \nabla f_k + \frac{1}{2!}\alpha^2 p^T\na
 </div>
 </div>
 </section>
-<section id="newton-raphson-method" class="level2" data-number="2.11">
-<h2 data-number="2.11" class="anchored" data-anchor-id="newton-raphson-method"><span class="header-section-number">2.11</span> Newton-Raphson method</h2>
+<section id="newton-raphson-method" class="level2" data-number="2.12">
+<h2 data-number="2.12" class="anchored" data-anchor-id="newton-raphson-method"><span class="header-section-number">2.12</span> Newton-Raphson method</h2>
 <p>The most important search direction is not steepest descent but <strong>Newton’s direction</strong></p>
 <p>. . .</p>
 <p>This direction gives rise to the Newton-Raphson Method</p>
@@ -345,8 +354,8 @@ f(x_k + \alpha p) = f(x_k) + \alpha p^T \nabla f_k + \frac{1}{2!}\alpha^2 p^T\na
 <li>This method is basically just using Newton’s method to find the root of the gradient of the objective function</li>
 </ul>
 </section>
-<section id="newton-raphson-method-1" class="level2" data-number="2.12">
-<h2 data-number="2.12" class="anchored" data-anchor-id="newton-raphson-method-1"><span class="header-section-number">2.12</span> Newton-Raphson method</h2>
+<section id="newton-raphson-method-1" class="level2" data-number="2.13">
+<h2 data-number="2.13" class="anchored" data-anchor-id="newton-raphson-method-1"><span class="header-section-number">2.13</span> Newton-Raphson method</h2>
 <p>Newton’s direction comes out of the second order Taylor series approximation to <span class="math inline">f(x_k + p)</span></p>
 <p><span class="math display">
 f(x_k + p) \approx f_k + p^T\,\nabla\,f_k + \frac{1}{2!}\,p^T\,\nabla^2f_k\,p
@@ -359,8 +368,8 @@ f(x_k + p) \approx f_k + p^T\,\nabla\,f_k + \frac{1}{2!}\,p^T\,\nabla^2f_k\,p
 p^N_k = -[\nabla^2 f_k]^{-1}\nabla f_k
 </span></p>
 </section>
-<section id="newton-raphson-method-2" class="level2" data-number="2.13">
-<h2 data-number="2.13" class="anchored" data-anchor-id="newton-raphson-method-2"><span class="header-section-number">2.13</span> Newton-Raphson method</h2>
+<section id="newton-raphson-method-2" class="level2" data-number="2.14">
+<h2 data-number="2.14" class="anchored" data-anchor-id="newton-raphson-method-2"><span class="header-section-number">2.14</span> Newton-Raphson method</h2>
 <p>The algorithm is pretty much the same as in Newton’s rootfinding method</p>
 <ol type="1">
 <li>Start with an initial guess <span class="math inline">x_0</span></li>
@@ -375,8 +384,8 @@ p^N_k = -[\nabla^2 f_k]^{-1}\nabla f_k
 <li>Most packages just use <span class="math inline">\alpha=1</span> (i.e., Newton’s method step). But you can usually change this parameter if you have convergence issues</li>
 </ul>
 </section>
-<section id="newton-raphson-method-3" class="level2" data-number="2.14">
-<h2 data-number="2.14" class="anchored" data-anchor-id="newton-raphson-method-3"><span class="header-section-number">2.14</span> Newton-Raphson method</h2>
+<section id="newton-raphson-method-3" class="level2" data-number="2.15">
+<h2 data-number="2.15" class="anchored" data-anchor-id="newton-raphson-method-3"><span class="header-section-number">2.15</span> Newton-Raphson method</h2>
 <p>This approximation to the function we are trying to solve has error of <span class="math inline">O(||p||^3)</span>, so if <span class="math inline">p</span> is small, the quadratic approximation is very accurate</p>
 <p>. . .</p>
 <p><strong>Drawbacks:</strong></p>
@@ -388,8 +397,8 @@ p^N_k = -[\nabla^2 f_k]^{-1}\nabla f_k
 </ul></li>
 </ul>
 </section>
-<section id="quasi-newton-methods" class="level2" data-number="2.15">
-<h2 data-number="2.15" class="anchored" data-anchor-id="quasi-newton-methods"><span class="header-section-number">2.15</span> Quasi-Newton methods</h2>
+<section id="quasi-newton-methods" class="level2" data-number="2.16">
+<h2 data-number="2.16" class="anchored" data-anchor-id="quasi-newton-methods"><span class="header-section-number">2.16</span> Quasi-Newton methods</h2>
 <p>Just like in rootfinding, there are several methods to avoid computing derivatives (Hessians, in this case)</p>
 <p>Instead of the true Hessian <span class="math inline">\nabla^2 f(x)</span>, these methods use an approximation <span class="math inline">B_k</span> (to the inverse of the Hessian). Hence, they set direction</p>
 <p><span class="math display">
@@ -401,8 +410,8 @@ d_k = -B_k \nabla f_k
 <li>Named after its inventors, Broyden, Fletcher, Goldfarb, Shanno</li>
 </ul>
 </section>
-<section id="linear-search-methods-in-practice" class="level2" data-number="2.16">
-<h2 data-number="2.16" class="anchored" data-anchor-id="linear-search-methods-in-practice"><span class="header-section-number">2.16</span> Linear search methods in practice</h2>
+<section id="linear-search-methods-in-practice" class="level2" data-number="2.17">
+<h2 data-number="2.17" class="anchored" data-anchor-id="linear-search-methods-in-practice"><span class="header-section-number">2.17</span> Linear search methods in practice</h2>
 <p>Once again, we will use <code>Optim.jl</code>. We’ll see an example with an easy function, solving it using Steepest Descent, Newton-Raphson, and BFGS</p>
 <p><span class="math display">
 (x_1, x_2) = ax_1^2 + bx_2^2 + cx_1 + dx_2 + ex_1 x_2
@@ -417,8 +426,8 @@ d_k = -B_k \nabla f_k
 </details>
 </div>
 </section>
-<section id="linear-search-methods-in-julia" class="level2" data-number="2.17">
-<h2 data-number="2.17" class="anchored" data-anchor-id="linear-search-methods-in-julia"><span class="header-section-number">2.17</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia" class="level2" data-number="2.18">
+<h2 data-number="2.18" class="anchored" data-anchor-id="linear-search-methods-in-julia"><span class="header-section-number">2.18</span> Linear search methods in Julia</h2>
 <p>Let’s take a look at our function with a contour plot</p>
 <div id="2b4fa067" class="cell" data-execution_count="3">
 <details class="code-fold">
@@ -619,8 +628,8 @@ d_k = -B_k \nabla f_k
 </div>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-1" class="level2" data-number="2.18">
-<h2 data-number="2.18" class="anchored" data-anchor-id="linear-search-methods-in-julia-1"><span class="header-section-number">2.18</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-1" class="level2" data-number="2.19">
+<h2 data-number="2.19" class="anchored" data-anchor-id="linear-search-methods-in-julia-1"><span class="header-section-number">2.19</span> Linear search methods in Julia</h2>
 <p>Since we will use Newton-Raphson, we should define the gradient and the Hessian of our function</p>
 <div id="71845056" class="cell" data-execution_count="5">
 <details class="code-fold">
@@ -641,8 +650,8 @@ d_k = -B_k \nabla f_k
 </details>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-2" class="level2" data-number="2.19">
-<h2 data-number="2.19" class="anchored" data-anchor-id="linear-search-methods-in-julia-2"><span class="header-section-number">2.19</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-2" class="level2" data-number="2.20">
+<h2 data-number="2.20" class="anchored" data-anchor-id="linear-search-methods-in-julia-2"><span class="header-section-number">2.20</span> Linear search methods in Julia</h2>
 <p>Let’s check if the Hessian satisfies it being positive semidefinite. One way is to check whether all eigenvalues are positive. In this case, <span class="math inline">H</span> is constant, so it’s easy to check</p>
 <div id="6ed01096" class="cell" data-execution_count="6">
 <details class="code-fold">
@@ -658,8 +667,8 @@ d_k = -B_k \nabla f_k
 </div>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-3" class="level2" data-number="2.20">
-<h2 data-number="2.20" class="anchored" data-anchor-id="linear-search-methods-in-julia-3"><span class="header-section-number">2.20</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-3" class="level2" data-number="2.21">
+<h2 data-number="2.21" class="anchored" data-anchor-id="linear-search-methods-in-julia-3"><span class="header-section-number">2.21</span> Linear search methods in Julia</h2>
 <p>Since the gradient is linear, it is also easy to calculate the minimizer analytically. The FOC is just a linear equation</p>
 <div id="d953659c" class="cell" data-execution_count="7">
 <details class="code-fold">
@@ -673,8 +682,8 @@ d_k = -B_k \nabla f_k
 </div>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-4" class="level2" data-number="2.21">
-<h2 data-number="2.21" class="anchored" data-anchor-id="linear-search-methods-in-julia-4"><span class="header-section-number">2.21</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-4" class="level2" data-number="2.22">
+<h2 data-number="2.22" class="anchored" data-anchor-id="linear-search-methods-in-julia-4"><span class="header-section-number">2.22</span> Linear search methods in Julia</h2>
 <p>Let’s solve it with the Steepest (or Gradient) descent method</p>
 <div id="07290ed0" class="cell" data-execution_count="8">
 <details class="code-fold">
@@ -707,8 +716,8 @@ d_k = -B_k \nabla f_k
 </div>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-5" class="level2" data-number="2.22">
-<h2 data-number="2.22" class="anchored" data-anchor-id="linear-search-methods-in-julia-5"><span class="header-section-number">2.22</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-5" class="level2" data-number="2.23">
+<h2 data-number="2.23" class="anchored" data-anchor-id="linear-search-methods-in-julia-5"><span class="header-section-number">2.23</span> Linear search methods in Julia</h2>
 <p>Let’s solve it with the Steepest (or Gradient) descent method</p>
 <div id="7d12ad94" class="cell" data-execution_count="9">
 <details class="code-fold">
@@ -731,12 +740,12 @@ d_k = -B_k \nabla f_k
 </div>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-6" class="level2" data-number="2.23">
-<h2 data-number="2.23" class="anchored" data-anchor-id="linear-search-methods-in-julia-6"><span class="header-section-number">2.23</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-6" class="level2" data-number="2.24">
+<h2 data-number="2.24" class="anchored" data-anchor-id="linear-search-methods-in-julia-6"><span class="header-section-number">2.24</span> Linear search methods in Julia</h2>
 <p><img src="figures/Optim_GD.png" class="img-fluid"></p>
 </section>
-<section id="linear-search-methods-in-julia-7" class="level2" data-number="2.24">
-<h2 data-number="2.24" class="anchored" data-anchor-id="linear-search-methods-in-julia-7"><span class="header-section-number">2.24</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-7" class="level2" data-number="2.25">
+<h2 data-number="2.25" class="anchored" data-anchor-id="linear-search-methods-in-julia-7"><span class="header-section-number">2.25</span> Linear search methods in Julia</h2>
 <p>We haven’t really specified a line search method yet</p>
 <p>In most cases, <code>Optim.jl</code> will use by default the <em>Hager-Zhang method</em></p>
 <ul>
@@ -753,8 +762,8 @@ d_k = -B_k \nabla f_k
 <p>. . .</p>
 <p>Let’s re-run the <code>GradientDescent</code> method using <span class="math inline">\bar{\alpha}=1</span> and the backtracking method</p>
 </section>
-<section id="linear-search-methods-in-julia-8" class="level2" data-number="2.25">
-<h2 data-number="2.25" class="anchored" data-anchor-id="linear-search-methods-in-julia-8"><span class="header-section-number">2.25</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-8" class="level2" data-number="2.26">
+<h2 data-number="2.26" class="anchored" data-anchor-id="linear-search-methods-in-julia-8"><span class="header-section-number">2.26</span> Linear search methods in Julia</h2>
 <div id="8bde9655" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
@@ -787,16 +796,16 @@ d_k = -B_k \nabla f_k
 </div>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-9" class="level2" data-number="2.26">
-<h2 data-number="2.26" class="anchored" data-anchor-id="linear-search-methods-in-julia-9"><span class="header-section-number">2.26</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-9" class="level2" data-number="2.27">
+<h2 data-number="2.27" class="anchored" data-anchor-id="linear-search-methods-in-julia-9"><span class="header-section-number">2.27</span> Linear search methods in Julia</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figures/Optim_GDBT.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-10" class="level2" data-number="2.27">
-<h2 data-number="2.27" class="anchored" data-anchor-id="linear-search-methods-in-julia-10"><span class="header-section-number">2.27</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-10" class="level2" data-number="2.28">
+<h2 data-number="2.28" class="anchored" data-anchor-id="linear-search-methods-in-julia-10"><span class="header-section-number">2.28</span> Linear search methods in Julia</h2>
 <p>Next, let’s use the Newton-Raphson method with default (omitted) line search parameters</p>
 <ul>
 <li>If you omit <code>g!</code> and <code>h!</code>, <code>Optim</code> will approximate them numerically for you. You can also specify options to use auto differentiation</li>
@@ -831,16 +840,16 @@ d_k = -B_k \nabla f_k
 </div>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-11" class="level2" data-number="2.28">
-<h2 data-number="2.28" class="anchored" data-anchor-id="linear-search-methods-in-julia-11"><span class="header-section-number">2.28</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-11" class="level2" data-number="2.29">
+<h2 data-number="2.29" class="anchored" data-anchor-id="linear-search-methods-in-julia-11"><span class="header-section-number">2.29</span> Linear search methods in Julia</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figures/Optim_NR.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-12" class="level2" data-number="2.29">
-<h2 data-number="2.29" class="anchored" data-anchor-id="linear-search-methods-in-julia-12"><span class="header-section-number">2.29</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-12" class="level2" data-number="2.30">
+<h2 data-number="2.30" class="anchored" data-anchor-id="linear-search-methods-in-julia-12"><span class="header-section-number">2.30</span> Linear search methods in Julia</h2>
 <p>Lastly, let’s use the BFGS method</p>
 <div id="7432c264" class="cell" data-execution_count="14">
 <details class="code-fold">
@@ -871,8 +880,8 @@ d_k = -B_k \nabla f_k
 </div>
 </div>
 </section>
-<section id="linear-search-methods-in-julia-13" class="level2" data-number="2.30">
-<h2 data-number="2.30" class="anchored" data-anchor-id="linear-search-methods-in-julia-13"><span class="header-section-number">2.30</span> Linear search methods in Julia</h2>
+<section id="linear-search-methods-in-julia-13" class="level2" data-number="2.31">
+<h2 data-number="2.31" class="anchored" data-anchor-id="linear-search-methods-in-julia-13"><span class="header-section-number">2.31</span> Linear search methods in Julia</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figures/Optim_BFGS.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>

@@ -138,7 +138,11 @@ A widely-used method is the **Backtracking** procedure
 
 - Step 3 checks the *Armijo condition*^[Several other step lenght methods exist. See Nocedal & Wright Ch.3 and Miranda & Fackler Ch 4.4 for more examples.], which checks for a *sufficient decrease* for convergence
 
+## Armijo condition illustraion
 
+$\phi(\alpha) \equiv f(x_k + \alpha p_k) \leq f(x_k) + c\alpha\nabla f_k^T p_k \equiv l(\alpha)$
+
+![](figures/Armijo.png){fig-align="center"}
 
 ## Line search: direction choice
 
