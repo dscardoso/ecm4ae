@@ -452,6 +452,8 @@ There are six operations:
 (d) **Shrinkage:** shrink the simplex toward the best point
 
 -   Replace all points but the best one with $x_i = x_1 + \sigma(x_i - x_1)$
+
+**Repeats these steps until a convergence criterion is met:** usually, when the sum of the distances between the vertices and the centroid is smaller than some tolerance level
 :::
 
 ::: column
@@ -470,6 +472,8 @@ f(x, y) = (a - x)^2  + b(y - x^2)^2
 $$
 
 Its global minimizer is $(x, y) = (a, a^2 )$
+
+Contour (level) plot of the Rosenbrock function $\rightarrow$
 :::
 
 ::: column
@@ -482,6 +486,8 @@ Its global minimizer is $(x, y) = (a, a^2 )$
 ## Nelder-Mead illustration
 
 ![](figures/Nelder-Mead_Rosenbrock.gif){fig-align="center"}
+
+(Here, $x_1 = x$ and $x_2 = y$)
 
 ## Nelder-Mead in Julia
 

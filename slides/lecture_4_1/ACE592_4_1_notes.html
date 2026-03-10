@@ -593,6 +593,7 @@ window.Quarto = {
 <ul>
 <li>Replace all points but the best one with <span class="math inline">x_i = x_1 + \sigma(x_i - x_1)</span></li>
 </ul>
+<p><strong>Repeats these steps until a convergence criterion is met:</strong> usually, when the sum of the distances between the vertices and the centroid is smaller than some tolerance level</p>
 </div><div class="column">
 <p><img src="figures/nelder-mead_d.png" class="img-fluid"></p>
 </div>
@@ -607,6 +608,7 @@ window.Quarto = {
 f(x, y) = (a - x)^2  + b(y - x^2)^2
 </span></p>
 <p>Its global minimizer is <span class="math inline">(x, y) = (a, a^2 )</span></p>
+<p>Contour (level) plot of the Rosenbrock function <span class="math inline">\rightarrow</span></p>
 </div><div class="column">
 <p><em>a = 1, b = 100</em></p>
 <p><img src="figures/Rosenbrock-contour.svg" class="img-fluid"></p>
@@ -620,6 +622,7 @@ f(x, y) = (a - x)^2  + b(y - x^2)^2
 <p><img src="figures/Nelder-Mead_Rosenbrock.gif" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
+<p>(Here, <span class="math inline">x_1 = x</span> and <span class="math inline">x_2 = y</span>)</p>
 </section>
 <section id="nelder-mead-in-julia" class="level2" data-number="2.21">
 <h2 data-number="2.21" class="anchored" data-anchor-id="nelder-mead-in-julia"><span class="header-section-number">2.21</span> Nelder-Mead in Julia</h2>
