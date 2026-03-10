@@ -612,7 +612,7 @@ $$
 
 ::: {.columns}
 ::: {.column}
-Using default configurations in solvers, you may have notice sometimes they use `Trust region with dogleg`. What is that?
+Using default configurations in solvers, you may notice sometimes they use `Trust region with dogleg`. What is that?
 
 It's an improvement on the Cauchy point method
 
