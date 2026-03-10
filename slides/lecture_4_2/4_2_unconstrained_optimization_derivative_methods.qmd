@@ -612,7 +612,7 @@ $$
 
 ::: {.columns}
 ::: {.column}
-If you ran `nlsolve` with default parameters, you may have noticed it uses `Trust region with dogleg`. What's the deal with the `dogleg`?
+Using default configurations in solvers, you may have notice sometimes they use `Trust region with dogleg`. What is that?
 
 It's an improvement on the Cauchy point method
 

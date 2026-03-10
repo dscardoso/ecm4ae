@@ -977,7 +977,7 @@ p^C_k = -\tau_k \frac{\Delta_k}{||\nabla f_k||} \nabla f_k
 <h2>Trust region methods</h2>
 <div class="columns">
 <div class="column">
-<p>If you ran <code>nlsolve</code> with default parameters, you may have noticed it uses <code>Trust region with dogleg</code>. What’s the deal with the <code>dogleg</code>?</p>
+<p>Using default configurations in solvers, you may have notice sometimes they use <code>Trust region with dogleg</code>. What is that?</p>
 <p>It’s an improvement on the Cauchy point method</p>
 <ul>
 <li>It allows us to move in V-shaped trajectory instead of slowly adjusting with Cauchy directions along a curved path</li>
