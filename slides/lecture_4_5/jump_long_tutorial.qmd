@@ -202,7 +202,7 @@ In words: marginal revenue net of discount minus marginal cost minus the shadow 
 **Investment** ($I_t$): also a complementarity condition since $I_t \geq 0$. The key insight is that investing one unit today raises capacity in all future periods, so the return to investment is the present discounted value of the shadow price of capacity:
 
 $$
-\quad F'(I_t) - \sum_{s=t+1}^{T} \beta^{s-t} \alpha_s \leq 0 \perp I_t \geq 0
+\quad \sum_{s=t+1}^{T} \beta^{s-t} \alpha_s \leq 0 -F'(I_t) \perp I_t \geq 0
 $$
 
 **Capacity constraint** ($\alpha_t$): the complementary slackness condition on the capacity constraint:
@@ -219,10 +219,16 @@ The PATH solver expects complementarity conditions in the form $x \geq 0 \perp f
 For the sales condition, the "natural" economic FOC gives $p - d - C' - \alpha \leq 0$ when $X > 0$. To match PATH's convention, we flip the sign and write
 
 $$
-C'(X_t) + \alpha_t - p(X_t) + d \geq 0 \perp X_t \geq 0
+\quad C'(X_t) + \alpha_t - p(X_t) + d \geq 0 \perp X_t \geq 0
 $$
 
-Similarly for investment and the capacity multiplier. Getting the signs right is one of the most common sources of errors when setting up MCP problems.
+Similarly for investment and the capacity multiplier. 
+
+$$
+\quad F'(I_t) - \sum_{s=t+1}^{T} \beta^{s-t} \alpha_s \geq 0  \perp I_t \geq 0
+$$
+
+Getting the signs right is one of the most common sources of errors when setting up MCP problems.
 :::
 
 
