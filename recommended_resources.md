@@ -128,3 +128,19 @@ If you have suggestions of materials, please share them with me.
 - [Optim.jl documentation and tutorials](https://julianlsolvers.github.io/Optim.jl/stable/)
 - [JuMP.jl documentation and tutorials](https://jump.dev/)
 - [Ipopt Documentation](https://coin-or.github.io/Ipopt/index.html)
+
+
+
+## Unit 6: Introduction to Structural Estimation
+
+### Readings
+
+- Reiss, P. C., & Wolak, F. A. (2007). Structural econometric modeling: Rationales and examples from industrial organization. Handbook of econometrics, 6, 4277-4415. [[Link]](https://doi.org/10.1016/S1573-4412(07)06064-3) 
+  - Read chapters 1 to 3
+- Timmins, C., & Schlenker, W. (2009). Reduced-form versus structural modeling in environmental and resource economics. Annu. Rev. Resour. Econ., 1(1), 351-380. [[Link]](https://doi.org/10.1146/annurev.resource.050708.144119)
+
+
+## Tutorials & Extra resources
+
+- Manipulating data with [DataFrames.jl](https://julia.school/julia/dataframes)
+
