@@ -13,4 +13,5 @@ Pkg.add("LinearAlgebra"); # Lecture 3.1
 Pkg.add("NLsolve"); Pkg.add("LinearAlgebra"); # Lecture 3.2
 Pkg.add("Optim"); Pkg.add("LineSearches"); # Lecture 4.1
 Pkg.add("JuMP"); Pkg.add("Ipopt"); # Lecture 4.4
+Pkg.add("PATHSolver"); Pkg.add("LaTeXStrings"); Pkg.add("DataFrames") # Lecture 4.5
 ```

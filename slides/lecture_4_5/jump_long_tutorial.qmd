@@ -1,0 +1,542 @@
+---
+title: "ACE 592 - Unit 4 Tutorial (Lecture 4.5)"
+subtitle: "Dynamic Optimization with JuMP: Sanctions on an Oil Exporter"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  html:
+    output-file: ACE592_4_5_notes.html
+    toc: true
+    number-sections: true
+    code-fold: false
+    html-math-method: katex
+---
+
+## Introduction
+
+This tutorial walks through a simplified dynamic model of oil sanctions. The setting is motivated by Cardoso, Salant, and Daubanes (forthcoming, AEJ Policy), which studies how an oil-exporting country (hereafter, Rogue country) responds to international sanctions that ban its access to traditional shipping and insurance channels for oil exports.
+
+Under the ban, Rogue country can only sell oil through a shadow fleet of non-traditional shipping capacity. This capacity is limited in the short run but can be expanded through investment. The model captures the dynamic tradeoff: investing in evasion capacity is costly today but increases future export revenue.
+
+We solve this problem three ways using JuMP.jl, each illustrating a different formulation technique:
+
+1. **Mixed Complementarity Problem (MCP)** solved with `PATHSolver`: we derive the first-order conditions and complementarity constraints, then solve the equilibrium system directly.
+2. **Constrained optimization with an economic objective** solved with `Ipopt`: we maximize total surplus (equivalent to a competitive equilibrium) directly.
+3. **Constrained optimization with equilibrium conditions as constraints** solved with `Ipopt`: we use a dummy objective and program all optimality/equilibrium conditions as explicit constraints.
+
+All three formulations yield the same solution! We will compare them to highlight the connections between equilibrium conditions and optimization, and demonstrate the flexibility of JuMP as a modeling framework.
+
+
+## Setup
+
+```{julia}
+#| output: false
+using JuMP
+using PATHSolver
+using Ipopt
+using Plots, LaTeXStrings
+using DataFrames
+```
+
+
+## The model
+
+### Environment
+
+Rogue country exports oil to the global market. Under a full ban on traditional shipping channels, it can only sell through non-traditional channels (the "shadow fleet"). Let:
+
+- $X_t$: oil sold through the shadow fleet in period $t$ (mb/quarter)
+- $K_t$: shadow fleet capacity in period $t$ (mb/quarter)
+- $I_t$: investment in capacity expansion in period $t$ (mb/quarter)
+
+Capacity evolves according to
+$$
+K_{t+1} = K_t + I_t, \quad K_1 = \bar{K}
+$$
+
+and sales are bounded by capacity:
+$$
+X_t \leq K_t
+$$
+
+All variables are non-negative: $X_t, K_t, I_t \geq 0$.
+
+
+### Prices and costs
+
+**Global oil demand** is isoelastic. Total demand equals non-Rogue supply $Z$ (treated as fixed) plus Rogue exports $X_t$. The inverse demand function is
+
+$$
+p(X_t) = p_0 \left(\frac{Z + X_t}{D_0}\right)^{-1/\varepsilon_D}
+$$
+
+where $p_0$ is the baseline price, $D_0$ is baseline global demand, and $\varepsilon_D$ is the short-run price elasticity of demand.
+
+**Production costs** are quadratic with marginal cost
+
+$$
+C'(X_t) = c_0 + (p_0 - c_0) \frac{X_t}{R_0}
+$$
+
+where $c_0$ is the marginal cost at zero production and $R_0$ is baseline Rogue exports.
+
+**Shadow fleet discount**: sales through non-traditional channels occur at a discount $d$ below the world price, so the effective price received is $p(X_t) - d$.
+
+**Investment costs** are quadratic:
+
+$$
+F(I_t) = \frac{\bar{f}}{2} I_t^2, \quad F'(I_t) = \bar{f} \, I_t
+$$
+
+
+### Rogue country's problem
+
+The exporter maximizes discounted profits:
+
+$$
+\max_{\{X_t, I_t\}} \sum_{t=1}^{T} \beta^{t-1} \left[ (p(X_t) - d) X_t - C(X_t) - F(I_t) \right]
+$$
+
+subject to
+
+$$
+\begin{aligned}
+K_{t+1} &= K_t + I_t \\
+X_t &\leq K_t \\
+X_t, I_t &\geq 0
+\end{aligned}
+$$
+
+
+## Parameterization
+
+The calibration follows Cardoso, Salant, and Daubanes (forthcoming), which draws on IEA data and elasticity estimates from the literature.
+
+```{julia}
+#| output: false
+# Time horizon and discounting
+T  = 20            # quarters (5 years)
+β  = 0.85^(1/4)   # quarterly discount factor (annual rate ≈ 0.85)
+
+# Sanctions parameters
+d  = 15.0          # shadow fleet discount (USD/barrel)
+
+# Initial conditions
+K₁    = 2.0 * 90  # initial shadow fleet capacity (mb/quarter)
+K_max = 12.0 * 90  # max capacity (mb/quarter)
+
+# Demand parameters
+p_0   = 80.0       # baseline price (USD/barrel)
+ϵ_D   = 0.125      # short-run demand elasticity
+S_ROW = 92.0 * 90  # non-Rogue supply (mb/quarter), treated as fixed
+Q_W_0 = 5.4 * 90   # baseline Rogue traditional-channel exports (mb/quarter)
+Q_NW_0 = 2.0 * 90  # baseline Rogue non-traditional exports (mb/quarter)
+R_0   = Q_W_0 + Q_NW_0  # baseline total Rogue exports
+D_0   = S_ROW + R_0      # baseline global demand
+
+# Production cost parameters
+c_0 = 17.0                    # marginal cost intercept (USD/barrel)
+c̄   = (p_0 - c_0) / R_0      # marginal cost slope
+
+# Investment cost parameter (calibrated in Cardoso, Salant, and Daubanes)
+f̄ = 4.102
+```
+
+Let us define the economic functions we will use across all three formulations.
+
+```{julia}
+#| output: false
+# Inverse demand
+p_B(X) = p_0 * ((S_ROW + X) / D_0)^(-1/ϵ_D)
+
+# Marginal production cost
+C_prime(X) = c_0 + (p_0 - c_0) * (X / R_0)
+
+# Total production cost
+C_total(X) = c_0 * X + (p_0 - c_0) / (2 * R_0) * X^2
+
+# Investment cost and marginal
+F_cost(I) = f̄ / 2 * I^2
+F_prime(I) = f̄ * I
+
+# Integral of inverse demand: ∫₀ˣ p_B(q) dq
+# Used in Approach 2 for the surplus objective
+demand_integral(X) = p_0 * D_0 / (1 - 1/ϵ_D) * (((S_ROW + X) / D_0)^(1 - 1/ϵ_D) - (S_ROW / D_0)^(1 - 1/ϵ_D))
+```
+
+Quick sanity check: at baseline Rogue exports, marginal cost should equal the baseline price.
+
+```{julia}
+println("MC at baseline exports: $(C_prime(R_0))")
+println("Baseline price: $p_0")
+```
+
+
+## Deriving the equilibrium conditions
+
+Before solving numerically, we derive the first-order conditions that characterize the solution. These conditions will be used directly in Approaches 1 and 3.
+
+The Lagrangian for this problem is
+
+$$
+\mathcal{L} = \sum_{t=1}^{T} \beta^{t-1} \left[ (p(X_t) - d) X_t - C(X_t) - F(I_t) + \alpha_t (K_t - X_t) \right]
+$$
+
+where $\alpha_t \geq 0$ is the multiplier on the capacity constraint $X_t \leq K_t$.
+
+The first-order conditions are:
+
+**Sales** ($X_t$): this is a complementarity condition because $X_t \geq 0$:
+
+$$
+\quad p(X_t) - d - C'(X_t) - \alpha_t \leq 0 \perp X_t \geq 0
+$$
+
+In words: marginal revenue net of discount minus marginal cost minus the shadow value of capacity must be non-positive, with equality if $X_t > 0$.
+
+**Investment** ($I_t$): also a complementarity condition since $I_t \geq 0$. The key insight is that investing one unit today raises capacity in all future periods, so the return to investment is the present discounted value of the shadow price of capacity:
+
+$$
+\quad F'(I_t) - \sum_{s=t+1}^{T} \beta^{s-t} \alpha_s \leq 0 \perp I_t \geq 0
+$$
+
+**Capacity constraint** ($\alpha_t$): the complementary slackness condition on the capacity constraint:
+
+$$
+\quad K_t - X_t \geq 0 \perp \alpha_t \geq 0
+$$
+
+::: {.callout-note}
+### Sign conventions for MCP solvers
+
+The PATH solver expects complementarity conditions in the form $x \geq 0 \perp f(x) \geq 0$. This means the function $f$ associated with each variable must be non-negative at the solution when the variable is at its lower bound.
+
+For the sales condition, the "natural" economic FOC gives $p - d - C' - \alpha \leq 0$ when $X > 0$. To match PATH's convention, we flip the sign and write
+
+$$
+C'(X_t) + \alpha_t - p(X_t) + d \geq 0 \perp X_t \geq 0
+$$
+
+Similarly for investment and the capacity multiplier. Getting the signs right is one of the most common sources of errors when setting up MCP problems.
+:::
+
+
+## Approach 1: MCP with PATH
+
+We program the equilibrium conditions as a mixed complementarity problem and solve with the PATH solver.
+
+```{julia}
+mod_mcp = Model(PATHSolver.Optimizer)
+
+# Choice variables with non-negativity bounds
+@variable(mod_mcp, X[1:T] >= 0, start = R_0/2)
+@variable(mod_mcp, I[1:(T-1)] >= 0, start = 0.0)
+@variable(mod_mcp, alpha[1:T] >= 0, start = 0.0)
+
+# State variable: capacity as a function of initial condition + cumulative investment
+K = Vector{Any}(undef, T)
+K[1] = K₁
+for t in 2:T
+    K[t] = K₁ + sum(I[s] for s in 1:(t-1))
+end
+
+# FOC for X (flipped sign for PATH convention):
+# C'(X_t) + alpha_t - p_B(X_t) + d >= 0  ⊥  X_t >= 0
+@constraint(mod_mcp, foc_X[t in 1:T],
+    C_prime(X[t]) + alpha[t] - p_B(X[t]) + d ⟂ X[t])
+
+# FOC for I:
+# F'(I_t) - sum_{s=t+1}^{T} β^{s-t} α_s >= 0  ⊥  I_t >= 0
+@constraint(mod_mcp, foc_I[t in 1:(T-1)],
+    F_prime(I[t]) - sum(β^(s-t) * alpha[s] for s in (t+1):T) ⟂ I[t])
+
+# Complementarity on capacity constraint:
+# K_t - X_t >= 0  ⊥  alpha_t >= 0
+@constraint(mod_mcp, cap_constraint[t in 1:T],
+    K[t] - X[t] ⟂ alpha[t])
+
+optimize!(mod_mcp)
+println(solution_summary(mod_mcp))
+```
+
+Extract and store the MCP solution.
+
+```{julia}
+X_mcp     = value.(X)
+I_mcp     = value.(I)
+alpha_mcp = value.(alpha)
+K_mcp = Vector{Float64}(undef, T)
+K_mcp[1] = K₁
+for t in 2:T
+    K_mcp[t] = K₁ + sum(I_mcp[s] for s in 1:(t-1))
+end
+
+println("Shadow fleet capacity (K): ", round.(K_mcp, digits=1))
+println("Sales (X):                 ", round.(X_mcp, digits=1))
+println("Investment (I):            ", round.(I_mcp, digits=1))
+println("Shadow price (α):          ", round.(alpha_mcp, digits=2))
+```
+
+
+
+## Approach 2: Direct surplus maximization (Ipopt)
+
+In a competitive market, the equilibrium allocation maximizes total surplus (First Welfare Theorem!). Rather than programming the equilibrium conditions explicitly, we can solve for the competitive equilibrium by maximizing total surplus directly.
+
+Why can we do this? Because producers are price takers, the competitive equilibrium FOCs (price equals marginal cost plus shadow value) are exactly the KKT conditions of the surplus maximization problem. 
+
+Note: The surplus objective uses the *integral* of the inverse demand function $\int_0^{X_t} p(q)\,dq$, and not $p(X_t) \cdot X_t$, because total surplus measures the area under the demand curve, not revenue.
+
+$$
+\max_{\{X_t, I_t\}} \sum_{t=1}^{T} \beta^{t-1} \left[ \int_0^{X_t} p(q)\,dq - d \, X_t - C(X_t) - F(I_t) \right]
+$$
+
+subject to
+
+$$
+\begin{aligned}
+K_{t+1} &= K_t + I_t \\
+X_t &\leq K_t \\
+X_t, I_t &\geq 0
+\end{aligned}
+$$
+
+JuMP handles the complementarity conditions automatically through the KKT conditions of this optimization problem. We do not need to derive or program them ourselves.
+
+```{julia}
+# Surplus per period (as a JuMP-compatible nonlinear expression)
+# We define the objective inline using JuMP's nonlinear syntax
+mod_opt = Model(Ipopt.Optimizer)
+set_silent(mod_opt)
+
+# Choice variables
+@variable(mod_opt, X[1:T] >= 0, start = R_0/2)
+@variable(mod_opt, I[1:(T-1)] >= 0, start = 0.0)
+
+# Capacity as state
+K_opt = Vector{Any}(undef, T)
+K_opt[1] = K₁
+for t in 2:T
+    K_opt[t] = K₁ + sum(I[s] for s in 1:(t-1))
+end
+
+# Capacity constraint
+@constraint(mod_opt, cap[t in 1:T], X[t] <= K_opt[t])
+
+# Objective: maximize discounted total surplus
+# Surplus from shadow fleet sales: ∫₀ˣ p_B(q) dq - d * X_t
+# Production cost: C(X_t) = c_0 * X_t + (p_0 - c_0)/(2*R_0) * X_t^2
+# Investment cost: f̄/2 * I_t^2
+@objective(mod_opt, Max,
+    sum(β^(t-1) * (demand_integral(X[t]) - d * X[t] - C_total(X[t])) for t in 1:T)
+    - sum(β^(t-1) * F_cost(I[t]) for t in 1:(T-1))
+)
+
+optimize!(mod_opt)
+println("Termination status: ", termination_status(mod_opt))
+println("Objective value:    ", round(objective_value(mod_opt), digits=2))
+```
+
+```{julia}
+X_opt = value.(X)
+I_opt = value.(I)
+K_opt_sol = Vector{Float64}(undef, T)
+K_opt_sol[1] = K₁
+for t in 2:T
+    K_opt_sol[t] = K₁ + sum(I_opt[s] for s in 1:(t-1))
+end
+
+# Shadow prices on capacity from dual values
+# JuMP returns negative duals for ≤ constraints in Max problems, so we negate
+alpha_opt = [-dual(cap[t]) for t in 1:T]
+alpha_opt = alpha_opt ./ [β^(t-1) for t in 1:T]  # un-discount the duals
+
+println("Max |X_mcp - X_opt|:     ", maximum(abs.(X_mcp .- X_opt)))
+println("Max |I_mcp - I_opt|:     ", maximum(abs.(I_mcp .- I_opt)))
+```
+
+
+## Approach 3: Constrained optimization with equilibrium conditions (Ipopt)
+
+Here we program the same equilibrium conditions but inside a standard Non-Linear Programming (NLP) framework. We set a constant (dummy) objective function and let Ipopt find a feasible point satisfying all the KKT conditions as equality/inequality constraints.
+
+This approach is only useful when:
+
+- You want to verify results from the MCP formulation.
+- You need to use a solver that does not support complementarity directly.
+- You want to add side constraints that do not fit neatly into MCP form.
+
+But there's a catch! We cannot directly program complementarity ($x \geq 0 \perp f(x) \geq 0$) as standard constraints. Instead, we introduce each complementarity condition through its equivalent reformulation using slack variables and **bilinear complementarity constraints** (similar to how you learned to solve in Math Econ/Micro).
+
+For each complementarity pair $x_i \geq 0, \; g_i(x) \geq 0, \; x_i \cdot g_i(x) = 0$, we write:
+
+- $x_i \geq 0$ (variable bound)
+- $g_i(x) \geq 0$ (inequality constraint, using a slack variable $s_i \geq 0$ with $g_i(x) = s_i$)
+- $x_i \cdot s_i = 0$ (complementary slackness)
+
+But this does not work well!
+
+::: {.callout-warning}
+### Bilinear complementarity constraints are numerically fragile
+
+The reformulation used here programs each complementarity condition $x_i \geq 0, \; g_i(x) \geq 0, \; x_i \cdot g_i(x) = 0$ by introducing a slack variable $s_i = g_i(x)$ and imposing $x_i \cdot s_i \leq \epsilon$. This works for our small problem, but you should not treat it as a general-purpose technique.
+
+The bilinear constraint $x_i \cdot s_i \leq \epsilon$ makes the feasible region nonconvex. General-purpose NLP solvers like Ipopt are designed for smooth, preferably convex problems. When faced with bilinear complementarity constraints, they can struggle to converge, converge to spurious solutions, or become sensitive to starting values and the relaxation parameter $\epsilon$. Making $\epsilon$ small enough to approximate true complementarity is precisely what makes the problem hard for the solver!
+
+There are smoother reformulations. For example, the Fischer function $\phi(x_i, s_i) = x_i + s_i - \sqrt{x_i^2 + s_i^2} = 0$ (covered in Lecture 3.3) is $C^1$ almost everywhere and works well with Newton-type solvers. However, that gives you a system of nonlinear equations, not an optimization problem, so it falls outside JuMP and into the domain of solvers like NLsolve.jl.
+
+The takeaway: if your model is naturally a complementarity problem, use an MCP solver (Approach 1). If it can be written as a single optimization problem, do that and let the solver derive the complementarity conditions internally (Approach 2). Approach 3 exists to show you that the bridge between these two worlds is not as clean as it might seem.
+:::
+
+But let's continue regardless for the sake of the example. We need relax the last condition slightly to $x_i \cdot s_i \leq \epsilon$ for numerical tractability.
+
+```{julia}
+mod_eq = Model(Ipopt.Optimizer)
+set_silent(mod_eq)
+
+# Complementarity relaxation parameter
+ε_comp = 1e-6
+
+# Choice variables
+@variable(mod_eq, X[1:T] >= 0, start = R_0/2)
+@variable(mod_eq, I[1:(T-1)] >= 0, start = 0.0)
+@variable(mod_eq, alpha[1:T] >= 0, start = 0.0)
+
+# Slack variables for the FOC inequalities
+@variable(mod_eq, s_X[1:T] >= 0, start = 0.0)    # slack for FOC on X
+@variable(mod_eq, s_I[1:(T-1)] >= 0, start = 0.0) # slack for FOC on I
+@variable(mod_eq, s_K[1:T] >= 0, start = 100.0)   # slack for capacity constraint
+
+# Capacity as state
+K_eq = Vector{Any}(undef, T)
+K_eq[1] = K₁
+for t in 2:T
+    K_eq[t] = K₁ + sum(I[s] for s in 1:(t-1))
+end
+
+# Dummy objective (constant)
+@objective(mod_eq, Min, 0)
+
+# --- Equilibrium conditions as constraints ---
+
+# FOC for X: C'(X_t) + alpha_t - p_B(X_t) + d = s_X_t
+@constraint(mod_eq, [t in 1:T],
+    C_prime(X[t]) + alpha[t] - p_B(X[t]) + d == s_X[t])
+
+# Complementary slackness for X: X_t * s_X_t ≤ ε
+@constraint(mod_eq, [t in 1:T],
+    X[t] * s_X[t] <= ε_comp)
+
+# FOC for I: F'(I_t) - Σ β^{s-t} α_s = s_I_t
+@constraint(mod_eq, [t in 1:(T-1)],
+    F_prime(I[t]) - sum(β^(s-t) * alpha[s] for s in (t+1):T) == s_I[t])
+
+# Complementary slackness for I: I_t * s_I_t ≤ ε
+@constraint(mod_eq, [t in 1:(T-1)],
+    I[t] * s_I[t] <= ε_comp)
+
+# Capacity constraint: K_t - X_t = s_K_t
+@constraint(mod_eq, [t in 1:T],
+    K_eq[t] - X[t] == s_K[t])
+
+# Complementary slackness for capacity: alpha_t * s_K_t ≤ ε
+@constraint(mod_eq, [t in 1:T],
+    alpha[t] * s_K[t] <= ε_comp)
+
+optimize!(mod_eq)
+println("Termination status: ", termination_status(mod_eq))
+```
+
+```{julia}
+X_eq     = value.(X)
+I_eq     = value.(I)
+alpha_eq = value.(alpha)
+K_eq_sol = Vector{Float64}(undef, T)
+K_eq_sol[1] = K₁
+for t in 2:T
+    K_eq_sol[t] = K₁ + sum(I_eq[s] for s in 1:(t-1))
+end
+
+println("Max |X_mcp - X_eq|:     ", maximum(abs.(X_mcp .- X_eq)))
+println("Max |I_mcp - I_eq|:     ", maximum(abs.(I_mcp .- I_eq)))
+println("Max |α_mcp - α_eq|:     ", maximum(abs.(alpha_mcp .- alpha_eq)))
+```
+
+
+## Comparing results
+
+```{julia}
+# Build comparison DataFrame
+results = DataFrame(
+    t     = 1:T,
+    K_mcp = round.(K_mcp, digits=1),
+    K_opt = round.(K_opt_sol, digits=1),
+    X_mcp = round.(X_mcp, digits=1),
+    X_opt = round.(X_opt, digits=1),
+    X_eq  = round.(X_eq, digits=1),
+    I_mcp = round.(vcat(I_mcp, 0.0), digits=2),
+    I_opt = round.(vcat(I_opt, 0.0), digits=2),
+    I_eq  = round.(vcat(I_eq, 0.0), digits=2),
+    α_mcp = round.(alpha_mcp, digits=3),
+    α_eq  = round.(alpha_eq, digits=3),
+    α_opt = round.(alpha_opt, digits=3),
+)
+results
+```
+
+
+### Trajectories
+
+```{julia}
+#| fig-cap: "Shadow fleet capacity and sales over time"
+p1 = plot(1:T, K_mcp, label="Capacity (K)", lw=2, xlabel="Quarter", ylabel="mb/quarter")
+plot!(p1, 1:T, X_mcp, label="Sales (X)", lw=2, ls=:dash)
+title!(p1, "Capacity and Sales")
+
+p2 = plot(1:(T-1), I_mcp, label="Investment (I)", lw=2, xlabel="Quarter", ylabel="mb/quarter")
+title!(p2, "Investment")
+
+p3 = plot(1:T, p_B.(X_mcp), label="World price", lw=2, xlabel="Quarter", ylabel="USD/barrel")
+hline!(p3, [p_0], label="Baseline price", ls=:dot, lc=:gray)
+title!(p3, "Oil Price")
+
+p4 = plot(1:T, alpha_mcp, label="Shadow price (α)", lw=2, xlabel="Quarter", ylabel="USD/barrel")
+title!(p4, "Capacity Shadow Price")
+
+plot(p1, p2, p3, p4, layout=(2,2), size=(800, 500))
+```
+
+### Cross-method comparison
+
+```{julia}
+#| fig-cap: "Sales trajectories across three solution methods"
+plot(1:T, X_mcp, label="MCP (PATH)", lw=3, xlabel="Quarter", ylabel="mb/quarter",
+     title="Sales: Cross-Method Comparison")
+plot!(1:T, X_opt, label="Surplus max (Ipopt)", lw=2, ls=:dot)
+plot!(1:T, X_eq, label="Eq. conditions (Ipopt)", lw=2, ls=:dash)
+```
+
+
+## Discussion
+
+### When to use each approach
+
+**MCP with PATH** is the natural formulation when the model is derived from equilibrium conditions (as opposed to a single agent's optimization). It handles complementarity directly and scales well. The main limitation is that PATH requires a commercial license for large problems (but you can get a [free temporary license](https://pages.cs.wisc.edu/~ferris/path.html) for educational purposes). There is a [workaround to use NLSolve as the MCP solver](https://github.com/chkwon/Complementarity.jl), but JuMP does not support it directly.
+
+**Direct surplus maximization (Approach 2)** is the cleanest formulation when the equilibrium can be represented as the solution to a single optimization problem. By the First Welfare Theorem, a competitive equilibrium maximizes total surplus, so we can solve for the equilibrium by maximizing the integral of inverse demand minus costs. The solver handles complementarity implicitly through KKT conditions. But this approach does not extend to settings with strategic interaction or other sources of equilibrium that cannot be reduced to a single optimization.
+
+**Equilibrium conditions as constraints (Approach 3)** is a mostly a hack for when you lack access to an MCP solver or when you want to add constraints that do not fit the MCP framework. The downside is that programming complementarity through slack variables and bilinear constraints makes the problem harder for general-purpose NLP solvers. Convergence can be sensitive to the relaxation parameter $\epsilon$ and starting values.
+
+
+### Extensions
+
+The model in Cardoso, Salant, and Daubanes (forthcoming) includes a price cap mechanism and the choice to sell through traditional channels at the capped price. Adding this channel introduces an additional complementarity condition for cap sales $Q_t$ and complicates the effective price function. The MCP formulation extends naturally to handle this. But the direct optimization formulation requires more care because the cap introduces a kink in the revenue function.
+
+### A challenge for you!
+
+Try solving the same problem when the Rogue country is a residual monopolist with market power. What would change in the MCP? What about the objective function in the direct optimization approach?
