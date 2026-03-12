@@ -199,7 +199,13 @@ $$
 
 In words: marginal revenue net of discount minus marginal cost minus the shadow value of capacity must be non-positive, with equality if $X_t > 0$.
 
-**Investment** ($I_t$): also a complementarity condition since $I_t \geq 0$. The key insight is that investing one unit today raises capacity in all future periods, so the return to investment is the present discounted value of the shadow price of capacity:
+**Investment** ($I_t$): also a complementarity condition since $I_t \geq 0$. Here, it will be helpful to note that we can express $K_t$ in terms of the initial capacity and cumulative investment:
+
+$$
+K_t = K_1 + \sum_{s=1}^{t-1} I_s
+$$
+
+So, the derivative of the Lagrangian with respect to $I_t$ involves the future shadow prices $\alpha_s$ for all $s > t$ because investing today increases capacity in the future. Then, the key insight is that investing one unit today raises capacity in all future periods, so the return to investment is the present discounted value of the shadow price of capacity:
 
 $$
 \quad \sum_{s=t+1}^{T} \beta^{s-t} \alpha_s -F'(I_t) \leq 0  \perp I_t \geq 0
