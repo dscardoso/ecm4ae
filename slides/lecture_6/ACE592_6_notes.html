@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Diego S. Cardoso">
+
+<title>ACE 592 - Lecture 6</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="6_Intro_Structural_estimation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="6_Intro_Structural_estimation_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="6_Intro_Structural_estimation_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="6_Intro_Structural_estimation_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="6_Intro_Structural_estimation_files/libs/quarto-html/popper.min.js"></script>
+<script src="6_Intro_Structural_estimation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="6_Intro_Structural_estimation_files/libs/quarto-html/anchor.min.js"></script>
+<link href="6_Intro_Structural_estimation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="6_Intro_Structural_estimation_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="6_Intro_Structural_estimation_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="6_Intro_Structural_estimation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="6_Intro_Structural_estimation_files/libs/bootstrap/bootstrap-0e5f40ec6cc387305998617d35d5b2e2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-axe-checker-options" type="text/plain">eyJvdXRwdXQiOiJkb2N1bWVudCJ9</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ACE592_6_slides.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ACE 592 - Lecture 6</h1>
+<p class="subtitle lead">Introduction to Structural Estimation</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Diego S. Cardoso </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Illinois Urbana-Champaign
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="course-roadmap" class="level2" data-background-color="orange" data-number="0.1">
+<h2 data-background-color="orange" data-number="0.1" class="anchored" data-anchor-id="course-roadmap"><span class="header-section-number">0.1</span> Course Roadmap</h2>
+<ol type="1">
+<li><span class="gray">Introduction to Scientific Computing</span></li>
+<li><span class="gray">Fundamentals of numerical methods</span></li>
+<li><span class="gray">Systems of equations</span></li>
+<li><span class="gray">Optimization</span></li>
+<li><span class="gray">Function approximation (postponed)</span></li>
+<li><strong>Structural estimation: Intro</strong></li>
+<li>Generalized Method of Moments</li>
+<li>Maximum Likelihood Estimator</li>
+<li>Simulation-based methods</li>
+</ol>
+</section>
+<section id="main-references-for-today" class="level2" data-background-color="orange" data-number="0.2">
+<h2 data-background-color="orange" data-number="0.2" class="anchored" data-anchor-id="main-references-for-today"><span class="header-section-number">0.2</span> Main references for today</h2>
+<ul>
+<li>Reiss &amp; Wolak (2007)</li>
+<li>Timmins &amp; Schlenker (2009)</li>
+<li>Course materials by Matt Woerman (UMass) and Simon Quinn (Oxford)</li>
+</ul>
+</section>
+<section id="so-where-have-we-got-to-so-far" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> So, where have we got to so far?</h1>
+<section id="example-1" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.1</span> Example 1</h2>
+<p>Suppose we have a constant elasticity demand function:</p>
+<p><span class="math display">q(p) = p^{-0.2}</span></p>
+<p>In equilibrium, quantity demanded is <span class="math inline">q^* = 2</span></p>
+<p><strong>Q: What price clears the market in equilibrium?</strong></p>
+</section>
+<section id="example-1-1" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="example-1-1"><span class="header-section-number">1.2</span> Example 1</h2>
+<p>A: Just invert the demand function</p>
+<p><span class="math display">
+2 = p^{-0.2}
+</span></p>
+<p>. . .</p>
+<p><span class="math display">
+p^* = 2^{-5} \checkmark
+</span></p>
+<p>Your calculator can do the rest</p>
+</section>
+<section id="example-2" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="example-2"><span class="header-section-number">1.3</span> Example 2</h2>
+<p>Suppose the demand function is now</p>
+<p><span class="math display">
+q(p) = 0.5p^{-0.2} + 0.5p^{-0.5},
+</span></p>
+<p>a weighted average of two CE demand functions</p>
+<p>In equilibrium, quantity demanded is <span class="math inline">q^* = 2</span></p>
+<p><strong>Q: What price clears the market in equilibrium?</strong></p>
+<p><strong>How would you solve it now?</strong></p>
+</section>
+<section id="example-3" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="example-3"><span class="header-section-number">1.4</span> Example 3</h2>
+<p>Consider a two period ag commodity market model</p>
+<ul>
+<li>Period 1: Farmer makes acreage decisions for planting<br>
+</li>
+<li>Period 2: Per-acre yield realizes, equilibrium crop price clears the market</li>
+</ul>
+<p>. . .</p>
+<p>The farmer’s policy function is:</p>
+<p><span class="math display">
+a(E[p]) = \frac{1}{2} + \frac{1}{2}E[p]
+</span></p>
+</section>
+<section id="example-3-1" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="example-3-1"><span class="header-section-number">1.5</span> Example 3</h2>
+<p>Yield <span class="math inline">\hat{y}</span> is stochastic and only realized after planting period. It follows <span class="math inline">\hat{y} \sim \mathcal{N}(1, 0.1)</span></p>
+<p>Crop production is</p>
+<p><span class="math display">
+q = a\hat{y}
+</span></p>
+<p>. . .</p>
+<p>Demand is given by</p>
+<p><span class="math display">
+p(q) = 3-2q
+</span></p>
+<p>. . .</p>
+<p><strong>Q: How many acres get planted?</strong></p>
+</section>
+<section id="example-3-2" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="example-3-2"><span class="header-section-number">1.6</span> Example 3</h2>
+<p><strong>Q: How many acres get planted?</strong></p>
+<p>A: We plug in the stochastic quantity and take expectations</p>
+<p><span class="math inline">p(\hat{y}) = 3-2a\hat{y}</span></p>
+<p>. . .</p>
+<p><span class="math inline">a = \frac{1}{2} + \frac{1}{2}(3-2aE[\hat{y}])</span></p>
+<p>. . .</p>
+<p>Rearrange and solve:</p>
+<p><span class="math inline">a^* = 1</span></p>
+</section>
+<section id="example-3-3" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="example-3-3"><span class="header-section-number">1.7</span> Example 3</h2>
+<p>Now suppose the government implements a price floor such that <span class="math inline">p &gt; 1</span>.</p>
+<p>We now have that</p>
+<p><span class="math display">
+p(\hat{y}) = \max(1,3-2a\hat{y})
+</span></p>
+<p><strong>Q: How many acres get planted with a price floor?</strong></p>
+</section>
+<section id="example-3-4" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="example-3-4"><span class="header-section-number">1.8</span> Example 3</h2>
+<p><strong>Q: How many acres get planted with a price floor?</strong></p>
+<p>This is analytically intractable</p>
+<p>The max operator is non-linear so we can’t pass the expectation through</p>
+<p><span class="math inline">E[\max(1,3-2a\hat{y})] \neq \max(1,E[3-2a\hat{y}])</span></p>
+<p><strong>How would you solve it now?</strong></p>
+</section>
+<section id="so-where-have-we-got-to-so-far-1" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="so-where-have-we-got-to-so-far-1"><span class="header-section-number">1.9</span> So, where have we got to so far?</h2>
+<p>We’ve seen many tools that can help us solve many of the well-defined problems in economics</p>
+<p>By now, we can:</p>
+<ul>
+<li>Numerically calculate difficult integrals and derivatives
+<ul>
+<li>E.g.: calculate expectations of weird functions, evaluate FOCs and SOCs</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Solve linear and nonlinear systems
+<ul>
+<li>E.g.: solve for equilibria in single and multiple-agent models</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Unconstrained and constrained optimization
+<ul>
+<li>E.g.: solve utility maximization and cost minimization problems</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<p>And, hopefully, you picked up useful programming skills and learned Julia and GitHub along the way</p>
+</section>
+<section id="so-where-have-we-got-to-so-far-2" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="so-where-have-we-got-to-so-far-2"><span class="header-section-number">1.10</span> So, where have we got to so far?</h2>
+<p>In most of these problems, we have (or assumed we have) all the necessary parameters and we calculated a solution</p>
+<p><strong>But, for practical purposes, where do model parameter values come from?</strong></p>
+<p>. . .</p>
+<p>We need to estimate them!</p>
+<ul>
+<li>Sometimes, we are lucky and someone else has estimated them for us</li>
+<li>Sometimes, the parameters themselves are not the focus of a paper and we can “roughly” find a set of parameters that reproduce a stylized fact or illustrate a mechanism (aka, calibration)</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>If those are not the case, we need data and econometric tools to estimate parameters</li>
+</ul>
+</section>
+<section id="time-to-bring-data-in" class="level2" data-number="1.11">
+<h2 data-number="1.11" class="anchored" data-anchor-id="time-to-bring-data-in"><span class="header-section-number">1.11</span> Time to bring data in</h2>
+<p><strong>Key idea: economic agents behave as if they are solving some economic problem</strong></p>
+<p>. . .</p>
+<ol type="1">
+<li><p>We conceptualize the problem and formulate its respective model and parameters</p></li>
+<li><p>We observe agents solving the economic problem and use observations to infer the value of parameters that best describe their behavior</p></li>
+</ol>
+<p>. . .</p>
+<p>This is a rough description of <strong>structural econometric models</strong></p>
+</section>
+<section id="readings-for-this-unit" class="level2" data-number="1.12">
+<h2 data-number="1.12" class="anchored" data-anchor-id="readings-for-this-unit"><span class="header-section-number">1.12</span> Readings for this unit</h2>
+<ul>
+<li><p>(Sections 1 to 3) Reiss, P. C., &amp; Wolak, F. A. (2007). Structural econometric modeling: Rationales and examples from industrial organization. Handbook of econometrics, 6, 4277-4415.</p></li>
+<li><p>Timmins, C., &amp; Schlenker, W. (2009). Reduced-form versus structural modeling in environmental and resource economics. Annual Review of Resource Economics, 1(1), 351-380.</p></li>
+</ul>
+</section>
+</section>
+<section id="structural-econometric-models" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Structural econometric models</h1>
+<section id="structural-econometric-models-1" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="structural-econometric-models-1"><span class="header-section-number">2.1</span> Structural econometric models</h2>
+<blockquote class="blockquote">
+<p>(It is) <em>the use of (statistical) models based in economic theory. Structural modeling attempts to use data to identify the parameters of an underlying economic model, based on models of individual choice or aggregate relations derived from them.</em> (Nevo and Whinston, 2010)</p>
+</blockquote>
+<p>. . .</p>
+<p>This approach combines theoretical and statistical models to study an economic phenomenon</p>
+<ul>
+<li>Economic theory tell us about how variables relate to each other</li>
+<li>Statistical properties rationalize why theory does not perfectly explain the data</li>
+</ul>
+<p>. . .</p>
+<p>This is a different from <strong>reduced-form</strong> or “non-structural” estimation (more on the differences later)</p>
+</section>
+<section id="steps-in-structural-modeling" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="steps-in-structural-modeling"><span class="header-section-number">2.2</span> Steps in structural modeling</h2>
+<p><strong>1. Economic model</strong></p>
+<ul>
+<li>The economic model describes the economic environment
+<ul>
+<li>Who are the decision-makers (agents)? What information is available to them?</li>
+<li>What are their objectives? What choices can they make?</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>What are the primitives?
+<ul>
+<li>Technologies available, preference structure, endowments</li>
+</ul></li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>How are markets and institutions organized?</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Given the economic environment, what is an equilibrium in this market?
+<ul>
+<li>E.g.: Perfect competition? Nash equilibrium?</li>
+</ul></li>
+</ul>
+</section>
+<section id="steps-in-structural-modeling-1" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="steps-in-structural-modeling-1"><span class="header-section-number">2.3</span> Steps in structural modeling</h2>
+<p><strong>1. Economic model</strong></p>
+<p>Formally, economic theory formulates mathematical statements about how observable <em>endogenous</em> variables <span class="math inline">y</span> relate to observable <em>explanatory</em> variables <span class="math inline">x</span></p>
+<ul>
+<li>It may also tell us about how <span class="math inline">y</span> relates to <em>unobservable</em> variables <span class="math inline">\xi</span></li>
+</ul>
+<p>. . .</p>
+<p>Statements are usually in the form of equalities</p>
+<p><span class="math display">
+y = g(x, \xi, \Theta)
+</span></p>
+<p>where <span class="math inline">g</span> is a known function and <span class="math inline">\Theta</span> is a set of of unknown parameters or functions</p>
+</section>
+<section id="steps-in-structural-modeling-2" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="steps-in-structural-modeling-2"><span class="header-section-number">2.4</span> Steps in structural modeling</h2>
+<p><strong>2. Statistical (or econometric) model</strong></p>
+<p>The economic model is expanded into a statistical model to rationalize the fact that observed data does not fit the economic model perfectly</p>
+<ul>
+<li>This is done by including <strong>unobservable</strong> variables</li>
+</ul>
+<p>. . .</p>
+<p>Types of unobservables:</p>
+<ul>
+<li>Unobservable to the econometrician only: agents make decisions based on information that is not observed in the available data</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Unobservable to agents</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Optimization errors by economic agents</li>
+<li>Measurement errors in observables</li>
+</ul>
+</section>
+<section id="steps-in-structural-modeling-3" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="steps-in-structural-modeling-3"><span class="header-section-number">2.5</span> Steps in structural modeling</h2>
+<p><strong>2. Statistical (or econometric) model</strong></p>
+<p>Formally, the statistical model establishes a joint distribution of <span class="math inline">x</span>, <span class="math inline">\xi</span>, and possibly other unobservables</p>
+<p><span class="math display">
+f(x,\xi)
+</span></p>
+<p>. . .</p>
+<p>Combined, the theoretical and statistical models give us an empirical model that can <em>rationalize</em> observable outcomes</p>
+<ul>
+<li>This is, for any set of observable variables, there is some <span class="math inline">\Theta</span> that can explain the observed behavior under the theoretical and statistical assumptions</li>
+</ul>
+</section>
+<section id="steps-in-structural-modeling-4" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="steps-in-structural-modeling-4"><span class="header-section-number">2.6</span> Steps in structural modeling</h2>
+<p><strong>3. Estimation procedure</strong></p>
+<p>In this step, we first parameterize the model <span class="math inline">\Rightarrow</span> we define what is in <span class="math inline">\Theta</span></p>
+<p>. . .</p>
+<p>This is done by</p>
+<ul>
+<li><p>Specifying functional forms and their parameters</p></li>
+<li><p>Making distributional assumptions and selecting distribution parameters</p></li>
+</ul>
+</section>
+<section id="steps-in-structural-modeling-5" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="steps-in-structural-modeling-5"><span class="header-section-number">2.7</span> Steps in structural modeling</h2>
+<p><strong>3. Estimation procedure</strong></p>
+<p>With <span class="math inline">\Theta</span> defined, we construct a statistical object that relates data and the empirical model</p>
+<p>The two most common objects are</p>
+<ol type="1">
+<li>A likelihood function <span class="math inline">L(y,x|\Theta)</span>
+<ul>
+<li>Use the Maximum Likelihood Estimator to find <span class="math inline">\Theta</span></li>
+</ul></li>
+</ol>
+<p>. . .</p>
+<ol type="1">
+<li>Conditional moments <span class="math inline">E[y|x, \Theta]</span>
+<ul>
+<li>Use Generalized Method of Moments to find <span class="math inline">\Theta</span></li>
+</ul></li>
+</ol>
+<p>. . .</p>
+<ul>
+<li>In this step, we can also formulate specification and other hypothesis tests</li>
+</ul>
+</section>
+<section id="a-simple-structural-model" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="a-simple-structural-model"><span class="header-section-number">2.8</span> A simple structural model</h2>
+<p>Suppose we want to estimate output elasticities of capital and labor</p>
+<p>We observe output <span class="math inline">Y_{t}</span> and input use of capital <span class="math inline">K_{t}</span> and labor <span class="math inline">L_{t}</span></p>
+<p>. . .</p>
+<p><strong>Step 1:</strong> An economic model with Cobb-Douglas production with parameters <span class="math inline">A, \alpha, \beta</span></p>
+<p><span class="math display">
+Q_{t} = A L_{t}^\alpha K_{t}^\beta
+</span></p>
+</section>
+<section id="a-simple-structural-model-1" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="a-simple-structural-model-1"><span class="header-section-number">2.9</span> A simple structural model</h2>
+<p><strong>Step 2:</strong> A statistical model that specifies an unobservable productivity component <span class="math inline">\epsilon_{t}</span></p>
+<p><span class="math display">
+Q_{t} = A L_{t}^\alpha K_{t}^\beta\exp(\epsilon_t)
+</span></p>
+<p>. . .</p>
+<p>And we assume that <span class="math inline">\epsilon_{t}</span> are independently drawn, with values following a mean-zero normal distribution, and independent of firm input choices (i.e., unobservable by agents)</p>
+<p><span class="math display">
+\epsilon_t \sim N(0, \sigma^2) \\
+E[\epsilon_t|K_t, L_t] = 0
+</span></p>
+</section>
+<section id="a-simple-structural-model-2" class="level2" data-number="2.10">
+<h2 data-number="2.10" class="anchored" data-anchor-id="a-simple-structural-model-2"><span class="header-section-number">2.10</span> A simple structural model</h2>
+<p><strong>Step 3:</strong> We can rewrite the statistical equation with logs</p>
+<p><span class="math display">
+\log Q_{t} = \log A + \alpha \log L_{t} +\beta \log K_{t} + \epsilon_t
+</span></p>
+<p>. . .</p>
+<p>Given our assumptions on <span class="math inline">\epsilon</span>, we can estimate <span class="math inline">\alpha</span> and <span class="math inline">\beta</span> with OLS by regressing <span class="math inline">\log Q</span> on a constant, <span class="math inline">\log L</span>, and <span class="math inline">\log K</span></p>
+<p>. . .</p>
+<p>But if, in reality, <span class="math inline">\epsilon_t</span> includes differences in productivity that are <em>observable to the firm when</em> it makes decisions but <em>not observable to the econometrician</em>, then <span class="math inline">\epsilon_t</span> is correlated with inputs</p>
+<ul>
+<li>I.e., <span class="math inline">E[\epsilon_t|K_t, L_t] \neq 0 \Rightarrow</span> we made a bad assumption for <span class="math inline">\epsilon_t</span></li>
+<li>We can’t use OLS; but we could use IV estimation instead if we have instruments for <span class="math inline">\log L</span> and <span class="math inline">\log K</span></li>
+</ul>
+</section>
+<section id="structural-estimation-procedures" class="level2" data-number="2.11">
+<h2 data-number="2.11" class="anchored" data-anchor-id="structural-estimation-procedures"><span class="header-section-number">2.11</span> Structural estimation procedures</h2>
+<p>In this simple example, the model was simple enough that we could get an <strong>estimating equation</strong> that was linear in the parameters</p>
+<ul>
+<li>In those cases, we can use OLS (if assumptions hold), 2SLS, and other <strong>linear estimation methods</strong></li>
+</ul>
+<p>. . .</p>
+<p>In other models, we might not have the same luck but still get closed-form expressions that are nonlinear in parameters. Then, we can resort to <strong>nonlinear estimation methods</strong></p>
+<ul>
+<li>If we assume moment conditions, we can calculate empirical conditional moments <span class="math inline">\Rightarrow</span> GMM</li>
+<li>If we assume specific distributions for unobservables, we can calculate log-likelihoods <span class="math inline">\Rightarrow</span> MLE</li>
+</ul>
+</section>
+<section id="structural-estimation-procedures-1" class="level2" data-number="2.12">
+<h2 data-number="2.12" class="anchored" data-anchor-id="structural-estimation-procedures-1"><span class="header-section-number">2.12</span> Structural estimation procedures</h2>
+<p>In more complicated cases, we do not have closed-form statistical objects to perform the estimation and need to calculate them numerically at every iteration of the estimation procedure</p>
+<p>. . .</p>
+<ul>
+<li>When we can’t get closed-form expressions because there is a difficult integral in the statistical object, we can use <strong>simulation-based estimators</strong>
+<ul>
+<li>The “simulation” part comes from Monte Carlo integration: we simulate/draw samples from a distribution</li>
+<li>If the integral is to calculate an expectation, we get the <strong>Method of Simulated Moments</strong></li>
+<li>If the integral is to calculate log-likelihood, we get the <strong>Maximum Simulated Likelihood</strong></li>
+</ul></li>
+</ul>
+</section>
+<section id="structural-estimation-procedures-2" class="level2" data-number="2.13">
+<h2 data-number="2.13" class="anchored" data-anchor-id="structural-estimation-procedures-2"><span class="header-section-number">2.13</span> Structural estimation procedures</h2>
+<p>In other complicated cases, theoretical models might not have closed-form solutions either. These give rise to what is generally referred to as <strong>“nested estimation”</strong></p>
+<ol type="1">
+<li>We start with some initial guess of the parameter value</li>
+</ol>
+<p>. . .</p>
+<ol start="2" type="1">
+<li><strong>Inner loop:</strong> given current parameter values, solve the model numerically for those parameters and calculate statistics we want to optimize over</li>
+</ol>
+<ul>
+<li>E.g., minimize the sum of squared residuals or maximize log-likelihood</li>
+<li>This step might involve rootfinding, optimization, solving functional equations, etc</li>
+</ul>
+<p>. . .</p>
+<ol start="3" type="1">
+<li><strong>Outer loop:</strong> based on the statistics generated in the inner loop, an estimation algorithm picks the next set of parameters</li>
+</ol>
+<p>. . .</p>
+<ol start="4" type="1">
+<li>Repeat steps 2 and 3 until convergence</li>
+</ol>
+</section>
+<section id="why-add-structure-to-an-econometric-model" class="level2" data-number="2.14">
+<h2 data-number="2.14" class="anchored" data-anchor-id="why-add-structure-to-an-econometric-model"><span class="header-section-number">2.14</span> Why add structure to an econometric model?</h2>
+<p>Structural models are useful to</p>
+<ol type="1">
+<li>Estimate unobserved values of economic interest</li>
+</ol>
+<ul>
+<li>Marginal costs, returns to scale, risk preferences, discount rates, switching costs, etc</li>
+</ul>
+<p>. . .</p>
+<ol start="2" type="1">
+<li>Perform counterfactual or policy simulations</li>
+</ol>
+<ul>
+<li>What would happen if we introduced a new policy or changed the economic environment?</li>
+<li>These analyses require primitives that are invariant to policy changes</li>
+</ul>
+<p>. . .</p>
+<ol start="3" type="1">
+<li>Calculate welfare</li>
+</ol>
+<ul>
+<li>Welfare usually requires structural modeling of utitlity and profit functions</li>
+</ul>
+<p>. . .</p>
+<ol start="4" type="1">
+<li>Compare competing economic theories</li>
+</ol>
+</section>
+<section id="reduced-form-models" class="level2" data-number="2.15">
+<h2 data-number="2.15" class="anchored" data-anchor-id="reduced-form-models"><span class="header-section-number">2.15</span> Reduced-form models</h2>
+<p><strong>Reduced-form models</strong> focus on estimating key “high-level” response parameters rather than primitives of a model</p>
+<ul>
+<li>These include from simple summary statistics (means, conditional means, and higher moments) to the estimation of average treatment effects and time series models</li>
+</ul>
+<p>. . .</p>
+<p>These models generally use economic theory to guide the selection of <span class="math inline">y</span> and <span class="math inline">x</span>. Their goals are usually to estimate joint population density <span class="math inline">f(x, y)</span> or some related statistical objects such as</p>
+<ul>
+<li>Conditional density <span class="math inline">f(y | x)</span> or expectation <span class="math inline">E[y|x]</span></li>
+<li>Conditional covariance (or correlation) <span class="math inline">Cov(y | x)</span></li>
+<li>Conditional <span class="math inline">\alpha</span> quantiles <span class="math inline">Q_\alpha(y | x)</span></li>
+</ul>
+</section>
+<section id="structural-vs.-reduced-form-models" class="level2" data-number="2.16">
+<h2 data-number="2.16" class="anchored" data-anchor-id="structural-vs.-reduced-form-models"><span class="header-section-number">2.16</span> Structural vs.&nbsp;reduced-form models</h2>
+<p><strong>THERE IS NO SINGLE APPROACH THAT IS BETTER FOR ALL PURPOSES</strong></p>
+<p>. . .</p>
+<p>There might be the right approach for your <em>specific research question</em> given the data available and the institutional details</p>
+<p>Each approach has its <em>pros</em> and <em>cons</em></p>
+</section>
+<section id="structural-vs.-reduced-form-models-1" class="level2" data-number="2.17">
+<h2 data-number="2.17" class="anchored" data-anchor-id="structural-vs.-reduced-form-models-1"><span class="header-section-number">2.17</span> Structural vs.&nbsp;reduced-form models</h2>
+<p><strong>Reduced-form models</strong> are a great tool to find out <strong>“what works”</strong></p>
+<p>They can be used flexibly to estimate the effects of policy interventions, aggregate responses, etc</p>
+<ul>
+<li>They require few theoretical and statistical assumptions</li>
+<li>With good research designs, quasi-experimental methods can deliver credible identification of effects without imposing an untestable economic model
+<ul>
+<li>Though statistical assumptions can imply some constraints on the unstated theoretical model</li>
+</ul></li>
+</ul>
+</section>
+<section id="structural-vs.-reduced-form-models-2" class="level2" data-number="2.18">
+<h2 data-number="2.18" class="anchored" data-anchor-id="structural-vs.-reduced-form-models-2"><span class="header-section-number">2.18</span> Structural vs.&nbsp;reduced-form models</h2>
+<p><strong>Reduced-form models</strong> have more limitations when studying <strong>“why it works”</strong></p>
+<ul>
+<li>This is done by isolating mechanisms and might require large amounts of detailed data</li>
+</ul>
+<p>. . .</p>
+<p>These models are less useful to study <strong>how it would work</strong> under different circumstances</p>
+<ul>
+<li>Counterfactual analysis requires parameters that are invariant to changes in the economic environment
+<ul>
+<li>This is rarely the case of high-level parameters and statistics</li>
+</ul></li>
+</ul>
+</section>
+<section id="structural-vs.-reduced-form-models-3" class="level2" data-number="2.19">
+<h2 data-number="2.19" class="anchored" data-anchor-id="structural-vs.-reduced-form-models-3"><span class="header-section-number">2.19</span> Structural vs.&nbsp;reduced-form models</h2>
+<p>In contrast, <strong>structural models</strong> are a useful tool for counterfactual analysis, testing hypothesis on mechanisms, and quantifying unobservable values of economic interest (costs, welfare, etc)</p>
+<p>. . .</p>
+<p>However, these models require</p>
+<ul>
+<li>Existing economic theory that addresses the empirical context</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>Many assumptions to formulate an estimable empirical model
+<ul>
+<li>Unrealistic assumptions deliver non-credible results</li>
+<li>Modeling assumptions are difficult to test formally</li>
+</ul></li>
+</ul>
+</section>
+<section id="structural-vs.-reduced-form-models-4" class="level2" data-number="2.20">
+<h2 data-number="2.20" class="anchored" data-anchor-id="structural-vs.-reduced-form-models-4"><span class="header-section-number">2.20</span> Structural vs.&nbsp;reduced-form models</h2>
+<p>There is no trade-off between structure and credibility</p>
+<ul>
+<li>Once again, it all depends on your research question and data</li>
+</ul>
+<p>. . .</p>
+<ul>
+<li>In some cases, adding structure is the only way to deliver credible answers
+<ul>
+<li>E.g.: counterfactual questions and non-marginal welfare effects</li>
+</ul></li>
+</ul>
+</section>
+<section id="structural-vs.-reduced-form-models-5" class="level2" data-number="2.21">
+<h2 data-number="2.21" class="anchored" data-anchor-id="structural-vs.-reduced-form-models-5"><span class="header-section-number">2.21</span> Structural vs.&nbsp;reduced-form models</h2>
+<p>These approaches are <em>complements rather than substitutes</em></p>
+<p>When studying a specific policy:</p>
+<ul>
+<li>Reduced-form methods can give a credible estimate of treatment effects</li>
+<li>Structural methods can investigate the underlying mechanisms that generate the treatment effects</li>
+</ul>
+<p>. . .</p>
+<p>Regardless the method: <strong>Good data <span class="math inline">+</span> identification <span class="math inline">=</span> less restrictive assumptions</strong></p>
+<ul>
+<li>The better the data, the less we need to assume about the data generating process</li>
+</ul>
+</section>
+<section id="homework" class="level2" data-number="2.22">
+<h2 data-number="2.22" class="anchored" data-anchor-id="homework"><span class="header-section-number">2.22</span> Homework</h2>
+<p>In this part of the course, we will work with data! Please get ready for that</p>
+<ul>
+<li>In Julia, the <code>DataFrames</code> package offers interface to work with data tables
+<ul>
+<li>It’s quite similar to R</li>
+<li>If you haven’t done so yet, please read and follow the steps in <a href="https://julia.school/julia/dataframes">this tutorial</a></li>
+</ul></li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

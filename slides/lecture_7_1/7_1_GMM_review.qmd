@@ -1,0 +1,659 @@
+---
+title: "ACE 592 - Lecture 7.1"
+subtitle: "Generalized Method of Moments: Theory review"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_7_1_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_7_1_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+
+## Course Roadmap {background-color="orange"}
+
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  [Function approximation (postponed)]{.gray}
+6.  [Structural estimation: Intro]{.gray}
+7.  **Generalized Method of Moments**
+8.  Maximum Likelihood Estimator
+9.  Simulation-based methods
+
+
+## Main references for today {background-color="orange"}
+
+- Cameron & Trivedi (2008), Greene (2018)
+- Course materials by Michael Delgado (Purdue), Matt Woerman (UMass) and Simon Quinn (Oxford)
+
+
+# Intro to GMM
+
+## Generalized Method of Moments in one slide
+
+1. Our economic model defines the following population moment conditions: at the true parameter $\theta_0$, $g(x;\theta)$ are on average equal to zero
+$$E[g(x;\theta_0)] = 0$$
+
+. . .
+
+2. We observe some data $x_i, i=1,\dots,N$ and calculate sample analogue 
+$$E[g(x;\theta)] \approx \frac{1}{N} \sum_{i=1}^N g(x_i;\theta) \equiv g_N(\theta)$$
+
+. . .
+
+3. The GMM estimator is given by ( $W_N$ is a weighting matrix)
+$$\hat{\theta}_{GMM} = \arg \min_\theta g_N(\theta)^\prime \; W_N \; g_N(\theta)$$
+
+
+
+## (Generalized) Method of Moments intuition
+
+Suppose we draw five numbers from an unknown distribution
+$$y = {47.3, 51.2, 50.5, 44.9, 53.1}$$
+
+. . .
+
+Suppose this unknown distribution has mean $\mu$, giving a population moment condition
+
+$$E[y_i] = \mu \Rightarrow E[y_i - \mu] = 0$$
+
+. . .
+
+We expect the population moment condition to also hold in the sample analogue
+
+$$\frac{1}{N}\sum_{i=1}^N (y_i - \mu) = 0$$
+
+
+
+## (Generalized) Method of Moments intuition
+
+Forget the weighting matrix for now. We have one condition and one parameter, so this is effectively a special case: just *Method of Moments*
+
+. . .
+
+For our estimate, we pick $\hat{\mu}$ that minimizes
+
+$$\left(\frac{1}{N}\sum_{i=1}^N (y_i - \hat{\mu})\right)^2 $$
+
+In this simple case, this is just solving for $\frac{1}{N}\sum_{i=1}^N (y_i - \hat{\mu}) = 0$
+
+
+
+
+## Generalized Method of Moments example
+
+Linear regression: again, we have $Y_{it} = X_i\beta + \epsilon_i$. But now, instead of normality, we assume $\epsilon_i$ is orthogonal to data $X_i$ (a $1 \times K$ vector)
+$$E[x_{ki} \epsilon_i] = 0 \Rightarrow E[x_{ki} (Y_i - X_i\beta)] = 0$$
+
+- This actually gives $K$ moment conditions: one for each variable $x_{ki} \in X_i$
+
+. . .
+
+We replace these $K$ conditions with their respective sample analogues and solve for
+
+$$\frac{1}{N}\sum_{i=1}^N x_{ki} (Y_i - X_i \hat{\beta}) = 0$$
+
+. . .
+
+- We can show that this solution is analytically equivalent to OLS, too
+
+# GMM theory
+
+## GMM: General case
+
+
+1. Start with data $z_1, \dots, z_N$ drawn from a population with $M$ moment conditions that are functions of vector $\theta$ with $K \leq M$ parameters^[The "generalized" in GMM comes from allowing more moment conditions than parameters; the "standard" Method of Moments requires M=K]
+$$E[g(Z; \theta)] = 0$$
+
+
+. . .
+
+Where do moment conditions come from?
+
+- Economic model conditions: first-order optimality, market clearing, zero arbitrage, etc 
+- Statistical assumptions: error orthogonality $(E[x\epsilon]=0)$
+- Instruments orthogonality $(E[z\epsilon]=0)$
+- Model fit: predicted market shares are equal to realized market shares
+
+
+
+## GMM: General case
+
+2. Construct empirical (sample analogue) moment conditions
+$$\frac{1}{N} \sum_{i=1}^N g(z_i; \theta) = 0$$
+
+
+
+## GMM: General case
+
+
+3. Compute the GMM estimate
+
+$$\hat{\theta}_{GMM} = \arg \min_\theta Q_N(\theta), \; Q_N(\theta) = \left[\frac{1}{N} \sum_{i=1}^N g(z_i; \theta)\right]^\prime W \left[\frac{1}{N} \sum_{i=1}^N g(z_i; \theta)\right]$$
+
+. . .
+
+- If $M = K$ and the problem is well-conditioned, then $\frac{1}{N} \sum_{i=1}^N g(z_i; \theta) = 0$ is $K\times K$ (non)linear system and we can find the $\hat{\theta}$ that solves it
+
+. . .
+
+- But if $M > K$, we almost certainly can't find $K$ parameters that satisfy more that $K$ conditions simultaneously
+  - So we look for parameters that get as close as possible to satisfying all moment conditions $\rightarrow$ we minimize deviations from zero, weighted by a $M\times M$ matrix $W$
+
+
+
+
+## GMM: General case
+
+4. Compute $V(\hat{\theta}_{GMM})$, the variance-covariance matrix of the estimates
+
+- More on that soon
+
+
+
+## Properties of GMM
+
+Under some *regularity conditions*, GMM has the following properties
+
+
+1. Consistency
+2. Asymptotic normality
+
+. . .
+
+- Note that, unlike MLE, GMM is not asymptotically efficient
+
+These properties require some assumptions on the empirical moments
+
+
+
+## Properties of GMM: empirical moments assumption
+
+We assume the following about empirical moments at the true parameter value, $\theta_0$
+
+1. Empirical moments obey the law of large numbers
+$$\frac{1}{N} \sum_{i=1}^N g(z_i; \theta_0) \stackrel{p}{\rightarrow} 0$$
+
+. . .
+
+2. The derivatives of the empirical moments converge to the $M \times K$ Jacobian matrix
+$$D_N(\theta_0) = \frac{1}{N} \sum_{i=1}^N \left.\frac{\partial g(z_i; \theta)}{\partial \theta^\prime}\right|_{\theta=\theta_0} \stackrel{p}{\rightarrow}  D_0 \equiv D(\theta_0) = E\left[\frac{\partial g(z_i; \theta_0)}{\partial \theta_0^\prime}\right]$$
+
+
+
+## Properties of GMM: empirical moments assumption
+
+3. Empirical moments obey the central limit theorem
+
+$$\sqrt{N}\frac{1}{N} \sum_{i=1}^N g(z_i; \theta_0) \stackrel{d}{\rightarrow} \mathcal{N}(0, S_0)$$
+
+where $S_0 = E[g(z_i; \theta_0) g(z_i; \theta_0)^\prime]$ is the variance-covariance matrix of moments (an $M\times M$ matrix)
+
+. . .
+
+- We also need to assume that the weighting matrix converges to $W_0$, a finite symmetric positive definite matrix
+
+$$W \stackrel{p}{\rightarrow}W_0$$
+
+
+
+## Properties of GMM: consistency
+$$\hat{\theta}_{GMM} \stackrel{p}{\rightarrow} \theta_0$$
+
+As sample size grows to infinity, $\hat{\theta}_{GMM}$ gets arbitrarily close to the true parameter value, $\theta_0$
+
+
+
+## Properties of GMM: Asymptotic normality
+
+. . .
+
+$$\sqrt{N}(\hat{\theta}_{GMM}-\theta_0) \stackrel{d}{\rightarrow} \mathcal{N}\left(0, V_0\right)$$
+
+where $V_0$ has a typical *sandwich form*
+
+$$V_0 = \underbrace{(D_0^\prime W_0 D_0)^{-1}}_{\text{bread}}\underbrace{(D_0^\prime W_0 S_0 W_0 D_0)}_{\text{filling}} \underbrace{(D_0^\prime W_0 D_0)^{-1}}_{\text{bread}}$$
+
+. . .
+
+As the sample size grows to infinity, the distribution of $\hat{\theta}_{GMM}$ converges to a normal distribution with mean as the true parameter value and a particular Variance-Covariance structure
+
+
+
+
+## GMM variance estimator
+
+Any valid weighting matrix $W$ yields a consistent GMM estimator
+
+But the choice of $W$ affects variance, so we want to use some optimal $W$ that minimizes the variance of the estimator
+
+
+. . .
+
+It can be shown that the **optimal weigthing matrix** is given by
+
+$$W_0 = S_0^{-1} = \left\{E[g(z_i; \theta_0) g(z_i; \theta_0)^\prime]\right\}^{-1}$$
+
+which yields^[This is the "non-robust" VCOV matrix, i.e., assuming homoskedasticity and no clustering/residual correlation structure. Check references to see how to construct robust versions.]
+
+$$V_0 = (D_0^\prime S_0^{-1} D_0)^{-1}$$
+
+
+
+## Computing $\hat{\theta}_{GMM}$
+
+This is the objective function for GMM 
+
+$$
+\hat{\theta}_{GMM} = \arg \min_\theta Q_N(\theta), \; Q_N(\theta) = \left[\frac{1}{N} \sum_{i=1}^N g(z_i; \theta)\right]^\prime W \left[\frac{1}{N} \sum_{i=1}^N g(z_i; \theta)\right]
+$$
+
+Once again, we can use numerical optimization to calculate $\hat{\theta}_{GMM}$
+
+. . .
+
+But what $W$ do we use?
+
+
+
+## Computing $\hat{\theta}_{GMM}$
+
+Technically, the GMM estimator is consistent for any symmetric positive definite matrix
+
+But different matrices give different variances $\rightarrow$ we want to pick $W$ that minimizes variance
+
+. . .
+
+This is, the sample analogue of the **optimal weigthing matrix**
+
+$$\hat{W} = \hat{S}^{-1} = \left\{E[g(z_i; \hat{\theta}) g(z_i; \hat{\theta})^\prime]\right\}^{-1}$$
+
+. . .
+
+But we have a chicken and egg problem here: we need $\hat{W}$ to estimate $\hat{\theta}$ but we need $\hat{\theta}$ to get $\hat{W}$!
+
+
+
+## Computing $\hat{\theta}_{GMM}$: 2-step GMM
+
+One way to solve this problem is to apply a widely-used algorithm: the **2-step GMM**
+
+. . .
+
+**Step 1**
+
+- Using $W = I$ (identity matrix), estimate $\hat{\theta}_1$
+  - Alternatives exist, but we are going to stick with the simplest here
+. . .
+
+- With $\hat{\theta}_1$, calculate $\hat{W} = \left\{E[g(z_i; \hat{\theta}) g(z_i; \hat{\theta})^\prime]\right\}^{-1}$
+
+
+
+## Computing $\hat{\theta}_{GMM}$: 2-step GMM
+
+**Step 2**
+
+- Using $\hat{W}$ from step 1, estimate $\hat{\theta}_{GMM}$
+
+. . .
+
+- Recalculate $\hat{S}^{-1} = \left\{E[g(z_i; \hat{\theta}) g(z_i; \hat{\theta})^\prime]\right\}^{-1}$
+- Calculate $\hat{D} = \frac{1}{N} \sum_{i=1}^N \frac{\partial g(z_i; \hat{\theta}_{GMM})}{\partial \theta^\prime}$
+
+. . .
+
+- Then, calculate the asymptotic Variance-Covariance matrix $V(\hat{\theta}_{GMM}) = (\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}$
+
+
+# GMM hypothesis and specification tests
+
+## Hypothesis tests for GMM
+
+Again, we will consider a generic null hypothesis we want to test
+
+$$
+H_0: c(\theta) = 0
+$$
+
+There are three commonly used tests for GMM estimation:
+
+- D-test
+- Wald (W) test
+- Lagrange Multiplier (LM) test
+
+
+## Hypothesis tests: common assumptions
+
+1. All the tests will assume we have GMM estimates using the efficient weighting matrix (estimated, for example, with the 2-step procedure).
+2. The **unrestricted** GMM estimate $\hat\theta_u$ is estimated by minimizing the objective function $Q_N(\theta) = g_N(\theta)^\prime S_N^{-1} g_N(\theta)^\prime$
+   - where $g_N(\theta) = N^{-1} \sum_i g(z_i;\theta)$ and $S_N$ is consistent for $S_0 = V[g_N(\theta)]$
+3. The **restricted** GMM estimate $\hat\theta_r$ is estimated by minimizing the objective function $Q_N(\theta)$ subject to constraint $c(\theta) = 0$
+
+## D-test
+
+The D-test is analogous to the Likelihood Ratio as it is based on the differences of the objective functions when evaluated at the restricted and the unrestricted estimates. The D-statistics is given by
+
+$$
+D = N \left[Q_N(\hat\theta_r) - Q_N(\hat\theta_u)\right] \sim \chi^2_{[df]}
+$$
+
+where $df$ is again the number of restrictions imposed.
+
+As in the LR test, we need to estimate both the unrestricted and the restricted models to obtain the D-statistic.
+
+## Wald test
+
+The Wald statistic is based on how close $c(\hat\theta_u)$ is to zero
+
+$$
+W = c(\hat\theta_u)^\prime V\left[c(\hat\theta_u)\right]c(\hat\theta_u) \sim \chi^2_{[df]}
+$$
+
+where $df$ is again the number of restrictions imposed and $V(\hat{c})$ is the asymptotic variance of $c$, which now is given by
+
+$$
+V[c(\hat\theta)] = \left[\frac{\partial c(\hat\theta)}{\partial \hat\theta^\prime}\right]\left[V(\hat\theta)\right]^{-1}\left[\frac{\partial c(\hat\theta)}{\partial \hat\theta^\prime}\right]^\prime
+$$
+
+and $V(\hat{\theta}) = (\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}$ and $\hat{D} = \frac{\partial g_N(\hat\theta)}{\partial \theta^\prime}$.
+
+
+## LM test
+
+The LM test is again based on how close the gradient of the objective function is to zero. The idea is that, if the restricted estimate is indeed valid, the gradients of the unconstraiend objective function should approximately satisty the FOC.
+
+This gives the LM statistics
+
+$$
+LM = N g(\hat\theta_r)^\prime  \hat{S}^{-1} D(\hat\theta_r) \left[D(\hat\theta_r)^\prime \hat{S}^{-1} D(\hat\theta_r)\right] D(\hat\theta_r)^\prime \hat{S}^{-1} g(\hat\theta_r) \sim \chi^2_{[df]}
+$$
+
+where $S$, $D$ and $df$ are defined in the previous slides.
+
+## Specification test: Overidentifying Restrictions
+
+GMM has a general specification test that can be used when there are more moment conditions than parameters (i.e., an overidentified system).
+
+The key idea of this test is that, if all of our moment conditions are valid, then $\frac{1}{N} \sum_i g(z_i;\hat\theta) \approx 0$. So, the null hypothesis of this test is
+
+$$
+H_0: E\left[g(z_i;\theta_0)\right] = 0
+$$
+
+. . .
+
+The **Overidentifying Restrictions (OIR) test** (Hansen, 1982) is given by
+
+$$
+OIR = \left[\frac{1}{N} \sum_{i=1}^N g(z_i; \hat\theta)\right]^\prime \hat{S}^{-1} \left[\frac{1}{N} \sum_{i=1}^N g(z_i; \hat\theta)\right] \sim \chi^2_{[M-K]}
+$$
+
+where $M$ is the number of moment conditions and $K$ the number of parameters. 
+
+## Specification test: Overidentifying Restrictions
+
+$$
+OIR = \left[\frac{1}{N} \sum_{i=1}^N g(z_i; \hat\theta)\right]^\prime \hat{S}^{-1} \left[\frac{1}{N} \sum_{i=1}^N g(z_i; \hat\theta)\right] \sim \chi^2_{[M-K]}
+$$
+
+Notes:
+
+1. The OIR statistic is equal to the value of the minimized objective function.
+2. If OIR is large, then the population moment conditions are rejected, so the GMM estimator is inconsistent for $\theta$.
+   - We know that all moment conditions are collectively invalid, but this test gives no information about which moment conditions are individually invalid.
+3. If $M \leq K$, then this test cannot be used (we need the model to be overidentified).
+
+
+# GMM in practice
+
+## GMM in practice: setup
+
+We will repeat the exercise of estimating a simple linear model using GMM. Again, the model is
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i
+$$
+
+- $y_i$ is the dependent variable
+- $x_i$ is the independent variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope coefficient
+- $\epsilon_i$ is the error term, which we assume follows a normal distribution with mean zero and variance $\sigma^2$, i.e., $\epsilon_i \sim N(0, \sigma^2)$
+
+We will refer generically to $\theta = [\beta_0, \beta_1]$ as the parameter vector we are estimating.
+
+## GMM in practice: fake data
+
+Let's generate the same fake data for our estimation assuming true values $\beta_0 = 2, \beta_1 = 3, \sigma = 1.5$
+
+```{julia}
+using Statistics, Random
+# Generate some synthetic data for illustration
+Random.seed!(652) # Set random seed for reproducibility
+N = 1000  # Number of observations
+X = rand(N) * 10  # Independent variable: random uniform [0,10]
+β0_true = 2.0  # True intercept
+β1_true = 3.0  # True slope
+σ_true = 1.5  # True standard deviation of the errors
+ε = randn(N) * σ_true  # Normally distributed errors
+Y = β0_true .+ β1_true .* X .+ ε  # Dependent variable
+```
+
+
+
+## GMM in practice: moment conditions
+
+First, we need to establish the moment conditions. Following the classical linear regression results, we have that
+
+$$
+\begin{align}
+E[\epsilon] = 0 \\
+E[x \epsilon] = 0
+\end{align}
+$$
+
+So we have two moment conditions to estimate two parameters. 
+
+. . .
+
+Recall that $\epsilon_i = y_i - \beta_0 - \beta_1 x_i$. So, we define
+
+$$
+g\left(y_i, x_i; \theta\right) = g\left(\left[\begin{matrix}\beta_0 \\ \beta_1\end{matrix} \right]\right) = \left[\begin{matrix}y_i - \beta_0 - \beta_1 x_i \\ x_i(y_i - \beta_0 - \beta_1 x_i)\end{matrix} \right]
+$$
+
+## GMM in practice: moment conditions
+
+Next, we program function `g_i(θ)` that receives parameter vector $\theta$ and returns those two moment conditions for all observations ($N \times 2$ matrix).
+
+```{julia}
+function g_i(θ; Y = Y, X = X)
+  β_0, β_1 = θ # Unpack parameters
+  ϵ = Y .- β_0 .- β_1 .* X
+  return hcat(ϵ, X.*ϵ) # Concatenate horizontally
+end;
+```
+
+. . .
+
+Testing with some parameter values.
+
+```{julia}
+G = g_i([0.0, 0.0], Y=Y, X=X);
+G[1:6,:] # See the first few lines
+```
+
+## GMM in practice: moment conditions
+
+And recall that we write the sample analogue: $g_N(\theta) = \frac{1}{N} \sum_{i=1}^N g(y_i, x_i;\theta)$
+
+```{julia}
+function g_N(θ; Y = Y, X = X)
+  N = length(Y) # Number of obs
+  # Get moment vectors
+  g_Ns = g_i(θ; Y = Y, X = X)
+  # Take means of each column and return
+  return [sum(g_Ns[:, k]) for k in 1:2] ./ N
+end;
+```
+
+. . .
+
+Testing with some parameter values.
+
+```{julia}
+g_N([0.0, 0.0], Y=Y, X=X)
+```
+
+
+## GMM in practice: objective function
+
+- Since we have 2 moment conditions and two parameters, this is technically an exactly identified GMM, which is equivalent to the standard method of moments and does not need the weighting matrix. 
+  - Regardless, we will keep the weighting matrix to demonstrate all the steps.
+
+. . .
+
+The objective function therefore is
+
+$$
+Q_N(\theta) = g_N(z_i;\theta)^\prime W g_N(\theta)
+$$
+
+```{julia}
+using LinearAlgebra
+function Q_N(θ; W = I(2), Y = Y, X = X)
+    return g_N(θ; Y=Y, X=X)' * W * g_N(θ; Y=Y, X=X)
+end;
+```
+
+Testing with some an initial guess and the identity matrix as the weighting matrix.
+
+```{julia}
+θ_0 = [0.0, 0.0] # Initial guess
+W_0 = I(2) # 2x2 identity matrix
+Q_N([0.0, 0.0], W=W_0, Y=Y, X=X)
+```
+
+
+
+## GMM in practice: step 1
+
+Next, we will do step 1 of the efficient GMM estimation. The GMM estimator is defined as $\hat{\theta} = \arg \min_\theta Q_N(\theta)$
+
+Since our parameters are unconstrained, we can program our optimization using Optim.
+
+```{julia}
+using Optim
+res_step_1 = Optim.optimize(θ -> Q_N(θ; W = W_0), θ_0, Newton())
+θ_1 = res_step_1.minimizer # Step 1 estimate
+```
+
+## GMM in practice: $\hat{W}$
+
+With the estimates of step 1, we can now estimate the optimal weighting matrix $\hat{W}$
+
+$$
+\hat{W} = \hat{S}^{-1} = \left\{E[g(y_i, x_i; \hat{\theta}) g(y_i, x_i; \hat{\theta})^\prime]\right\}^{-1}
+$$
+
+```{julia}
+W_hat = inv(g_i(θ_1)'  * g_i(θ_1) ./N)
+```
+
+## GMM in practice: step 2
+
+We can now obtain the final estimates by repeating the optimization with $\hat{W}$.
+
+```{julia}
+res_step_2 = Optim.optimize(θ -> Q_N(θ; W = W_hat), θ_0, Newton())
+θ_2 = res_step_2.minimizer # Step 2 estimate
+```
+
+. . .
+
+*We get pratically the same estimates in step 2 because the weighting matrix doesn't really matter in the exactly identified case*.
+
+
+## GMM in practice: standard errors
+
+Recall 
+$$
+V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
+$$
+
+where:
+
+- $\hat{D} = E\left[\frac{\partial g(y_i, x_i; \hat{\theta})}{\partial \hat{\theta}^\prime}\right]$
+- $\hat{S} = E\left[g_i(z_i; \hat{\theta}) g_i(z_i;\hat{\theta})^\prime\right]$
+
+To calculate $\hat{D}$, we can use a numerical method!
+
+```{julia}
+using ForwardDiff
+D_hat = ForwardDiff.jacobian(g_N, θ_2)
+```
+
+## GMM in practice: standard errors
+
+Calculating the other components. 
+
+```{julia}
+S_hat = g_i(θ_2)'  * g_i(θ_2) ./N
+```
+
+```{julia}
+V_hat = inv(D_hat' * inv(S_hat) * D_hat) ./N
+```
+
+So, the standard errors are the square root of the diagonal elements.
+
+```{julia}
+SEs = sqrt.(diag(V_hat))
+```
+
+
+## GMM in practice: estimation results
+
+Again, we can organize the results in a table and print them nicely with 95% confidence intervals
+
+```{julia}
+using DataFrames, Distributions
+df = DataFrame(
+  Coefficient = ["beta_0", "beta_1"],
+  Estimate = θ_2,
+  StdError = SEs,
+  CI_lower = θ_2 .+ quantile(Normal(), 0.025) .* SEs,
+  CI_upper = θ_2 .+ quantile(Normal(), 0.975) .* SEs
+)
+
+println(df)
+```
+
