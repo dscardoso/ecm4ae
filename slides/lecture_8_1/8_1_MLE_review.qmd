@@ -1,0 +1,631 @@
+---
+title: "ACE 592 - Lecture 8.1"
+subtitle: "Maximum Likelihood Estimation: Theory review"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_8_1_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_8_1_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+
+## Course Roadmap {background-color="orange"}
+
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  [Function approximation (postponed)]{.gray}
+6.  [Structural estimation: Intro]{.gray}
+7.  [Generalized Method of Moments]{.gray}
+8.  **Maximum Likelihood Estimator**
+9.  Simulation-based methods
+
+
+## Main references for today {background-color="orange"}
+
+- Cameron & Trivedi (2008), Greene (2018)
+- Course materials by Michael Delgado (Purdue), Matt Woerman (UMass) and Simon Quinn (Oxford)
+
+# Intro to MLE
+
+
+## Maximum Likelihood in one slide
+
+1. We observe some data $(y_i, x_i), i=1,\dots,N$ and assume it comes from a joint distribution described by parameter vector $\theta$
+
+. . .
+
+2. For any given $\theta$ we can calculate the joint probability of our data
+   - If observations are i.i.d., this joint probability is a product of individual probabilities of drawing $(y_i, x_i)$
+
+. . .
+
+3. Using Bayes' rule, we can calculate the probability of $\theta$ given $(y_i, x_i)$: the **likelihood function**
+
+. . .
+
+4. The MLE estimate is the value of $\theta$ that maximizes the likelihood: *we pick the parameters that make it most likely to generate the observed data*
+
+
+
+## Maximum Likelihood intuition
+
+Suppose we draw five numbers from a normal distribution: 
+$$y = {47.3, 51.2, 50.5, 44.9, 53.1}$$
+
+. . .
+
+And we consider two candidate distributions: $N(0,1)$ or $N(50, 1)$
+
+. . .
+
+- What is the likelihood of $N(0,1)$ generating $y$? 
+
+. . .
+
+   - Virtually zero
+  
+. . .
+
+- What is the likelihood of $N(50,1)$ generating $y$? 
+
+. . .
+
+   - Definitely greater
+
+. . .
+
+So, between these two, we pick $\mu = 50$, since it's *more likely* to generate $y$ than $\mu = 0$
+
+
+
+
+## Maximum Likelihood example
+
+Linear regression: we have $Y_{i} = X_i\beta + \epsilon_i$ and assume $\epsilon_i | X_i \sim N(0, \sigma^2)$. This implies $Y_i | X_i \sim N(X_i\beta, \sigma^2)$
+
+. . .
+
+Given the parameters and i.i.d. observations, the data come from a joint distribution ( $\phi$ is the standard normal PDF) 
+
+$$
+Pr(Y_1,\dots,Y_N| X_1,\dots,X_N;\beta,\sigma^2) = \prod_{i=1}^N \Pr(Y_i | X_i, \beta,\sigma^2) = \prod_{i=1}^N \phi(Y_i-X_i\beta;0,\sigma^2)
+$$
+
+. . .
+
+By Bayes' rule 
+
+$$
+L(\beta,\sigma^2|X,Y) = \prod_{i=1}^N \Pr(\beta,\sigma^2|Y_i, X_i) \propto \prod_{i=1}^N \Pr(Y_i | X_i, \beta,\sigma^2)
+$$
+
+
+
+
+## Maximum Likelihood example
+
+Then, we use optimization methods to find
+$$(\hat{\beta}_{MLE},\hat{\sigma}^2_{MLE}) = \arg \max_{\beta,\sigma^2} L(\beta,\sigma^2|X,Y)$$
+
+- We can show that this solution is analytically equivalent to OLS
+
+. . .
+
+- In practice, we take logs to transform that product inside $L$ into a sum
+  - We maximize the *log-likelihood function* $l(\beta,\sigma^2|X,Y)$
+
+
+## Up next
+
+We are going to review MLE with a focus on application: properties of this estimator and how to implement it in practice
+
+. . .
+
+We won't cover
+
+- Proofs of asymptotic properties
+- Small sample properties
+- Specialized numerical methods for their estimation
+
+Some good textbooks to learn about these details: Cameron & Trivedi, Greene, Wooldridge (PhD-level), Hayashi, Hansen
+
+
+
+# MLE theory
+
+
+
+## MLE: General case
+
+1. Start with the **joint density of the data** $z_1, \dots, z_N$ given by $f_Z(Z; \theta)$
+
+. . .
+
+2. Assuming an i.i.d. sample, construct the **log likelihood function**^[We take logs to simplify computation. Log is a positive monotonic transformation, so it preserves the max.]
+  
+$$
+l(\theta | Z) = \log\left(\prod_{i=1}^N f_Z(z_i;\theta)\right) = \sum_{i=1}^N \log f_Z(z_i;\theta)
+$$
+
+. . .
+
+3. Compute $\hat{\theta}_{MLE} = \arg \max_\theta l(\theta | Z)$
+
+. . .
+
+4. Compute $Var(\hat{\theta}_{MLE})$, the variance-covariance matrix of the estimates
+
+
+
+## Properties of MLE
+
+
+Under some *regularity conditions*, MLE has the following properties
+
+
+1. Consistency
+2. Asymptotic normality
+3. Asymptotic efficiency
+4. Invariance
+
+
+
+## Properties of MLE: Consistency
+
+. . .
+
+$$
+\hat{\theta}_{MLE} \stackrel{p}{\rightarrow} \theta_0
+$$
+
+As sample size grows to infinity, $\hat{\theta}_{MLE}$ gets arbitrarily close to the true parameter value, $\theta_0$
+
+
+
+## Properties of MLE: Asymptotic normality
+
+. . .
+
+$$
+\sqrt{N}(\hat{\theta}_{MLE}-\theta_0) \stackrel{d}{\rightarrow} \mathcal{N}\left(0, I(\theta_0)^{-1}\right)
+$$
+
+where $I(\theta_0)$ is the Fisher Information Matrix, given by
+
+$$
+I(\theta_0) = -E\left[\frac{\partial^2 l(\theta_0)}{\partial \theta_0 \partial \theta_0^{\prime}}\right]
+$$
+
+. . .
+
+As the sample size grows to infinity, the distribution of $\hat{\theta}_{MLE}$ converges to a normal distribution with mean as the true parameter value and a particular Variance-Covariance structure
+
+
+
+
+## Properties of MLE: Asymptotic normality
+
+Note that $I(\theta_0)$ is the expectation of the Hessian of $l$ evaluated at the true parameter
+
+- This has a meaningful intuition: we are more certain of MLE estimates when the (log-) likelihood function has more curvature!
+
+. . .
+
+The asymptotic variance-covariance matrix is then given by
+
+$$
+Var(\hat{\theta}_{MLE}) = \left\{ -E\left[\frac{\partial^2 l(\theta_0)}{\partial \theta_0 \partial \theta_0^{\prime}}\right] \right\}^{-1}
+$$
+
+
+## Properties of MLE: Asymptotic efficiency
+
+
+$\hat{\theta}_{MLE}$ achieves the Cramér-Rao lower bound
+
+$$
+Var(\hat{\theta}_{MLE}) = I(\theta_0)^{-1}
+$$
+
+- No consistent estimator has lower asymptotic variance than the MLE
+
+
+
+
+## Properties of MLE: Invariance
+
+Let $f(\theta_0)$ be a continuous and continuously differentiable function. Then
+
+$$
+\widehat{f(\theta_0)}_{MLE} = f(\hat{\theta}_{MLE})
+$$
+
+- The MLE of a function of $\theta$ is the function applied to the $\hat{\theta}_{MLE}$ 
+
+
+
+## MLE variance estimator
+
+The variance-covariance matrix of the MLE can be estimated using
+
+$$
+Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \theta \partial \theta^{\prime}}\right|_{\theta=\hat{\theta}_{MLE}} \right\}^{-1}
+$$
+
+So we calculate the Hessian of $l$ at the estimated parameter values.
+
+- This is the simplest variance estimator. More robust estimators exist but are beyond our scope here
+
+
+
+
+## Computing $\hat{\theta}_{MLE}$
+
+We can use any of the maximization methods we've seen so far to calculate $\hat{\theta}_{MLE}$
+
+- Unconstrained optimization with `Optim` (you can use the log/exp transformation to avoid domain problems with negative $\sigma^2$)
+- Constrained optimization with `JuMP` (can set a constraint for $\sigma^2\ge0$)
+- If closed-form derivatives of $l$ are easy to obtain, you can use nonlinear rootfinding methods
+
+. . .
+
+There is a specialized Quasi-Newton method for MLE called *BHHH (Berndt-Hall-Hall-Hausman)*
+
+- It has good properties approximating the Hessian of log-likelihoods and is faster than computing the actual Hessian every iteration
+
+
+
+## Computing $Var(\hat{\theta}_{MLE})$
+
+To estimate the variance-covariance matrix, you can
+
+- Derive the analytic Hessian (usually hard)
+- Calculate it numerically using, for example, `ForwardDiff.hessian`
+
+. . .
+
+Once you've calculated the variance-covariance matrix, standard errors can be easily calculated as the square root of its diagonal elements
+$$
+SE(\hat{\theta}_{MLE}) = \sqrt{diag(Var(\hat{\theta}_{MLE}))}
+$$
+
+# MLE hypothesis and specification tests
+
+## Hypothesis and specification tests
+
+After estimating parameters with MLE, we might be interested in making inferences about parameter values
+
+- For example, we may want to infer whether two parameters are statistically different from each other, or if a parameter is statistically different from a fixed value
+
+. . .
+
+We can generically represent a test as a null hypothesis
+
+$$
+H_0: c(\theta) = 0
+$$
+
+. . .
+
+There are three types of tests that are commonly used in MLE
+
+- Likelihood Ratio (LR) test
+- Wald test
+- Lagrange Multiplier (LM) test
+
+Let's quickly review them
+
+
+## Likelihood Ratio test
+
+This test draws its inference from a comparison between an **unrestricted** and a **restricted** model
+
+- For example, the restricted model could force a parameter to a specific value or the equality between two parameters
+- The LR test requires we estimate both models. 
+
+. . .
+
+Let $\hat{\theta}_U$ be the estimated parameters of the unrestricted model and $\hat{\theta}_R$ the restricted ones. The LR statistic is given by
+
+$$
+LR = -2 \ln \left(\frac{l(\hat{\theta}_R)}{l(\hat{\theta}_U)}\right) \sim \chi^2_{[df]}
+$$
+
+where $l$ is the log-likelihood function and $df$ is the number of restrictions imposed.
+
+## Wald test
+
+The nonlinear version of Wald test is based on the notion that, if a restriction is of the type $c(\theta) = 0$, then it will also be satisfied at a consistent estimate $c(\hat\theta) \approx 0$
+
+. . .
+
+The Wald statistic is then given by
+
+$$
+W = c(\hat\theta)\left[V(c(\hat\theta))\right]^{-1}c(\hat\theta) \sim \chi^2_{[df]}
+$$
+
+where $df$ is again the number of restrictions imposed and $V(c(\hat\theta))$ is the asymptotic variance of $c$ given by
+
+$$
+V(c(\hat\theta)) = \left[\frac{\partial c(\hat\theta)}{\partial \hat\theta^\prime}\right]\left[I(\hat\theta)\right]^{-1}\left[\frac{\partial c(\hat\theta)}{\partial \hat\theta^\prime}\right]^\prime
+$$
+
+*Note that the Wald test only requires that we estimate the unrestricted model*
+
+## Lagrange Multiplier (LM) test
+
+The Lagrange Multiplier test is based on the idea that, if the restriction is correct, the FOC (of maximizing $L$) at restricted estimator should be approximately satisfied. I.e.,
+
+$$
+\left.\frac{\partial l(\theta)}{\partial \theta}\right|_{\theta=\hat\theta_R} \approx 0
+$$
+
+The gradient of $l$, $\frac{\partial l(\theta)}{\partial \theta}$, is called **the score function**. That's why the LM test is also referred to as the Score test.
+
+. . .
+
+The LM statistic is given by
+
+$$
+LM = \left(\frac{\partial l(\hat\theta_R)}{\partial \theta_R}\right)^\prime \left[I(\hat\theta)\right]^{-1} \left(\frac{\partial l(\hat\theta_R)}{\partial \theta_R}\right) \sim \chi^2_{[df]}
+$$
+
+where $df$ is again the number of restrictions imposed
+
+*Note that Lagrange Multiplier test only requires that we estimate the restricted model*
+
+
+## Hypothesis and specification tests
+
+This was just a quick recap on the differences between these tests. There are practical considerations based on their underlying assumptions, efficiency, and computational costs
+
+Please check Greene or Cameron & Trivedi (or another PhD-level econometrics textbook) for detailed discussions
+
+
+
+# MLE in practice
+
+## MLE in practice: setup
+
+Next, we will see a complete example of estimating a simple linear model using MLE
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i
+$$
+
+- $y_i$ is the dependent variable
+- $x_i$ is the independent variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope coefficient
+- $\epsilon_i$ is the error term, which we assume follows a normal distribution with mean zero and variance $\sigma^2$, i.e., $\epsilon_i \sim N(0, \sigma^2)$
+
+We will refer generically to $\theta = [\beta_0, \beta_1, \sigma]$ as the parameter vector we are estimating.
+
+
+## MLE in practice: objective function
+
+- The likelihood function for our model, given the assumptions about the error term, is the product of the individual densities of $y_i$
+- Individual densities are also normally distributed with mean $\beta_0 + \beta_1 x_i$ and variance $\sigma^2$.
+  
+. . .
+  
+The log-likelihood function (which is more convenient for optimization) is:
+
+$$
+\ln L(\theta) = -\frac{n}{2} \ln(2\pi) - \frac{n}{2} \ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2
+$$
+
+```{julia}
+function log_likelihood(θ) 
+  β0, β1, σ = θ # Unpack parameters
+  return -n/2*log(2*pi) - n/2*log(σ^2) - (1/(2*σ^2)) * sum((y .- β0 .- β1 .* x).^2)
+end
+```
+
+
+## MLE in practice: fake data
+
+To estimate $\beta_0$, $\beta_1$, and $\sigma^2$, we need to maximize this log-likelihood function. We'll use Julia's JuMP for that
+
+But, firt, let's generate some fake data for our estimation assuming true values $\beta_0 = 2, \beta_1 = 3, \sigma = 1.5$
+
+```{julia}
+using JuMP, Ipopt, Statistics, Random
+# Generate some synthetic data for illustration
+Random.seed!(652) # Set random seed for reproducibility
+n = 1000  # Number of observations
+x = rand(n) * 10  # Independent variable: random uniform [0,10]
+β0_true = 2.0  # True intercept
+β1_true = 3.0  # True slope
+σ_true = 1.5  # True standard deviation of the errors
+ε = randn(n) * σ_true  # Normally distributed errors
+y = β0_true .+ β1_true .* x .+ ε  # Dependent variable
+```
+
+## MLE in practice: optimization setup
+
+Now, we can program our optimization in JuMP
+
+```{julia}
+# Define the model
+mle_model = Model(Ipopt.Optimizer);
+@variable(mle_model, β0);
+@variable(mle_model, β1);
+@variable(mle_model, σ >= 0.0001);  # Avoid division by zero in the log-likelihood
+
+# Set the objective to maximize the log-likelihood
+@objective(mle_model, Max, log_likelihood([β0, β1, σ]))
+```
+
+
+## MLE in practice: optimization
+
+```{julia}
+# Solve the model
+optimize!(mle_model)
+```
+
+## MLE in practice: optimization
+
+```{julia}
+# Retrieve the estimated parameters
+β0_hat = value(β0);
+β1_hat = value(β1);
+σ_hat = value(σ);
+
+println("Estimated parameters:")
+println("β0: ", β0_hat)
+println("β1: ", β1_hat)
+println("σ: ", σ_hat)
+```
+
+
+## MLE in practice: standard errors
+
+We've seen that the asymptotic distribution of MLE gives us the (non-robust) standard errors
+
+$$
+Var(\hat{\theta}_{MLE}) = \left\{-\left. \frac{\partial^2 l(\theta)}{\partial \theta \partial \theta^{\prime}}\right|_{\theta=\hat{\theta}_{MLE}} \right\}^{-1}
+$$
+
+How do we calculate this?
+
+. . .
+
+- We can use ForwardDiff.Hessian, for example! Let's calculate the information matrix first
+
+```{julia}
+using ForwardDiff, LinearAlgebra
+θ_hat = [β0_hat, β1_hat, σ_hat]
+Im = ForwardDiff.hessian(log_likelihood, θ_hat)
+```
+
+
+## MLE in practice: standard errors
+
+$$
+Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \theta \partial \theta^{\prime}}\right|_{\theta=\hat{\theta}_{MLE}} \right\}^{-1}
+$$
+
+Now, we invert it and take the squared root of its diagonal
+
+```{julia}
+V = inv(Im);
+SEs = sqrt.(diag(-V))
+```
+
+## MLE in practice: estimation results
+
+We can organize the results in a table and print them nicely with 95% confidence intervals
+
+```{julia}
+using DataFrames, Distributions
+df = DataFrame(
+  Coefficient = ["beta_0", "beta_1", "sigma"],
+  Estimate = θ_hat,
+  StdError = SEs,
+  CI_lower = θ_hat .+ quantile(Normal(), 0.025) .* SEs,
+  CI_upper = θ_hat .+ quantile(Normal(), 0.975) .* SEs
+)
+
+println(df)
+```
+
+## MLE in practice: testing
+
+- Let's now test the hypothesis that $\beta_0 = \beta_1$. This is, $H_0: \beta_0 - \beta_1 = 0$
+- This will require estimating a **restricted model.** One way to do this is to optimize again but look for only for a value of $\beta_0$ and using it also for $\beta_1$
+
+```{julia}
+# Define the model
+mle_model_restr = Model(Ipopt.Optimizer);
+set_silent(mle_model_restr)
+@variable(mle_model_restr, β0);
+@variable(mle_model_restr, σ >= 0.0001);  # Avoid division by zero in the log-likelihood
+
+# Note β0 being used twice!
+@objective(mle_model_restr, Max, log_likelihood([β0, β0, σ]));
+
+optimize!(mle_model_restr);
+```
+
+
+## MLE in practice: testing
+
+Let's see the results!
+
+```{julia}
+β0_hat_R = value(β0);
+σ_hat_R = value(σ);
+
+println("Estimated parameters:")
+println("β0=β1: ", β0_hat)
+println("σ: ", σ_hat)
+```
+
+
+## MLE in practice: testing
+
+We are now ready to calculate the log-likelihoods and the LR statistic. Recall
+
+$$
+LR = 2 \left(l(\hat{\theta}_U) - l(\hat{\theta}_R) \right) \sim \chi^2_{[df]}
+$$
+
+
+```{julia}
+l_U = log_likelihood([β0_hat, β1_hat, σ_hat]);
+l_R = log_likelihood([β0_hat_R, β0_hat_R, σ_hat_R]);
+```
+
+```{julia}
+LR_stat = 2 * (l_U - l_R)
+```
+
+## MLE in practice: testing
+
+We can calculate the critical value of this test using the quantile of the $\chi^2_{1}$ distribution with $\alpha  = 0.05$
+```{julia}
+crit_value = quantile(Chisq(1), 0.95);
+println("Critical value: $crit_value . Test statistic: $LR_stat")
+```
+
+So we can confidently reject this hypothesis.
+
+. . .
+
+We can also calculate the exact probability of the test (p-value) 
+```{julia}
+p_value = 1 - cdf(Chisq(1), LR_stat)
+```
+
+Which is so small it might get rounded to zero.
