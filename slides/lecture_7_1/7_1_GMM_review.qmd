@@ -56,6 +56,25 @@ format:
 
 # Intro to GMM
 
+
+## Why do we need a different estimator?
+
+Sometimes, OLS is all we need
+
+- The parameters we need to estimate are linear in the model
+- Or they can be made linear with some clever transformation (like logs)
+
+. . .
+
+But, in many many cases, we need to estimate parameters that enter nonlinearly in the model
+
+- We need to resort to nonlinear estimators
+
+. . .
+
+MLE and GMM are the most used estimators for structural modeling and estimation
+
+
 ## Generalized Method of Moments in one slide
 
 1. Our economic model defines the following population moment conditions: at the true parameter $\theta_0$, $g(x;\theta)$ are on average equal to zero
