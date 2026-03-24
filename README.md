@@ -32,7 +32,7 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
   - Lecture 4.4 - Constrained optimization: modeling framework [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_4/ACE592_4_4_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_4/ACE592_4_4_notes.html)
   - Lecture 4.5 - Unit 4 Tutorial: Optimization with JuMP [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_4_5/ACE592_4_5_notes.html)
 
-
+- Lecture 6 - Introduction to Structural Estimation [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_6/ACE592_6_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_6/ACE592_6_notes.html)
 
 ## Recommended additional resources
 
