@@ -74,7 +74,7 @@ Research question: **How much market power do car brands A and B have?**
 
 Research question: **How much market power do car brands A and B have?**
 
-We have data from a random sample from $N=300$ local markets (indexed by $j$) for car models A and B^[Unlike in Unit 6, we will not go over the details of data generation. But I uploaded the script for that, so please check it out.]
+We have data from a random sample from $N=300$ local markets (indexed by $j$) for car models A and B
 
 - Shares: $s_k$
 - Prices: $p_k$
@@ -112,10 +112,13 @@ If they do not buy a car, they get zero utility. Consumers are utility maximizer
 
 ## Demand: theoretical model
 
-As we saw in the last unit, assuming $\nu_{ik}$ is distributed in the population following a Type I Extreme Value distribution, we can derive a closed-form expression for expected market shares of products $a$ and $b$:
+Assuming $\nu_{ik}$ is distributed in the population following a Type I Extreme Value distribution, we can derive a closed-form expression for expected market shares of products $a$ and $b$. This will give us the classic Logit model (we will see the details of this in the next unit)
 
 $$
-s_{a}=\frac{e^{V_a}}{1+e^{V_a}+e^{V_b}}, \; s_{b}=\frac{e^{V_b}}{1+e^{V_a}+e^{V_b}}
+\begin{align}
+s_{a}=& \Pr(\text{Buying A})=\frac{e^{V_a}}{1+e^{V_a}+e^{V_b}} \\
+s_{b}=& \Pr(\text{Buying B})=\frac{e^{V_b}}{1+e^{V_a}+e^{V_b}}
+\end{align}
 $$
 
 The demand for the outside option is given by $s_0 = 1 - s_A - s_B = \frac{1}{1+e^{V_a}+e^{V_b}}$
@@ -206,6 +209,7 @@ where
 - $\xi^S_k$ is a vector of **unobserved** product characteristics that affect costs
 
 We assume $\epsilon^S_{k,j}$ to be uncorrelated with $t_{j}$, $l_{j}$, $B^S_{k,j}$, and $\xi^S_k$
+
 
 # Estimation
 
@@ -314,10 +318,28 @@ E\left[l_{j}\epsilon^S_{k,j}\right] & = 0
 \end{align}
 $$
 
+# Data Generation
+
+Let's stop here to check out the data generating script.
+
+
+## Data Generation: quantities
+
+Distribution of shares across markets
+
+![](figs/eq_shares.png)
+
+## Data Generation: prices
+
+Distribution of equilibrium prices across markets
+
+![](figs/eq_prices.png)
+
+# Programming the estimation
 
 ## Time for some actual estimation
 
-Enough talk, let's work! The data for this exercise are in file `duopoly_shares_data.csv`.
+Let's work! The data for this exercise are in file `duopoly_shares_data.csv`.
 
 Our empirical plan is:
 
@@ -574,8 +596,13 @@ plot(histogram(df.c_k[.!df.is_B], label=L"Pred. $c_a$", bins=30), histogram(df.c
 ```
 
 
+## True marginal costs 
 
-## Lerner index
+How does the distribution compare to the true marginal costs?
+
+![](figs/true_costs.png)
+
+## Market power analysis
 
 We are now ready to calculate the average Lerner index per firm
 

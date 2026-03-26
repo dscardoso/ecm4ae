@@ -259,7 +259,7 @@ Diego S. Cardoso
 <section id="data" class="slide level2">
 <h2>Data</h2>
 <p>Research question: <strong>How much market power do car brands A and B have?</strong></p>
-<p>We have data from a random sample from <span class="math inline">\(N=300\)</span> local markets (indexed by <span class="math inline">\(j\)</span>) for car models A and B<sup>1</sup></p>
+<p>We have data from a random sample from <span class="math inline">\(N=300\)</span> local markets (indexed by <span class="math inline">\(j\)</span>) for car models A and B</p>
 <ul>
 <li>Shares: <span class="math inline">\(s_k\)</span></li>
 <li>Prices: <span class="math inline">\(p_k\)</span></li>
@@ -269,7 +269,7 @@ Diego S. Cardoso
 <p>To assess market power, we want to estimate the mean Lerner index for each firm <span class="math display">\[
 L_k = \frac{1}{N} \sum_{j=1}^N \frac{p_{k,j} - c_{k,j}}{p_{k,j}}
 \]</span></p>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>Unlike in Unit 6, we will not go over the details of data generation. But I uploaded the script for that, so please check it out.</p></li></ol></aside></section></section>
+</section></section>
 <section>
 <section id="theoretical-and-statistical-models" class="title-slide slide level1 center">
 <h1>Theoretical and statistical models</h1>
@@ -297,9 +297,12 @@ L_k = \frac{1}{N} \sum_{j=1}^N \frac{p_{k,j} - c_{k,j}}{p_{k,j}}
 </section>
 <section id="demand-theoretical-model-1" class="slide level2">
 <h2>Demand: theoretical model</h2>
-<p>As we saw in the last unit, assuming <span class="math inline">\(\nu_{ik}\)</span> is distributed in the population following a Type I Extreme Value distribution, we can derive a closed-form expression for expected market shares of products <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>:</p>
+<p>Assuming <span class="math inline">\(\nu_{ik}\)</span> is distributed in the population following a Type I Extreme Value distribution, we can derive a closed-form expression for expected market shares of products <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. This will give us the classic Logit model (we will see the details of this in the next unit)</p>
 <p><span class="math display">\[
-s_{a}=\frac{e^{V_a}}{1+e^{V_a}+e^{V_b}}, \; s_{b}=\frac{e^{V_b}}{1+e^{V_a}+e^{V_b}}
+\begin{align}
+s_{a}=&amp; \Pr(\text{Buying A})=\frac{e^{V_a}}{1+e^{V_a}+e^{V_b}} \\
+s_{b}=&amp; \Pr(\text{Buying B})=\frac{e^{V_b}}{1+e^{V_a}+e^{V_b}}
+\end{align}
 \]</span></p>
 <p>The demand for the outside option is given by <span class="math inline">\(s_0 = 1 - s_A - s_B = \frac{1}{1+e^{V_a}+e^{V_b}}\)</span></p>
 </section>
@@ -399,7 +402,7 @@ c_k = p_k - \frac{1}{\alpha(1-s_k)}
 <li>Key idea: with fixed product characteristics, higher costs lead to higher prices without affecting demand<sup>1</sup></li>
 </ul>
 </div>
-<aside><ol class="aside-footnotes"><li id="fn2"><p>In the script to generate this data, products have an omitted quality index that affects both utility and costs.</p></li></ol></aside></section>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>In the script to generate this data, products have an omitted quality index that affects both utility and costs.</p></li></ol></aside></section>
 <section id="estimation-demand-moment-conditions-1" class="slide level2">
 <h2>Estimation: demand moment conditions</h2>
 <p>So, we rewrite the demand estimating equation as</p>
@@ -472,10 +475,30 @@ E\left[t_{j}\epsilon^S_{k,j}\right] &amp; = 0\\
 E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 \end{align}
 \]</span></p>
+</section></section>
+<section>
+<section id="data-generation" class="title-slide slide level1 center">
+<h1>Data Generation</h1>
+<p>Let’s stop here to check out the data generating script.</p>
+</section>
+<section id="data-generation-quantities" class="slide level2">
+<h2>Data Generation: quantities</h2>
+<p>Distribution of shares across markets</p>
+
+<img data-src="figs/eq_shares.png" class="r-stretch"></section>
+<section id="data-generation-prices" class="slide level2">
+<h2>Data Generation: prices</h2>
+<p>Distribution of equilibrium prices across markets</p>
+
+<img data-src="figs/eq_prices.png" class="r-stretch"></section></section>
+<section>
+<section id="programming-the-estimation" class="title-slide slide level1 center">
+<h1>Programming the estimation</h1>
+
 </section>
 <section id="time-for-some-actual-estimation" class="slide level2">
 <h2>Time for some actual estimation</h2>
-<p>Enough talk, let’s work! The data for this exercise are in file <code>duopoly_shares_data.csv</code>.</p>
+<p>Let’s work! The data for this exercise are in file <code>duopoly_shares_data.csv</code>.</p>
 <p>Our empirical plan is:</p>
 <ol type="1">
 <li>Using these 8 moment conditions, joinly estimate parameter vector <span class="math inline">\(\theta = [\theta^D, \theta^S]\)</span> with GMM</li>
@@ -484,7 +507,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 </section>
 <section id="loading-and-preparing-the-data" class="slide level2">
 <h2>Loading and preparing the data</h2>
-<div id="b2fe16bd" class="cell" data-execution_count="1">
+<div id="b2fe16bd" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href=""></a><span class="im">using</span> <span class="bu">DataFrames</span>, <span class="bu">CSV</span></span>
 <span id="cb1-2"><a href=""></a>df <span class="op">=</span> CSV.<span class="fu">read</span>(<span class="st">"duopoly_shares_data.csv"</span>, DataFrame);</span>
 <span id="cb1-3"><a href=""></a>df[<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">:</span>] <span class="co"># First few rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -567,7 +590,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 <li><span class="math inline">\(log(s_{k,j}) - log(s_{0,j})\)</span></li>
 <li><span class="math inline">\(B_{k,j}\)</span></li>
 </ul>
-<div id="807badb6" class="cell" data-execution_count="2">
+<div id="807badb6" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href=""></a>N <span class="op">=</span> <span class="fu">nrow</span>(df); <span class="co"># Get number of rows</span></span>
 <span id="cb2-2"><a href=""></a>df.logsk_logs0 <span class="op">=</span> <span class="fu">log</span>.(df.s_k) <span class="op">-</span> <span class="fu">log</span>.(df.s_0); <span class="co"># Calculate LHS of demand equation</span></span>
 <span id="cb2-3"><a href=""></a>df.is_B <span class="op">=</span> (df.product <span class="op">.==</span> <span class="st">"b"</span>); <span class="co"># Create dummy variable for product B</span></span>
@@ -659,7 +682,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 <section id="loading-and-preparing-the-data-2" class="slide level2">
 <h2>Loading and preparing the data</h2>
 <p>It might also be useful to prepare matrices <span class="math inline">\(X\)</span> and <span class="math inline">\(Z\)</span></p>
-<div id="230b3d92" class="cell" data-execution_count="3">
+<div id="230b3d92" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href=""></a>X <span class="op">=</span> [<span class="fu">ones</span>(N) df.p_k df.is_B];</span>
 <span id="cb3-2"><a href=""></a>Z <span class="op">=</span> [<span class="fu">ones</span>(N) df.is_B df.steel df.labor];</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -667,7 +690,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 <section id="moment-conditions-function" class="slide level2">
 <h2>Moment conditions function</h2>
 <p>Next, we program function <code>g_i(θ)</code> that receives parameter vector <span class="math inline">\(\theta\)</span> and returns the eight moment conditions for all observations (<span class="math inline">\(N \times 8\)</span> matrix). Here is a way to structure it</p>
-<div id="88e4dd8b" class="cell" data-execution_count="4">
+<div id="88e4dd8b" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href=""></a><span class="kw">function</span> <span class="fu">g_i</span>(θ)</span>
 <span id="cb4-2"><a href=""></a>    <span class="co"># DEMAND SIDE</span></span>
 <span id="cb4-3"><a href=""></a>    θ_d <span class="op">=</span> θ[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>] <span class="co"># Demand parameters</span></span>
@@ -695,7 +718,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 <section id="moment-conditions-function-1" class="slide level2">
 <h2>Moment conditions function</h2>
 <p>Then, we program <code>g_N(θ)</code> to calculate the sample analogue: <span class="math inline">\(g_N(\theta) = \frac{1}{N} \sum_{i=1}^N g(y_i, x_i;\theta)\)</span></p>
-<div id="46cb7328" class="cell" data-execution_count="5">
+<div id="46cb7328" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href=""></a><span class="kw">function</span> <span class="fu">g_N</span>(θ)</span>
 <span id="cb5-2"><a href=""></a>  <span class="co"># Get moment vectors</span></span>
 <span id="cb5-3"><a href=""></a>  g_is <span class="op">=</span> <span class="fu">g_i</span>(θ)</span>
@@ -707,7 +730,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 <section id="gmm-estimation" class="slide level2">
 <h2>GMM estimation</h2>
 <p>With function <code>g_i(θ)</code>, we can use <code>Optim</code> package to minimize objective function <code>Q(θ)</code></p>
-<div id="31aa6bdc" class="cell" data-execution_count="6">
+<div id="31aa6bdc" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href=""></a><span class="im">using</span> <span class="bu">LinearAlgebra</span></span>
 <span id="cb6-2"><a href=""></a>M <span class="op">=</span> <span class="fl">8</span> <span class="co"># Eight moment conditions</span></span>
 <span id="cb6-3"><a href=""></a>W_0 <span class="op">=</span> <span class="fu">I</span>(M) <span class="co"># Identity Matrix</span></span>
@@ -737,7 +760,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 <li>Let’s use OLS to get an initial guess for <span class="math inline">\(\theta^D\)</span>.</li>
 <li>For <span class="math inline">\(\theta^S\)</span>, let’s guess <span class="math inline">\(\gamma_0\)</span> as the minimum price and set 0.1 for the other parameters (we expect them to be positive)</li>
 </ul>
-<div id="6f9c49d7" class="cell" data-execution_count="7">
+<div id="6f9c49d7" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href=""></a><span class="im">using</span> <span class="bu">GLM</span></span>
 <span id="cb7-2"><a href=""></a><span class="co"># OLS regression to get initial guess</span></span>
 <span id="cb7-3"><a href=""></a>ols_reg <span class="op">=</span> <span class="fu">lm</span>(<span class="pp">@formula</span>(logsk_logs0 <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> p_k <span class="op">+</span> is_B), df);</span>
@@ -751,7 +774,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 </section>
 <section id="gmm-estimation-first-step" class="slide level2">
 <h2>GMM estimation: first step</h2>
-<div id="c2fac9a9" class="cell" data-execution_count="8">
+<div id="c2fac9a9" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href=""></a><span class="co"># Step 1</span></span>
 <span id="cb9-2"><a href=""></a><span class="im">using</span> <span class="bu">Optim</span></span>
 <span id="cb9-3"><a href=""></a>res <span class="op">=</span> Optim.<span class="fu">optimize</span>(Q, θ_0, <span class="fu">Newton</span>(), Optim.<span class="fu">Options</span>(f_abstol<span class="op">=</span><span class="fl">1e-10</span>))</span>
@@ -766,7 +789,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 <section id="gmm-estimation-first-step-1" class="slide level2">
 <h2>GMM estimation: first step</h2>
 <p>Next, calculate <span class="math inline">\(W = \hat{S}^{-1}\)</span> where <span class="math inline">\(\hat{S} = N^{-1}\sum_i g(\hat{\theta}_1) g(\hat{\theta}_1)^\prime\)</span></p>
-<div id="ac10ae45" class="cell" data-execution_count="9">
+<div id="ac10ae45" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href=""></a><span class="co"># Calculate W_hat (note that g_i transposed gs)</span></span>
 <span id="cb11-2"><a href=""></a>W_1 <span class="op">=</span> <span class="fu">inv</span>(<span class="fu">g_i</span>(θ_1)<span class="ch">'  * g_i(θ_1) ./N)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
@@ -784,7 +807,7 @@ E\left[l_{j}\epsilon^S_{k,j}\right] &amp; = 0
 </section>
 <section id="gmm-estimation-second-step" class="slide level2">
 <h2>GMM estimation: second step</h2>
-<div id="f4c5f890" class="cell" data-execution_count="10">
+<div id="f4c5f890" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href=""></a><span class="co"># Use step 1 estimates as initial guess</span></span>
 <span id="cb13-2"><a href=""></a>res <span class="op">=</span> Optim.<span class="fu">optimize</span>(θ <span class="op">-&gt;</span>  <span class="fu">Q</span>(θ; W <span class="op">=</span> W_1), θ_1, <span class="fu">Newton</span>(), Optim.<span class="fu">Options</span>(f_abstol<span class="op">=</span><span class="fl">1e-10</span>))</span>
 <span id="cb13-3"><a href=""></a>θ_GMM <span class="op">=</span>  res.minimizer;</span>
@@ -812,7 +835,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <p><span class="math display">\[
 \hat{D} =  \frac{\partial g_N(\hat{\theta})}{\partial \hat{\theta}^\prime}
 \]</span></p>
-<div id="ca82ff53" class="cell" data-execution_count="11">
+<div id="ca82ff53" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href=""></a><span class="im">using</span> <span class="bu">ForwardDiff</span></span>
 <span id="cb15-2"><a href=""></a>D_hat <span class="op">=</span> ForwardDiff.<span class="fu">jacobian</span>(g_N, θ_GMM)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
@@ -834,7 +857,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <p><span class="math display">\[
 \hat{S} =  N^{-1}\sum_i g_i(\hat{\theta}) g_i(\hat{\theta})^\prime
 \]</span></p>
-<div id="dc9d54d2" class="cell" data-execution_count="12">
+<div id="dc9d54d2" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href=""></a><span class="co"># Again, note that function g_i transposed gs</span></span>
 <span id="cb17-2"><a href=""></a>S_hat <span class="op">=</span> <span class="fu">g_i</span>(θ_GMM)<span class="ch">'  * g_i(θ_GMM) ./N</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
@@ -856,7 +879,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <p><span class="math display">\[
 V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 \]</span></p>
-<div id="a6c26ded" class="cell" data-execution_count="13">
+<div id="a6c26ded" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href=""></a>V_hat <span class="op">=</span> <span class="fu">inv</span>(D_hat<span class="op">'</span> <span class="op">*</span> <span class="fu">inv</span>(S_hat) <span class="op">*</span> D_hat) <span class="op">./</span>N</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>7×7 Matrix{Float64}:
@@ -873,7 +896,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <section id="gmm-estimation-standard-errors-4" class="slide level2">
 <h2>GMM estimation: standard errors</h2>
 <p>So, the standard errors are the square root of the diagonal elements.</p>
-<div id="fe10a1e3" class="cell" data-execution_count="14">
+<div id="fe10a1e3" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href=""></a>SEs <span class="op">=</span> <span class="fu">sqrt</span>.(<span class="fu">diag</span>(V_hat))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>7-element Vector{Float64}:
@@ -890,7 +913,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <section id="gmm-estimation-standard-errors-5" class="slide level2">
 <h2>GMM estimation: standard errors</h2>
 <p>Then, we can organize the results in a table with 95% confidence intervals</p>
-<div id="4bc96c0a" class="cell" data-execution_count="15">
+<div id="4bc96c0a" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href=""></a><span class="im">using</span> <span class="bu">DataFrames</span>, <span class="bu">Distributions</span></span>
 <span id="cb23-2"><a href=""></a>results_df <span class="op">=</span> <span class="fu">DataFrame</span>(</span>
 <span id="cb23-3"><a href=""></a>  Coefficient <span class="op">=</span> [<span class="st">"β_0"</span>, <span class="st">"-α"</span>, <span class="st">"β_1"</span>, <span class="st">"γ_0"</span>, <span class="st">"γ_1"</span>, <span class="st">"γ_2"</span>, <span class="st">"γ_3"</span>],</span>
@@ -935,7 +958,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <p><span class="math display">\[
 \hat{c}_k = p_k - \frac{1}{\hat\alpha(1-s_k)}
 \]</span></p>
-<div id="8020b865" class="cell" data-execution_count="16">
+<div id="8020b865" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb24-1"><a href=""></a>α_hat <span class="op">=</span> <span class="op">-</span>θ_GMM[<span class="fl">2</span>];</span>
 <span id="cb24-2"><a href=""></a>df.c_k <span class="op">=</span> df.p_k <span class="op">-</span> <span class="fl">1</span><span class="op">/</span>α_hat <span class="op">.*</span> <span class="fl">1</span> <span class="op">./</span>(<span class="fl">1</span> <span class="op">.-</span> df.s_k);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -943,7 +966,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <section id="marginal-cost-estimation-1" class="slide level2">
 <h2>Marginal cost estimation</h2>
 <p>Let’s take a look at the distribution of costs per firm</p>
-<div id="7da144b6" class="cell" data-execution_count="17">
+<div id="7da144b6" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb25-1"><a href=""></a><span class="im">using</span> <span class="bu">Plots</span>, <span class="bu">LaTeXStrings</span></span>
 <span id="cb25-2"><a href=""></a><span class="fu">plot</span>(<span class="fu">histogram</span>(df.c_k[.!df.is_B], label<span class="op">=</span>L<span class="st">"Pred. </span><span class="sc">$</span>c_a<span class="sc">$</span><span class="st">", </span>bins<span class="st">=30), histogram(df.c_k[df.is_B], label=L"</span>Pred. <span class="op">$</span>c_b<span class="op">$</span><span class="st">", bins=30))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
@@ -1141,13 +1164,18 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 </div>
 </div>
 </section>
-<section id="lerner-index" class="slide level2">
-<h2>Lerner index</h2>
+<section id="true-marginal-costs" class="slide level2">
+<h2>True marginal costs</h2>
+<p>How does the distribution compare to the true marginal costs?</p>
+
+<img data-src="figs/true_costs.png" class="r-stretch"></section>
+<section id="market-power-analysis" class="slide level2">
+<h2>Market power analysis</h2>
 <p>We are now ready to calculate the average Lerner index per firm</p>
 <p><span class="math display">\[
 L_k = \frac{1}{N} \sum_{j=1}^N \frac{p_{k,j} - c_{k,j}}{p_{k,j}}
 \]</span></p>
-<div id="92714e54" class="cell" data-execution_count="18">
+<div id="92714e54" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb26-1"><a href=""></a>df.lerner_k <span class="op">=</span> (df.p_k <span class="op">-</span> df.c_k) <span class="op">./</span> df.p_k;</span>
 <span id="cb26-2"><a href=""></a><span class="co"># Firm A</span></span>
 <span id="cb26-3"><a href=""></a>mean_lerner_a <span class="op">=</span> <span class="fu">sum</span>(df.lerner_k[.!df.is_B])<span class="op">./</span>(N<span class="op">/</span><span class="fl">2</span>);</span>
