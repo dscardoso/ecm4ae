@@ -128,7 +128,7 @@ In this simple case, this is just solving for $\frac{1}{N}\sum_{i=1}^N (y_i - \h
 
 ## Generalized Method of Moments example
 
-Linear regression: again, we have $Y_{it} = X_i\beta + \epsilon_i$. But now, instead of normality, we assume $\epsilon_i$ is orthogonal to data $X_i$ (a $1 \times K$ vector)
+Linear regression: we have $Y_{it} = X_i\beta + \epsilon_i$. We don't need to make a distributional assumption, but we assume $\epsilon_i$ is orthogonal to data $X_i$ (a $1 \times K$ vector)
 $$E[x_{ki} \epsilon_i] = 0 \Rightarrow E[x_{ki} (Y_i - X_i\beta)] = 0$$
 
 - This actually gives $K$ moment conditions: one for each variable $x_{ki} \in X_i$
