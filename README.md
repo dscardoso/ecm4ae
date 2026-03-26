@@ -34,6 +34,10 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
 
 - Lecture 6 - Introduction to Structural Estimation [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_6/ACE592_6_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_6/ACE592_6_notes.html)
 
+- Unit 7 - Generalized Method of Moments
+  - Lecture 7.1 - Theory review [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_7_1/ACE592_7_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_7_1/ACE592_7_1_notes.html)
+
+
 ## Recommended additional resources
 
 [Click here](recommended_resources.md)
