@@ -455,7 +455,7 @@ Notes:
 
 ## GMM in practice: setup
 
-We will repeat the exercise of estimating a simple linear model using GMM. Again, the model is
+We will repeat the exercise of estimating a simple linear model using GMM. The model is
 
 $$
 y_i = \beta_0 + \beta_1 x_i + \epsilon_i
@@ -471,12 +471,12 @@ We will refer generically to $\theta = [\beta_0, \beta_1]$ as the parameter vect
 
 ## GMM in practice: fake data
 
-Let's generate the same fake data for our estimation assuming true values $\beta_0 = 2, \beta_1 = 3, \sigma = 1.5$
+Let's generate fake data for our estimation assuming true values $\beta_0 = 2, \beta_1 = 3, \sigma = 1.5$
 
 ```{julia}
 using Statistics, Random
 # Generate some synthetic data for illustration
-Random.seed!(652) # Set random seed for reproducibility
+Random.seed!(592) # Set random seed for reproducibility
 N = 1000  # Number of observations
 X = rand(N) * 10  # Independent variable: random uniform [0,10]
 β0_true = 2.0  # True intercept
