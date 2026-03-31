@@ -143,4 +143,5 @@ If you have suggestions of materials, please share them with me.
 ## Tutorials & Extra resources
 
 - Manipulating data with [DataFrames.jl](https://julia.school/julia/dataframes)
+- [Simulation examples of estimator convergence rates](https://mcknaus.github.io/assets/notebooks/SNB/SNB_Convergence_rates.nb), by Michael Knaus
 
