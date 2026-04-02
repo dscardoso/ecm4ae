@@ -38,6 +38,9 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
   - Lecture 7.1 - Theory review [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_7_1/ACE592_7_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_7_1/ACE592_7_1_notes.html)
   - Lecture 7.2: GMM tutorial - Estimation of a model with strategic agents [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_7_2/ACE592_7_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_7_2/ACE592_7_2_notes.html)
 
+- Unit 8 - Maximum Likelihood Estimator
+  - Lecture 8.1 - Theory review [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_1/ACE592_8_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_1/ACE592_8_1_notes.html)
+
 
 ## Recommended additional resources
 
