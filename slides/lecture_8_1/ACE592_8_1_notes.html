@@ -491,7 +491,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <p><span class="math display">
 \ln L(\theta) = -\frac{n}{2} \ln(2\pi) - \frac{n}{2} \ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2
 </span></p>
-<div id="fb897202" class="cell" data-execution_count="2">
+<div id="7175bba4" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">log_likelihood</span>(θ) </span>
@@ -499,7 +499,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">-</span>n<span class="op">/</span><span class="fl">2</span><span class="fu">*log</span>(<span class="fl">2</span><span class="op">*</span><span class="cn">pi</span>) <span class="op">-</span> n<span class="op">/</span><span class="fl">2</span><span class="fu">*log</span>(σ<span class="op">^</span><span class="fl">2</span>) <span class="op">-</span> (<span class="fl">1</span><span class="op">/</span>(<span class="fl">2</span><span class="op">*</span>σ<span class="op">^</span><span class="fl">2</span>)) <span class="op">*</span> <span class="fu">sum</span>((y <span class="op">.-</span> β<span class="fl">0</span> <span class="op">.-</span> β<span class="fl">1</span> <span class="op">.*</span> x)<span class="op">.^</span><span class="fl">2</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="23">
 <pre><code>log_likelihood (generic function with 1 method)</code></pre>
 </div>
 </div>
@@ -508,12 +508,12 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <h2 data-number="4.3" class="anchored" data-anchor-id="mle-in-practice-fake-data"><span class="header-section-number">4.3</span> MLE in practice: fake data</h2>
 <p>To estimate <span class="math inline">\beta_0</span>, <span class="math inline">\beta_1</span>, and <span class="math inline">\sigma^2</span>, we need to maximize this log-likelihood function. We’ll use Julia’s JuMP for that</p>
 <p>But, firt, let’s generate some fake data for our estimation assuming true values <span class="math inline">\beta_0 = 2, \beta_1 = 3, \sigma = 1.5</span></p>
-<div id="47aa9c78" class="cell" data-execution_count="3">
+<div id="5938d0b4" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">JuMP</span>, <span class="bu">Ipopt</span>, <span class="bu">Statistics</span>, <span class="bu">Random</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate some synthetic data for illustration</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">652</span>) <span class="co"># Set random seed for reproducibility</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">592</span>) <span class="co"># Set random seed for reproducibility</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">1000</span>  <span class="co"># Number of observations</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">rand</span>(n) <span class="op">*</span> <span class="fl">10</span>  <span class="co"># Independent variable: random uniform [0,10]</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>β<span class="fl">0</span>_true <span class="op">=</span> <span class="fl">2.0</span>  <span class="co"># True intercept</span></span>
@@ -522,41 +522,41 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>ε <span class="op">=</span> <span class="fu">randn</span>(n) <span class="op">*</span> σ_true  <span class="co"># Normally distributed errors</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> β<span class="fl">0</span>_true <span class="op">.+</span> β<span class="fl">1</span>_true <span class="op">.*</span> x <span class="op">.+</span> ε  <span class="co"># Dependent variable</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div class="cell-output cell-output-display" data-execution_count="24">
 <pre><code>1000-element Vector{Float64}:
- 21.67019447290482
- 28.90711926428413
- 16.442940381636067
- 22.364903307770113
- 16.223008723288245
-  9.150914155735176
-  6.494370868789826
- 29.190769080962113
-  8.845913560652406
- 19.768418811032205
-  8.768806341579456
- 28.905029646813723
- 12.30335776513745
+ 20.736718417446358
+ 17.95060147390177
+ 10.841721674161931
+ 23.128034851147223
+ 22.92447129586724
+  5.068289032586796
+  6.749382801522847
+ 31.48660470586089
+ 30.057341953831394
+ 11.447208400197006
+ 24.01427139366263
+ 23.339423820309126
+  5.544564033585516
   ⋮
- 11.360611536318569
- 19.1496946598927
- 25.457203383492395
-  1.4494239993093165
-  9.673970881293892
- 20.211214574506702
-  9.796687093954356
- 24.24916530921735
- 17.096168925423544
-  5.155534028613376
- 17.977179360988384
- 16.455682148662746</code></pre>
+  6.579797740975762
+ 21.179624658806183
+ 11.721911790393847
+ 26.619456240578703
+ 15.220434413914287
+ 17.397579650995066
+ 22.175853799005722
+  6.385640702723057
+ 34.47800770589808
+ 13.415234221170758
+ 15.16297835850588
+  2.5568961259680356</code></pre>
 </div>
 </div>
 </section>
 <section id="mle-in-practice-optimization-setup" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="mle-in-practice-optimization-setup"><span class="header-section-number">4.4</span> MLE in practice: optimization setup</h2>
 <p>Now, we can program our optimization in JuMP</p>
-<div id="c3b8b067" class="cell" data-execution_count="4">
+<div id="14948630" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model</span></span>
@@ -568,14 +568,14 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the objective to maximize the log-likelihood</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="pp">@objective</span>(mle_model, Max, <span class="fu">log_likelihood</span>([β<span class="fl">0</span>, β<span class="fl">1</span>, σ]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="20">
-<p>$ {({-918.9385332046727} - {({500} * {({σ^2})})})} - {({({1} / {(2 σ^2)})} * {(1000 β0^2 + 9963.47856099766 β1β0 + 33221.279563642376 β1^2 - 33837.70697544798 β0 - 218512.37961324598 β1 + 362662.4150397652)})} $</p>
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="25">
+<p>$ {({-918.9385332046727} - {({500} * {({σ^2})})})} - {({({1} / {(2 σ^2)})} * {(1000 β0^2 + 10100.324103099014 β1β0 + 33881.48375859165 β1^2 - 34331.611192531345 β0 - 223569.036277673 β1 + 372055.38876282854)})} $</p>
 </div>
 </div>
 </section>
 <section id="mle-in-practice-optimization" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="mle-in-practice-optimization"><span class="header-section-number">4.5</span> MLE in practice: optimization</h2>
-<div id="48950981" class="cell" data-execution_count="5">
+<div id="694a79c7" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve the model</span></span>
@@ -599,53 +599,54 @@ Total number of inequality constraints...............:        0
         inequality constraints with only upper bounds:        0
 
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0 -1.7775825e+09 0.00e+00 3.52e+03  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
-   1 -9.8746876e+08 0.00e+00 1.48e+03  -1.0 3.59e-02   2.0 1.00e+00 1.00e+00f  1
-   2 -5.4405516e+08 0.00e+00 6.19e+02  -1.0 6.09e-02   1.5 1.00e+00 1.00e+00f  1
-   3 -2.9487793e+08 0.00e+00 2.58e+02  -1.0 1.03e-01   1.0 1.00e+00 1.00e+00f  1
-   4 -1.5520191e+08 0.00e+00 1.06e+02  -1.0 1.76e-01   0.6 1.00e+00 1.00e+00f  1
-   5 -7.6946295e+07 0.00e+00 4.25e+01  -1.0 3.00e-01   0.1 1.00e+00 1.00e+00f  1
-   6 -3.3241426e+07 0.00e+00 1.63e+01  -1.0 5.15e-01  -0.4 1.00e+00 1.00e+00f  1
-   7 -9.4929137e+06 0.00e+00 5.61e+00  -1.0 8.53e-01  -0.9 1.00e+00 1.00e+00f  1
-   8 -2.2118764e+06 0.00e+00 2.31e+00  -1.0 5.40e-01  -1.3 1.00e+00 1.00e+00f  1
-   9 -1.7741562e+06 0.00e+00 5.41e-01  -1.0 1.30e+00    -  1.00e+00 1.00e+00f  1
+   0 -1.8236221e+09 0.00e+00 3.61e+03  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1 -1.0128459e+09 0.00e+00 1.52e+03  -1.0 3.67e-02   2.0 1.00e+00 1.00e+00f  1
+   2 -5.5782925e+08 0.00e+00 6.35e+02  -1.0 6.24e-02   1.5 1.00e+00 1.00e+00f  1
+   3 -3.0214156e+08 0.00e+00 2.64e+02  -1.0 1.06e-01   1.0 1.00e+00 1.00e+00f  1
+   4 -1.5881037e+08 0.00e+00 1.08e+02  -1.0 1.80e-01   0.6 1.00e+00 1.00e+00f  1
+   5 -7.8492815e+07 0.00e+00 4.35e+01  -1.0 3.08e-01   0.1 1.00e+00 1.00e+00f  1
+   6 -3.3595272e+07 0.00e+00 1.66e+01  -1.0 5.32e-01  -0.4 1.00e+00 1.00e+00f  1
+   7 -9.1425164e+06 0.00e+00 5.59e+00  -1.0 8.88e-01  -0.9 1.00e+00 1.00e+00f  1
+   8 -2.1452124e+06 0.00e+00 2.31e+00  -1.0 5.09e-01  -1.3 1.00e+00 1.00e+00f  1
+   9 -1.7138664e+06 0.00e+00 5.39e-01  -1.0 1.25e+00    -  1.00e+00 1.00e+00f  1
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-  10 -6.1757310e+05 0.00e+00 1.91e-01  -1.7 2.97e-01  -1.8 1.00e+00 1.00e+00f  1
-  11 -1.5213281e+05 0.00e+00 1.54e-01  -2.5 8.76e+00    -  1.00e+00 2.50e-01f  3
-  12 -6.8928999e+04 0.00e+00 1.28e-02  -2.5 4.66e-01    -  1.00e+00 1.00e+00f  1
-  13 -3.7074924e+04 0.00e+00 4.71e-03  -3.8 9.54e-02    -  1.00e+00 1.00e+00f  1
-  14 -1.9111867e+04 0.00e+00 2.30e-03  -3.8 6.60e-02    -  1.00e+00 1.00e+00f  1
-  15 -9.8098107e+03 0.00e+00 9.12e-04  -3.8 9.51e-02    -  1.00e+00 1.00e+00f  1
-  16 -6.2123160e+03 0.00e+00 2.66e-04  -5.7 8.98e-02    -  7.99e-01 1.00e+00f  1
-  17 -3.8667251e+03 0.00e+00 1.12e-04  -5.7 1.36e-01    -  1.00e+00 1.00e+00f  1
-  18 -2.6745081e+03 0.00e+00 4.48e-05  -5.7 1.71e-01    -  1.00e+00 1.00e+00f  1
-  19 -2.1067638e+03 0.00e+00 1.78e-05  -5.7 2.10e-01    -  1.00e+00 1.00e+00f  1
+  10 -5.9245816e+05 0.00e+00 1.89e-01  -1.7 2.87e-01  -1.8 1.00e+00 1.00e+00f  1
+  11 -3.8783014e+05 0.00e+00 2.07e-01  -2.5 7.65e+00    -  1.00e+00 5.00e-01f  2
+  12 -1.3912072e+05 0.00e+00 5.32e-02  -2.5 8.17e-01    -  1.00e+00 1.00e+00f  1
+  13 -5.8831630e+04 0.00e+00 2.72e-02  -2.5 4.93e-02    -  1.00e+00 1.00e+00f  1
+  14 -3.8463504e+04 0.00e+00 4.60e-03  -3.8 1.37e-01    -  8.75e-01 1.00e+00f  1
+  15 -1.9654538e+04 0.00e+00 2.56e-03  -3.8 6.64e-02    -  1.00e+00 1.00e+00f  1
+  16 -1.0291508e+04 0.00e+00 9.10e-04  -3.8 9.06e-02    -  1.00e+00 1.00e+00f  1
+  17 -6.4268372e+03 0.00e+00 2.82e-04  -5.7 9.14e-02    -  7.93e-01 1.00e+00f  1
+  18 -3.9821222e+03 0.00e+00 1.19e-04  -5.7 1.34e-01    -  1.00e+00 1.00e+00f  1
+  19 -2.7329039e+03 0.00e+00 4.76e-05  -5.7 1.69e-01    -  1.00e+00 1.00e+00f  1
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-  20 -1.8939939e+03 0.00e+00 5.76e-06  -8.6 2.11e-01    -  8.18e-01 1.00e+00f  1
-  21 -1.8273765e+03 0.00e+00 1.66e-06  -8.6 1.92e-01    -  1.00e+00 1.00e+00f  1
-  22 -1.8169208e+03 0.00e+00 2.87e-07  -8.6 1.13e-01    -  1.00e+00 1.00e+00f  1
-  23 -1.8165006e+03 0.00e+00 1.35e-08  -8.6 2.87e-02    -  1.00e+00 1.00e+00f  1
-  24 -1.8164998e+03 0.00e+00 2.71e-11 -12.9 1.30e-03    -  9.99e-01 1.00e+00f  1
+  20 -2.1333546e+03 0.00e+00 1.90e-05  -5.7 2.08e-01    -  1.00e+00 1.00e+00f  1
+  21 -1.8898895e+03 0.00e+00 6.96e-06  -5.7 2.36e-01    -  1.00e+00 1.00e+00f  1
+  22 -1.8287305e+03 0.00e+00 1.67e-06  -8.6 1.82e-01    -  8.66e-01 1.00e+00f  1
+  23 -1.8181139e+03 0.00e+00 2.91e-07  -8.6 1.13e-01    -  1.00e+00 1.00e+00f  1
+  24 -1.8176822e+03 0.00e+00 1.38e-08  -8.6 2.91e-02    -  1.00e+00 1.00e+00f  1
+  25 -1.8176814e+03 0.00e+00 2.87e-11 -12.9 1.34e-03    -  9.99e-01 1.00e+00f  1
 
-Number of Iterations....: 24
+Number of Iterations....: 25
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.8164998368434539e-05   -1.8164998368434537e+03
-Dual infeasibility......:   2.7133122697689582e-11    2.7133122697689583e-03
+Objective...............:   1.8176813967686063e-05   -1.8176813967686062e+03
+Dual infeasibility......:   2.8732968695732503e-11    2.8732968695732502e-03
 Constraint violation....:   0.0000000000000000e+00    0.0000000000000000e+00
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   3.1480716766242930e-22    3.1480716766242931e-14
-Overall NLP error.......:   2.7133122697689582e-11    2.7133122697689583e-03
+Complementarity.........:   3.1394696494316042e-22    3.1394696494316039e-14
+Overall NLP error.......:   2.8732968695732503e-11    2.8732968695732502e-03
 
 
 Number of objective function evaluations             = 31
-Number of objective gradient evaluations             = 25
+Number of objective gradient evaluations             = 26
 Number of equality constraint evaluations            = 0
 Number of inequality constraint evaluations          = 0
 Number of equality constraint Jacobian evaluations   = 0
 Number of inequality constraint Jacobian evaluations = 0
-Number of Lagrangian Hessian evaluations             = 24
-Total seconds in IPOPT                               = 0.003
+Number of Lagrangian Hessian evaluations             = 25
+Total seconds in IPOPT                               = 0.004
 
 EXIT: Optimal Solution Found.</code></pre>
 </div>
@@ -653,7 +654,7 @@ EXIT: Optimal Solution Found.</code></pre>
 </section>
 <section id="mle-in-practice-optimization-1" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="mle-in-practice-optimization-1"><span class="header-section-number">4.6</span> MLE in practice: optimization</h2>
-<div id="b266ffc9" class="cell" data-execution_count="6">
+<div id="1928142e" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieve the estimated parameters</span></span>
@@ -668,9 +669,9 @@ EXIT: Optimal Solution Found.</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated parameters:
-β0: 2.115784643391707
-β1: 2.9714659830163095
-σ: 1.4881880181011236</code></pre>
+β0: 2.0379998759763134
+β1: 2.995508973490327
+σ: 1.4899472595169205</code></pre>
 </div>
 </div>
 </section>
@@ -685,18 +686,18 @@ Var(\hat{\theta}_{MLE}) = \left\{-\left. \frac{\partial^2 l(\theta)}{\partial \t
 <ul>
 <li>We can use ForwardDiff.Hessian, for example! Let’s calculate the information matrix first</li>
 </ul>
-<div id="2188b7cd" class="cell" data-execution_count="7">
+<div id="4a4b0ef4" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ForwardDiff</span>, <span class="bu">LinearAlgebra</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>θ_hat <span class="op">=</span> [β<span class="fl">0</span>_hat, β<span class="fl">1</span>_hat, σ_hat]</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Im <span class="op">=</span> ForwardDiff.<span class="fu">hessian</span>(log_likelihood, θ_hat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Im <span class="op">=</span> <span class="op">-</span>ForwardDiff.<span class="fu">hessian</span>(log_likelihood, θ_hat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>3×3 Matrix{Float64}:
-  -451.528        -2249.39           -2.18902e-5
- -2249.39        -15000.3            -0.000123744
-    -2.18902e-5      -0.000123744  -903.061</code></pre>
+  450.462        2274.91         -1.37305e-5
+ 2274.91        15262.3          -7.85522e-5
+   -1.37305e-5     -7.85522e-5  900.93</code></pre>
 </div>
 </div>
 </section>
@@ -706,24 +707,24 @@ Var(\hat{\theta}_{MLE}) = \left\{-\left. \frac{\partial^2 l(\theta)}{\partial \t
 Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \theta \partial \theta^{\prime}}\right|_{\theta=\hat{\theta}_{MLE}} \right\}^{-1}
 </span></p>
 <p>Now, we invert it and take the squared root of its diagonal</p>
-<div id="b13b202d" class="cell" data-execution_count="8">
+<div id="fb6ab23a" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> <span class="fu">inv</span>(Im);</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>SEs <span class="op">=</span> <span class="fu">sqrt</span>.(<span class="fu">diag</span>(<span class="op">-</span>V))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>SEs <span class="op">=</span> <span class="fu">sqrt</span>.(<span class="fu">diag</span>(V))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div class="cell-output cell-output-display" data-execution_count="29">
 <pre><code>3-element Vector{Float64}:
- 0.09356954161106946
- 0.016234029243829842
- 0.03327679494114924</code></pre>
+ 0.09475428383078001
+ 0.016278622161832186
+ 0.033316126580591514</code></pre>
 </div>
 </div>
 </section>
 <section id="mle-in-practice-estimation-results" class="level2" data-number="4.9">
 <h2 data-number="4.9" class="anchored" data-anchor-id="mle-in-practice-estimation-results"><span class="header-section-number">4.9</span> MLE in practice: estimation results</h2>
 <p>We can organize the results in a table and print them nicely with 95% confidence intervals</p>
-<div id="d45e5c2f" class="cell" data-execution_count="9">
+<div id="5c9d3e90" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span>, <span class="bu">Distributions</span></span>
@@ -747,11 +748,11 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 
 ─────┼──────────────────────────────────────────────────────
 
-   1 │ beta_0        2.11578  0.0935695   1.93239   2.29918
+   1 │ beta_0        2.038    0.0947543   1.85228   2.22371
 
-   2 │ beta_1        2.97147  0.016234    2.93965   3.00328
+   2 │ beta_1        2.99551  0.0162786   2.9636    3.02741
 
-   3 │ sigma         1.48819  0.0332768   1.42297   1.55341
+   3 │ sigma         1.48995  0.0333161   1.42465   1.55525
 </pre>
 </div>
 </div>
@@ -763,7 +764,7 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 <li>Let’s now test the hypothesis that <span class="math inline">\beta_0 = \beta_1</span>. This is, <span class="math inline">H_0: \beta_0 - \beta_1 = 0</span></li>
 <li>This will require estimating a <strong>restricted model.</strong> One way to do this is to optimize again but look for only for a value of <span class="math inline">\beta_0</span> and using it also for <span class="math inline">\beta_1</span></li>
 </ul>
-<div id="0bf586b1" class="cell" data-execution_count="10">
+<div id="a4229f1a" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model</span></span>
@@ -782,7 +783,7 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 <section id="mle-in-practice-testing-1" class="level2" data-number="4.11">
 <h2 data-number="4.11" class="anchored" data-anchor-id="mle-in-practice-testing-1"><span class="header-section-number">4.11</span> MLE in practice: testing</h2>
 <p>Let’s see the results!</p>
-<div id="908e3b8e" class="cell" data-execution_count="11">
+<div id="c27d07ab" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>β<span class="fl">0</span>_hat_R <span class="op">=</span> <span class="fu">value</span>(β<span class="fl">0</span>);</span>
@@ -794,8 +795,8 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated parameters:
-β0=β1: 2.115784643391707
-σ: 1.4881880181011236</code></pre>
+β0=β1: 2.0379998759763134
+σ: 1.4899472595169205</code></pre>
 </div>
 </div>
 </section>
@@ -805,46 +806,46 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 <p><span class="math display">
 LR = 2 \left(l(\hat{\theta}_U) - l(\hat{\theta}_R) \right) \sim \chi^2_{[df]}
 </span></p>
-<div id="2bb784e2" class="cell" data-execution_count="12">
+<div id="8709a3c7" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>l_U <span class="op">=</span> <span class="fu">log_likelihood</span>([β<span class="fl">0</span>_hat, β<span class="fl">1</span>_hat, σ_hat]);</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>l_R <span class="op">=</span> <span class="fu">log_likelihood</span>([β<span class="fl">0</span>_hat_R, β<span class="fl">0</span>_hat_R, σ_hat_R]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="afa5a4c8" class="cell" data-execution_count="13">
+<div id="eb8c0ac5" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>LR_stat <span class="op">=</span> <span class="fl">2</span> <span class="op">*</span> (l_U <span class="op">-</span> l_R)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="29">
-<pre><code>60.980118964166195</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<pre><code>74.10059263069843</code></pre>
 </div>
 </div>
 </section>
 <section id="mle-in-practice-testing-3" class="level2" data-number="4.13">
 <h2 data-number="4.13" class="anchored" data-anchor-id="mle-in-practice-testing-3"><span class="header-section-number">4.13</span> MLE in practice: testing</h2>
 <p>We can calculate the critical value of this test using the quantile of the <span class="math inline">\chi^2_{1}</span> distribution with <span class="math inline">\alpha  = 0.05</span></p>
-<div id="8c618d9d" class="cell" data-execution_count="14">
+<div id="07600131" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>crit_value <span class="op">=</span> <span class="fu">quantile</span>(<span class="fu">Chisq</span>(<span class="fl">1</span>), <span class="fl">0.95</span>);</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Critical value: </span><span class="sc">$</span>crit_value<span class="st"> . Test statistic: </span><span class="sc">$</span>LR_stat<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Critical value: 3.8414588206941245 . Test statistic: 60.980118964166195</code></pre>
+<pre><code>Critical value: 3.8414588206941245 . Test statistic: 74.10059263069843</code></pre>
 </div>
 </div>
 <p>So we can confidently reject this hypothesis.</p>
 <p>. . .</p>
 <p>We can also calculate the exact probability of the test (p-value)</p>
-<div id="1ef6ae86" class="cell" data-execution_count="15">
+<div id="7cce67ec" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu">cdf</span>(<span class="fu">Chisq</span>(<span class="fl">1</span>), LR_stat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="31">
-<pre><code>5.773159728050814e-15</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<pre><code>0.0</code></pre>
 </div>
 </div>
 <p>Which is so small it might get rounded to zero.</p>

@@ -461,7 +461,7 @@ But, firt, let's generate some fake data for our estimation assuming true values
 ```{julia}
 using JuMP, Ipopt, Statistics, Random
 # Generate some synthetic data for illustration
-Random.seed!(652) # Set random seed for reproducibility
+Random.seed!(592) # Set random seed for reproducibility
 n = 1000  # Number of observations
 x = rand(n) * 10  # Independent variable: random uniform [0,10]
 β0_true = 2.0  # True intercept
@@ -526,7 +526,7 @@ How do we calculate this?
 ```{julia}
 using ForwardDiff, LinearAlgebra
 θ_hat = [β0_hat, β1_hat, σ_hat]
-Im = ForwardDiff.hessian(log_likelihood, θ_hat)
+Im = -ForwardDiff.hessian(log_likelihood, θ_hat)
 ```
 
 
@@ -540,7 +540,7 @@ Now, we invert it and take the squared root of its diagonal
 
 ```{julia}
 V = inv(Im);
-SEs = sqrt.(diag(-V))
+SEs = sqrt.(diag(V))
 ```
 
 ## MLE in practice: estimation results
