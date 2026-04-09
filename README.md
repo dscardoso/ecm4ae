@@ -40,6 +40,7 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
 
 - Unit 8 - Maximum Likelihood Estimator
   - Lecture 8.1 - Theory review [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_1/ACE592_8_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_1/ACE592_8_1_notes.html)
+  - Lecture 8.2 - Discrete choice [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_2/ACE592_8_2_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_2/ACE592_8_2_notes.html)
 
 
 ## Recommended additional resources

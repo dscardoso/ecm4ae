@@ -1,0 +1,707 @@
+---
+title: "ACE 592 - Lecture 8.2"
+subtitle: "Discrete choice and Random Utility Models"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_8_2_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_8_2_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+## Course Roadmap {background-color="orange"}
+
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  [Function approximation (postponed)]{.gray}
+6.  [Structural estimation: Intro]{.gray}
+7.  [Generalized Method of Moments]{.gray}
+8.  **Maximum Likelihood Estimator**
+9.  Simulation-based methods
+
+
+## Main references for today {background-color="orange"}
+
+- The examples in this lecture are adapted from "Learning Microeconometrics with R", by Christopher P. Adams (2021)
+- Theory: Cameron & Trivedi (2008), Greene (2018)
+
+
+## Agenda {background-color="orange"}
+
+- In this unit, we will build an economic model to describe how people make discrete choices
+- We will see how the latent variable econometric model maps into a utility framework
+- We will create synthetic data based on that model and, based on this data, we will use MLE to estimate the parameters of that model
+
+# Background: what's the value of BART?
+
+## Background: what's the value of BART?
+
+
+::: {.columns}
+::: {.column}
+- In the 1970s, California started building the Bay Area Rapid Transit (BART) system
+- It would cost \$1.6 B but the benefits were unclear: how many people would actually use it?
+- One idea: a survey. Just ask people in the Bay area what transportation modes they use and whether they would switch
+:::
+::: {.column width="40%"}
+![](figs/BART.jpg)
+:::
+::: 
+
+## Background: what's the value of BART?
+
+::: {.columns}
+::: {.column}
+- But Daniel McFadden, at the time a Prof. of Economics at UC Berkeley, was concerned: 
+  - *Can people predict how they'll use something that doesn't yet exist?*
+- McFadden's idea: observe what people actually do and use theory to predict what they would do
+- To McFadden, using survey data + economic theory would deliver better results than a survey alone
+:::
+::: {.column width="30%"}
+![](figs/mcfadden_1124-full.jpg)
+:::
+::: 
+
+
+. . .
+
+- Predictions:
+  - Surveys: 15% of respondents said they'd use BART
+  - McFadden's estimates: 6%  of respondents would use BART
+
+
+## Background: revealed vs. stated preferences
+
+-  McFadden's idea turned out to be correct in this case: In fact, about 6% of the respondents actually used BART
+
+. . .  
+
+- This idea has been very influencial in economics, marketing, and other social sciences: study **revealed preferences** rather than **stated preferences**
+  - I.e., trust more the data on what people do, not what they say they will do
+- Estimation based on revealed preferences is at the core of demand estimation and consumer behaviour modeling used in academia, industry, policy, and courts
+
+. . .
+
+- But what is revealed preference, anyway?
+
+
+# Revealed preference
+
+## Revealed preference
+
+In the context of empirical economics, *revealed preference* can be interpreted as an assumption:
+
+> If there are two choices, A and B, and we observe a person choose A, then her utility from A is greater than her utility from B.
+
+Let's create an example!
+
+
+## Revealed preference example
+
+**Setting**: we have data on a large number of consumers who made a choice between two products A and B at different prices
+
+Each individual will have an *unobserved* characteristic $u$ (their utility). We will make two assumptions
+
+> **Assumption 1: Additive separability, linearity on money.** The value an individual $i$ gets from purchasing product $k \in \{A,B\}$ is $V_{ik} = u_{ik} - p_k$. This is, the unobserved utility of consuming $k$ minus the price paid to consume it 
+
+## Revealed preference example
+
+> **Assumption 2: Revealed prefernce.** If an individual $i$ purchases product A, then $u_{iA} - p_A > u_{iB} - p_B \Rightarrow u_{iA} - u_{iB} > p_A - p_B$
+
+. . .
+
+- Utility is measured on an arbitrary scale, so we can normalize it by picking one choice to be the reference
+- Here, we will normalize to product B and write
+
+$$
+p = p_A - p_B
+$$
+
+and 
+
+$$
+u_i = u_{iA} - u_{iB}
+$$
+
+
+## Revealed preference example: data
+
+Let's create some data to illustrate revealed preference
+
+In this illustration, we assume the unobserved normalized utility is normally distributed $u \sim N(1,9)$, and that we have $N=1000$ i.i.d observations
+
+```{julia}
+using Random, Distributions
+Random.seed!(592); # For reproducibility
+N = 1000;
+μ_u = 1;
+σ_u = 3;
+u_is = rand(Normal(μ_u, σ_u), N);
+```
+
+
+## Revealed preference example: data
+
+Next, let's use this distribution to generate the observations of behavior for a (relative) price $p = 2$
+
+We will define $y_i = 1$ if individual $i$ purchases option A, and $y_i = 0$ if $i$ purchases B
+
+```{julia}
+p = 2;
+y_is = (u_is .- p .> 0);
+```
+
+## Revealed preference example: uncovering preferences
+
+Can we use the observed behavior $y_i$ to uncover the unobserved term $u_i$?
+
+. . .
+
+Probably not, because $y_i$ as are binary but $u_i \in \mathbb{R}$ 
+
+```{julia}
+using Plots, LaTeXStrings
+Plots.scatter(u_is, y_is, xlabel=L"$u_i$", ylabel=L"$y_i$", label="")
+```
+
+## Revealed preference example: uncovering preferences
+
+But what about aggregate behavior? Can it at least inform about the mean of the distribution?
+
+```{julia}
+println("We know that $(mean(y_is)*100)% of consumers have u > p")
+```
+
+How can we compare that to the population distribution $N(1, 9)$?
+
+. . .
+
+By using the CDF!
+
+```{julia}
+1 - cdf(Normal(μ_u, σ_u), p)
+```
+
+So the data allowed us to get an estimate of how many individuals have $u_i > 2$
+
+What do we need to be able to say more about this distribution?
+
+
+## Revealed preference example: uncovering preferences
+
+If we want to say something about the CDF of $u$ at more points, we need to observe behavior at more prices!
+
+Instead of having a single price, suppose we could confront each consumer with a range of prices and observe their purchasing behavior
+
+We will organize that information in data matrix Z
+
+```{julia}
+p_grid = collect(-10:10)
+# Rows are individuals i, columns are prices
+Z = [(u - p > 0) for u in u_is, p in p_grid]
+```
+
+## Revealed preference example: uncovering preferences
+
+Now, for each price level $p_j$, we can calculate the proportion of consumers that chose to purchase A ($y_i(p_j) = 1$)
+
+$$
+s(p_j) = \frac{1}{N} \sum^N_{i=1} y_i(p_j)
+$$
+
+
+```{julia}
+s_p = zeros(length(p_grid))
+for j in 1:length(p_grid)
+  s_p[j] = mean(Z[:,j]) # Calculate mean of column j
+end
+```
+
+## Revealed preference example: uncovering preferences
+
+Let's plot $s(p_j)$
+
+
+```{julia}
+plot(s_p, p_grid, xlabel=L"$s$", ylabel=L"$p$", label="Observed")
+plot!(1 .- cdf.(Normal(μ_u, σ_u), p_grid), p_grid, linestyle=:dash, label="True distribution")
+```
+
+Look at the labels... What kind of curve is this?
+
+. . .
+
+Yep, we just estimated a demand function! (Note that $Q = s \times N$)
+
+# Discrete choice models
+
+## Latent variable model
+
+- In the previous example, we can regard $u_i$ as a **latent** (or hidden) variable
+  - We don't know its true value, but we observe a consequence of that value based on a cut-off point
+- The classic binary discrete choice model can be framed as a latent variable model, with the latent variable
+
+$$
+y_i^* = X_i^\prime \beta + \nu_i
+$$
+
+where $X_i$ is a vector of observed characteristics, $\nu_i$ an unobserved term (assumed uncorrelated with $X_i$), and $\beta$ is a vector that maps characteristics to the value of the latent variable
+
+. . .
+
+- We do not observe $y_i^*$, but only the outcome $y_i$
+
+$$
+y_i = \begin{cases}
+1\mbox{, if } y_i^* \geq 0\\
+0\mbox{, if } y_i^* < 0
+\end{cases}
+$$
+
+
+## Latent variable model
+
+- Although we don't observe $y_i^*$ directly, we can reason about the probabilities of seeing specific values of $y_i$
+- For instance
+
+$$
+\begin{align}
+\Pr(y_i = 1 | X_i) & = \Pr(y_i^* > 0) \\
+& = \Pr(X_i^\prime \beta + \nu_i > 0) \\
+& = \Pr(\nu_i > -X_i^\prime \beta) \\
+& = 1 - F(-X_i^\prime \beta) \\
+\end{align}
+$$
+
+where $F$ is the CDF of the distribution of $\nu_i$
+
+. . .
+
+- If we knew $\beta$, we could determine the distribution of $\nu_i$
+  - That's what we did in the previous exercise, where $\beta$ was $-1$
+
+. . .
+
+- But we rarely know the true $\beta$, so we need to estimate it
+
+
+## Estimating the latent variable model
+
+- The problem in estimating $\beta$ is that we cannot both $\beta$ and $F$ at the same time, so we need to make some restriction in one of them
+
+. . .
+
+- One common approach is to assume that $\nu_i$ is normally distributed following the standard normal, so $F$ is the $\Phi$, or the standard normal CDF
+
+$$
+\Pr(y_i = 1 | X_i) = 1 - \Phi(-X_i^\prime \beta)
+$$
+
+- This is the starting point of the **Binomial Probit** model!
+
+. . .
+
+- Note that $\beta$ is a nonlinear term in this equation, so we need a nonlinear estimator. MLE is a great candidate!
+
+
+## Estimating Probit with MLE
+
+- The first step is to assemble the likelihood function
+- But let's start with a single observation. We know that^[The second step uses the symmetry of the Normal distribution.]
+
+$$
+\begin{align}
+\Pr(y_i = 0 | X_i) & = \Phi(-X_i^\prime \beta) \\
+\Pr(y_i = 1 | X_i) & = 1 - \Phi(-X_i^\prime \beta) = \Phi(X_i^\prime \beta)
+\end{align}
+$$
+
+. . .
+
+There's a clever way to combine these expressions depending on the value of $y_i$
+
+$$
+\Pr(y_i| X_i, \beta)  = \left[\Phi(-X_i^\prime \beta)\right]^{1-y_i} \left[\Phi(X_i^\prime \beta)\right]^{y_i}
+$$
+
+- That is: if $y_i = 0$, the exponent of the fist term is $1$ and of second term is $0$, so we select the first one
+  - If $y_i = 1$, the opposite happens
+
+
+## Estimating Probit with MLE
+$$
+\Pr(y_i| X_i, \beta)  = \left[\Phi(-X_i^\prime \beta)\right]^{1-y_i} \left[\Phi(X_i^\prime \beta)\right]^{y_i}
+$$
+
+With the i.i.d. assumption, it's easy to write the likelihood function as the product of these probabilities
+
+$$
+L(y, X | \beta) = \prod_{i=1}^N \left[\Phi(-X_i^\prime \beta)\right]^{1-y_i} \left[\Phi(X_i^\prime \beta)\right]^{y_i}
+$$
+
+. . .
+
+Taking the logs to get the log-likelihood function, the MLE estimator is given by
+
+$$
+\hat\beta_{MLE} = \arg \max_\beta \sum_{i=1}^N (1-y_i)\log\left(\Phi(-X_i^\prime \beta)\right)  + y_i \log\left(\Phi(X_i^\prime \beta)\right)
+$$
+
+
+## Estimating Probit with MLE
+
+- One thing seems to be missing, though. Where's $\sigma^2$?
+
+. . .
+
+- Turns out, we can't identify it!
+  - This means that there is an infinite number of values of $\sigma^2$ that can be found to be consistent with the data
+
+. . .
+
+- Intuitively, the observed outcome ($y_i$) only gives us information about a location: where the latent variable crosses a threshold
+  - So you could increase $\sigma^2$ and $\beta$ in the same proportion and end up with the same probabilities
+
+## Estimating Probit with MLE
+
+For example, suppose we had two candidates: $\sigma_a$ and $\sigma_b$. The problem is that we can find $\beta_a$ and $\beta_b$ such that
+$$
+\Phi(\frac{X_i^\prime \beta_a}{\sigma_a}) = \Phi(\frac{X_i^\prime \beta_b}{\sigma_b})
+$$
+
+. . .
+
+- So $\beta$ and $\sigma$ are not separately identifiable, only their ratio!
+- The common practice is to assume $\sigma = 1$
+- This is one of the reasons the value of $\beta$ in isolation is rarely informative. Instead, we typically care about odds ratio of marginal effects ($\frac{\partial \Pr[y_i = j|X_{ij}, \beta]}{\partial X}$)
+
+
+## Binomial Logit
+
+- Another common assumption is that the unobserved terms are distributed following a **logistic distribution**, which gives^[Probit and Logit are special cases of the Generalized Linear Model (GLM). GLMs differ on their choice of $F$, called the *link function*.]
+
+$$
+\Pr(y_i = 1 | X_i) = \Lambda(X_i^\prime \beta) = \frac{e^{X_i^\prime \beta}}{1 + e^{X_i^\prime \beta}}
+$$
+
+- This is the foundation of the **Binomial Logit** model
+
+. . .
+
+- From here, we follow the same steps as in Probit model to set up the MLE estimator for the Binomial Logit model
+
+$$
+\hat\beta_{MLE} = \arg \max_\beta \sum_{i=1}^N (1-y_i)\log\left(\Lambda(-X_i^\prime \beta)\right)  + y_i \log\left(\Lambda(X_i^\prime \beta)\right)
+$$
+
+
+## Binomial choice example: data
+
+Let's see an example of using MLE to estimate the parameters of a Binomial Probit model. We start by generating some data for the latent variable
+
+```{julia}
+using Random, Distributions
+Random.seed!(652)
+N = 1000
+x_is = rand(Uniform(-2.0, 2.0), N) # x ~ U[2, 2]
+v_is = rand(Normal(), N) # ν ~ N(0,1)
+β_0_true = 2.0 
+β_1_true = 3.0
+y_is_star = β_0_true .+ β_1_true .* x_is .+ v_is; # Latent variable
+```
+
+Then, we use this data to generate the outcome variable
+
+```{julia}
+y_is = (y_is_star .> 0);
+```
+
+
+## Binomial choice example: why not OLS?
+
+But do we really need all this trouble? Why not just estimate OLS?
+
+. . .
+
+We can do that quickly using function `lm` of package `GLM`
+
+```{julia}
+using GLM
+X = hcat(ones(length(x_is)), x_is) # Form matrix X with a columns of 1s
+ols_model = lm(X, y_is)
+```
+
+That is a lot of bias!
+
+## Binomial choice example: why not OLS?
+
+```{julia}
+Plots.scatter(x_is, y_is, label = "", xlabel = L"x_i", ylabel = L"y_i", ylim = [-0.1, 1.1])
+plot!(x -> β_0_true+β_1_true*x, range(-2.0, 2.0, 100), label = "True")
+plot!(x -> coef(ols_model)[1]+coef(ols_model)[2]*x, range(-2.0, 2.0, 100), label = "OLS")
+```
+
+Looking pretty bad...
+
+
+## Binomial choice example: MLE estimation
+
+Let's write our ML estimator
+
+
+```{julia}
+Φ(z) = cdf(Normal(), z) # Define our Φ
+# We will define the negative of log-likelihood for optimization
+neg_l_probit(β) = -sum((1 .- y_is).*log.(Φ.(-X*β)) .+ y_is.*log.(Φ.(X*β)) );
+```
+
+. . .
+
+Since $\beta$ is unconstrained, we can use `Optim`
+
+
+```{julia}
+using Optim
+opt_res = Optim.optimize(neg_l_probit, [0.0, 0.0], BFGS())
+β_MLE = opt_res.minimizer
+```
+
+Much better!
+
+## Binomial choice example: why not OLS?
+
+```{julia}
+Plots.scatter(x_is, y_is, label = "", xlabel = L"x_i", ylabel = L"y_i", ylim = [-0.1, 1.1])
+plot!(x -> β_0_true+β_1_true*x, range(-2.0, 2.0, 100), label = "True")
+plot!(x -> coef(ols_model)[1]+coef(ols_model)[2]*x, range(-2.0, 2.0, 100), label = "OLS")
+plot!(x -> β_MLE[1]+β_MLE[2]*x, range(-2.0, 2.0, 100), label = "MLE")
+```
+
+Yep, much better than OLS!
+
+
+## Binomial choice example: MLE estimation
+
+Last lecture, we saw how to calculate the asymptotic standard errors of MLE. Let's do that again
+
+```{julia}
+using ForwardDiff, LinearAlgebra
+Im = -ForwardDiff.hessian(neg_l_probit, β_MLE) # Flip the signs
+V = inv(Im);
+SEs = sqrt.(diag(-V));
+```
+
+We can again organize our results in a nice-looking table
+
+```{julia}
+using DataFrames, Distributions
+df = DataFrame(
+  Coefficient = ["beta_0", "beta_1"],
+  Estimate = β_MLE,
+  StdError = SEs,
+  CI_lower = β_MLE .+ quantile(Normal(), 0.025) .* SEs,
+  CI_upper = β_MLE .+ quantile(Normal(), 0.975) .* SEs
+)
+println(df)
+```
+
+## Binomial choice example: canned MLE estimation
+
+For a standard binomial estimation model like Probit, we can resort to canned implementations to check our results. Here, we can use `GLM` again
+
+- `GLM` will require us to set up the data in a `DataFrame`
+- The `glm` call will require us to specify the type of choice as `Binomial` and the link function as `ProbitLink`
+- The formula `Y ~ 1 + X` add 1 tell `GLM` there is an intercept
+
+
+```{julia}
+my_df = DataFrame(X = x_is, Y = y_is)
+glm_model = glm(@formula(Y ~ 1 + X), my_df, Binomial(), ProbitLink())
+```
+
+Pretty close! The results may vary slightly because `GLM` uses different optimization methods, tolerances, parameters, etc
+
+
+# Multinomial choice and random utility models
+
+## Multinomial choice models
+
+- But the world is not binary! Most settings of interest for economic analysis involves choice sets with 3+ options
+- How can we extend our models to accommodate more options?
+
+. . .
+
+- We need first to specify whether choices have an inherent order or not
+  - Examples of ordered choices: educational level, Likert scales, etc 
+  - Examples of unordered choices: transportation modes, brands, etc
+- In this course, we will focus on unordered choices^[See Greene (2018) for the details of ordered choice models.]
+
+
+## Random Utility Model
+
+- We assume that individuals face a set with $J$ choices
+- In the (Additive) Random Utility Model, the utility an individual $i$ gets from choosing option $j$ is given by
+
+$$
+U_{ij} = X_{ij}^\prime \beta + \nu_{ij}
+$$
+
+where again $X_{ij}$ is a vector of observed characteristics and $\nu_{ij}$ is an **idiosyncratic taste** term
+
+## Random Utility Model and observed choices
+
+- Based on the revealed preference assumption, if individual $i$ chooses $j$, we infer that 
+
+$$
+\begin{align}
+U_{ij} & > U_{ik}  \\
+X_{ij}^\prime \beta + \nu_{ij} & >  X_{ik}^\prime \beta + \nu_{ik} \\
+\nu_{ij} - \nu_{ik} & >  -(X_{ij} \beta - X_{ik})^\prime \beta \quad \forall k \neq j
+\end{align}
+$$
+
+- So $j$ is the option that gives the highest utility of all options
+- Whereas before we only had one expression comparing the two possible options, now we have $J-1$ expressions!
+
+## Random Utility Model and choice probabilities
+
+- We can use those conditions to establish the probability of seeing a given choice
+
+$$
+\begin{align}
+\Pr[y_i = j | X_i] & = \Pr[\nu_{ij} - \nu_{ik} >  -(X_{ij} \beta - X_{ik})^\prime \beta]  \\
+ & = 1 - F(-(X_{ij} \beta - X_{ik})^\prime \beta) \quad \forall k \neq j
+\end{align}
+$$
+
+where $F$ is the CDF of the difference between $\nu$ values
+
+. . .
+
+- Again, we need to make distributional assumptions to advance
+- Assuming $\nu$ is normally distributed results in the Multinomial (or Conditional) Probit model
+- However, calculating the CDF of multivariate normal is computationally challenging, so this model rarely favored
+
+
+## Multinomial Logit
+
+- A widely used model assumes $\nu$ follows a [Type 1 Extreme Value distribution (T1EV)](https://en.wikipedia.org/wiki/Gumbel_distribution), a.k.a. Gumbel distribution or log-Weibull distribution
+- This seemingly weird choice is made for practical purposes: the difference of two T1EV random variables has a logistic distribution!
+
+. . .
+
+- This assumption yields an elegant and tractable expression of probabilities
+
+$$
+Pr[y_i = j | X_i] = \frac{e^{X_{ij}^\prime \beta}}{\sum_{k=1}^J e^{X_{ik}^\prime \beta}}
+$$
+
+- Technically the Multinomial Probit/Logit allows for individual-specific covariates (e.g., age, income) but the Conditional Probit/Logit has only choice-specific covariates (e.g., price, quality)
+
+## Multinomial Logit with MLE
+
+- When assembling the likehood function for the Multinomial Logit, we need to be a bit more careful with how we derive the expression for the conditional probability of observing a given $y_i$
+- We define a dummy variable $d_{ij} = 1$ if the observed outcome $y_i = j$, or $d_{ij} = 0$ otherwise
+
+. . .
+
+- With that, we can write the log-likelihood function as
+
+$$
+l(\beta) = \sum_{i=1}^N \sum_{j=1}^J d_{ij} \log Pr[y_i = j | X_i] = \sum_{i=1}^N \sum_{j=1}^J d_{ij} (X_{ij}^\prime \beta) - \sum_{i=1}^N \log \left(\sum_{k=1}^J e^{X_{ik}^\prime \beta}\right)
+$$
+
+- And define the ML estimator as  $\hat\beta_{MLE} = \arg \max_\beta l(\beta)$
+
+
+## Multinomial Logit and the Random Utility Model
+
+- Most commonly in Economics, we pick one choice to be the **outside option** and normalize its value
+  - In the RUM, utility is an arbitrary scale, so we are measuring utility relative to a reference option
+  - But that can be done with profits or generic measurments of value; just remember things are being measured relatively
+
+. . .
+
+- It is a convention to index the outside option by $j = 0$, so that, in the RUM, $U_{i0} = 0 + \nu_{i0}$
+- In the RUM, we typically see $J+1$ choices, with choices $j = 1$ to $J$ being measured relative to the outside option
+
+$$
+Pr[y_i = j | X_i] = \frac{e^{X_{ij}^\prime \beta}}{1 + \sum_{k=1}^J e^{X_{ik}^\prime \beta}}
+$$
+
+
+# MLE vs GMM
+
+## MLE vs GMM
+
+It's the same old **bias (or robustness) vs. efficiency trade-off**
+
+. . .
+
+- With MLE, we need to make assumptions on distributions of unobservables
+  - When our assumptions are correct, MLE is more efficient $\rightarrow$ lower variance
+  - Has good small sample properties (less bias, more efficiency with small data)
+  - If our assumptions are inadequate, estimates are more biased
+  
+  
+. . .
+
+- With GMM, we don't need to assume distributions and can rely only on moment conditions from the theoretical and statistical model
+  - This is more robust $=$ less bias
+  - Has good large sample properties (less bias, more efficiency with large data)
+  - But it's in general less efficient than MLE $\rightarrow$ higher variance
+
+
+
+## Choosing between MLE and GMM
+
+- *How much data is available?*
+  - Large data sets favor GMM: good large sample properties require fewer assumptions
+  - Smaller data sets might require stronger distributional assumptions $\rightarrow$ MLE
+
+. . .
+
+- *How complex is the model?*
+  - MLE is better suited for linear and quadratic models, but technically difficult to compute with highly nonlinear models. 
+  - For the latter case, GMM might be better
+
+. . .
+
+- *How comfortable are you making distributional assumptions?*
+  - MLE requires you to fully specify distributions. If there is good theoretical grounding for these assumptions, MLE is a good idea. 
+  - Otherwise, GMM is the more attractive option
+
+
+## Up next
+
+- In the next lecture, we will see a longer example using multinomial logit to simulate the analysis done for BART
+- We will also go deeper into the model to perform economic exercises using our estimates
+
+
