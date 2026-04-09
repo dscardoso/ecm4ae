@@ -370,7 +370,7 @@ The nonlinear version of Wald test is based on the notion that, if a restriction
 The Wald statistic is then given by
 
 $$
-W = c(\hat\theta)\left[V(c(\hat\theta))\right]^{-1}c(\hat\theta) \sim \chi^2_{[df]}
+W = c(\hat\theta)^\prime\left[V(c(\hat\theta))\right]^{-1}c(\hat\theta) \sim \chi^2_{[df]}
 $$
 
 where $df$ is again the number of restrictions imposed and $V(c(\hat\theta))$ is the asymptotic variance of $c$ given by
