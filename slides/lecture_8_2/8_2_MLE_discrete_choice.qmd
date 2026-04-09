@@ -428,7 +428,7 @@ Let's see an example of using MLE to estimate the parameters of a Binomial Probi
 
 ```{julia}
 using Random, Distributions
-Random.seed!(652)
+Random.seed!(592)
 N = 1000
 x_is = rand(Uniform(-2.0, 2.0), N) # x ~ U[2, 2]
 v_is = rand(Normal(), N) # ν ~ N(0,1)
@@ -513,9 +513,9 @@ Last lecture, we saw how to calculate the asymptotic standard errors of MLE. Let
 
 ```{julia}
 using ForwardDiff, LinearAlgebra
-Im = -ForwardDiff.hessian(neg_l_probit, β_MLE) # Flip the signs
+Im = ForwardDiff.hessian(neg_l_probit, β_MLE) # Should flip the sign but it's already flipped for optimization
 V = inv(Im);
-SEs = sqrt.(diag(-V));
+SEs = sqrt.(diag(V));
 ```
 
 We can again organize our results in a nice-looking table
@@ -583,7 +583,7 @@ $$
 \begin{align}
 U_{ij} & > U_{ik}  \\
 X_{ij}^\prime \beta + \nu_{ij} & >  X_{ik}^\prime \beta + \nu_{ik} \\
-\nu_{ij} - \nu_{ik} & >  -(X_{ij} \beta - X_{ik})^\prime \beta \quad \forall k \neq j
+\nu_{ij} - \nu_{ik} & >  -(X_{ij} - X_{ik})^\prime \beta \quad \forall k \neq j
 \end{align}
 $$
 
@@ -596,8 +596,8 @@ $$
 
 $$
 \begin{align}
-\Pr[y_i = j | X_i] & = \Pr[\nu_{ij} - \nu_{ik} >  -(X_{ij} \beta - X_{ik})^\prime \beta]  \\
- & = 1 - F(-(X_{ij} \beta - X_{ik})^\prime \beta) \quad \forall k \neq j
+\Pr[y_i = j | X_i] & = \Pr[\nu_{ij} - \nu_{ik} >  -(X_{ij} - X_{ik})^\prime \beta]  \\
+ & = 1 - F(-(X_{ij} - X_{ik})^\prime \beta) \quad \forall k \neq j
 \end{align}
 $$
 
