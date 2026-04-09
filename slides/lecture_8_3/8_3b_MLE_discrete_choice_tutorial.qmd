@@ -1,0 +1,809 @@
+---
+title: "ACE 592 - Lecture 8.3, part b"
+subtitle: "Random Utility Models tutorial: estimation and analysis"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_8_3b_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_8_3b_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+## Course Roadmap {background-color="orange"}
+
+
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  [Function approximation (postponed)]{.gray}
+6.  [Structural estimation: Intro]{.gray}
+7.  [Generalized Method of Moments]{.gray}
+8.  **Maximum Likelihood Estimator**
+9.  Simulation-based methods
+
+
+## Main references for today {background-color="orange"}
+
+- The examples in this lecture are adapted from "Learning Microeconometrics with R", by Christopher P. Adams (2021)
+- Theory: Cameron & Trivedi (2008), Greene (2018)
+
+## Introduction
+
+- In the first part of this tutorial we establish the economic model and generated simulation data from synthetic agents making transportation mode decisions
+- In this part, we will pretend we don't know the true parameters of the model and will perform an empirical analysis of the data
+- We will estimate the parameters and use our estimated model to draw economic insights
+
+---
+
+- We can't learn much about how individuals choose between trains and other transportation modes in cities currently without a rail system
+- But we also expect that the characteristics of individuals in cities with a rail system might not be exactly the same as those without a system
+- So our plan is to estimate a choice model based on the "rail cities" and use it to predict the mean behavior of individuals in "non-rail cities"
+
+
+## Empirical plan {background-color="orange"}
+
+1. Estimate a discrete choice model based on the observed choices in rail cities
+2. Use the estimated parameters to predict the mean choices on non-rail cities
+3. Interpret the marginal effects and examine how different characteristics affect the probability of each choice
+4. Estimate the willingness to pay for different modes and characteristics
+5. Estimate the welfare gains/losses from introducing rail systems
+
+
+# 1. Estimation
+
+
+## Data load
+
+We start by loading the data into memory.
+
+
+```{julia}
+using CSV, DataFrames
+df = CSV.read("transportation_mode_survey.csv", DataFrame);
+```
+
+Let's again inspect the first few rows of this data.
+
+```{julia}
+println(df[1:8, :])
+```
+
+
+---
+
+Since we want to perform an estimation only on rail cities, we can filter the rows we need from the data frame as follows
+
+```{julia}
+df_r = filter(row -> startswith(row[:city], "r_"), df);
+```
+
+## Defining $\beta$
+
+The discrete choice model we will estimate is the Random Utility Model we established in the first part of this tutorial. We will estimate the resulting discrete choice model using MLE. 
+
+Let's then establish the parameter vectors $\beta_b$ and $\beta_t$. Recall that each separate parameter vectors is a $6 \times 1$ vector indexed as follows
+
+|Parameter  | Covariate   |
+|:----------|:------------|
+| $\beta_0$ | Intercept   |
+| $\beta_1$ | `price`     |
+| $\beta_2$ | `stops`     |
+| $\beta_3$ | `density`   |
+| $\beta_4$ | `hhsize`    |
+| $\beta_5$ | `homeown`   |
+
+This way, we can regard the complete parameter vector $\beta$ as staking $\beta_b$ and $\beta_t$, thus forming a $12 \times 1$ vector.
+
+
+## Data preparation
+
+We will assemble the $X_b$ and $X_t$ matrices so that its columns correspond to each individual parameter in $\beta_b$ and $\beta_t$.
+
+First, assemble a vector of ones with the same size as the number of observations.
+```{julia}
+N_r = nrow(df_r);
+ones_column = ones(N_r);
+```
+
+Then, select the columns for bus and turn that into a matrix $X_b$ and add the column of ones for the intercept.
+```{julia}
+X_b = df_r[:, [:price_bus, :stops_bus, :density, :hhsize, :homeown]]
+X_b = Matrix(X_b) # This converts the DataFrame into a matrix
+X_b = hcat(ones_column, X_b); # This concatenates the vector of 1s and X_b horizontally
+```
+
+Take a peek:
+
+```{julia}
+X_b[1:5, :]
+```
+
+---
+
+Then, do the same for $X_t$
+```{julia}
+X_t = df_r[:, [:price_train, :stops_train, :density, :hhsize, :homeown]]
+X_t = Matrix(X_t)
+X_t = hcat(ones_column, X_t);
+```
+
+---
+
+Finally, we also want to form our vector of outcomes $d_b$ and $d_t$.
+
+
+```{julia}
+d_b = Matrix(df_r[:, [:d_ib]]);
+d_t = Matrix(df_r[:, [:d_it]]);
+```
+
+## Programming the estimator
+
+We are now ready to program our estimator. Recall that the MLE for the Multinomial Logit model is given by
+
+$$
+l(\beta) = \sum_{i=1}^N \sum_{k=1}^K d_{ik} \log Pr[y_i = k | X_i] = \sum_{i=1}^N \sum_{k=1}^K d_{ik} (X_{ik}^\prime \beta_k) - \sum_{i=1}^N \log \left(\sum_{k=1}^K e^{X_{ik}^\prime \beta_k}\right)
+$$
+
+Since $\beta$ is unconstrained, we can use `Optim` to solve this optimization problem. Therefore, to can program the negative of the $l$ function (remember that `Optim` solves only minimization problems).
+
+```{julia}
+function neg_log_likelihood(β; X_b = X_b, X_t = X_t, d_b = d_b, d_t = d_t)
+    # Unpack separate vector of parameters
+    β_b = β[1:6]
+    β_t = β[7:12]
+    # Calculate V_ik = X_ik * β_k
+    V_ib = X_b * β_b # Note that his is a matrix multiplication
+    V_it = X_t * β_t # And this one, too
+    # Calculate the denominator of the probabilities (the 2nd term in l)
+    log_denom = log.(1.0 .+ exp.(V_ib) .+ exp.(V_it))
+    # Calculate the whole l
+    neg_l = -sum(d_b .* V_ib .+ d_t .* V_it .- log_denom)
+    return neg_l
+end 
+```
+
+---
+
+Let's try out this function with the vector of true $\beta$
+
+
+```{julia}
+true_β_b = [-1.0, -0.8,  0.1,  0.3, -0.2, -0.3];
+true_β_t = [-0.6, -0.8,  0.2,  0.6, -0.1, -0.2];
+true_β = vcat(true_β_b, true_β_t);
+-neg_log_likelihood(true_β)
+```
+
+What if we give it a $\beta = 0$
+
+```{julia}
+-neg_log_likelihood(zeros(12))
+```
+
+It has a much smaller value, so definitely not the our MLE estimates!
+
+## Estimating
+
+Next, we can use `Optim` to solve the optimization for us.
+
+
+```{julia}
+using Optim
+# Let's give it a vector of zeros for the initial guess
+res = optimize(neg_log_likelihood, zeros(12), BFGS())
+```
+
+Let's check the minimum value it attains
+
+```{julia}
+res.minimum
+```
+
+---
+
+It's a good practice to check if our optimization is sensitive to the initial guess, so we can be more confident that our estimates are reliable
+
+
+```{julia}
+res_1 = optimize(neg_log_likelihood, ones(12), BFGS());
+res_1.minimum
+```
+
+```{julia}
+res_2 = optimize(neg_log_likelihood, 2*ones(12), BFGS());
+res_2.minimum
+```
+
+OK, these are all pretty close. So let's stick with the first one for our main estimate.
+
+```{julia}
+β_MLE = res.minimizer;
+β_MLE'
+```
+
+## Revising the estimation
+
+There's a theoretical problem here, though
+
+```{julia}
+β_MLE[2]
+```
+
+```{julia}
+β_MLE[8]
+```
+
+We would expect the price coefficients to be the same, because they represent the marginal utility of income. (Later we will need this parameter for welfare analysis). But random noise in the data prevents us from getting exactly the same estimates. 
+
+## Revising the estimation
+
+We can revise our estimation procedure to estimate a restricted model where we will enforce $\beta_{b,1} = \beta_{t,1}$. To do that, we program an estimator for the restricted model. 
+
+In this case, $\beta$ now has only 11 elements, and we will reuse the price coefficient of $\beta_b$ for $\beta_t$.
+
+```{julia}
+function restr_neg_log_likelihood(β; X_b = X_b, X_t = X_t, d_b = d_b, d_t = d_t)
+    # We just take element 2 in β and insert it again between elements 7 and 8
+    β_b = β[1:6] # The usual
+    β_t = vcat(β[7], β[2], β[8:11]) # Repeat the price coefficient
+    # Stack it again
+    β_restricted = vcat(β_b, β_t) 
+    # The rest is like the previous one, so we can just call our other function!
+    neg_l = neg_log_likelihood(β_restricted; X_b = X_b, X_t = X_t, d_b = d_b, d_t = d_t)
+    return neg_l
+end 
+```
+
+---
+
+Run the optimization/estimation!
+
+
+```{julia}
+res_restr = optimize(restr_neg_log_likelihood, zeros(11), BFGS())
+```
+
+```{julia}
+β_MLE_restr = res_restr.minimizer;
+β_MLE_restr'
+```
+
+## Testing the restriction
+
+Is this restriction empirically sensible? We know how to test it! We can use the LR test, for example, with a null hypothesis that $\beta_{b,1} =  \beta_{t,1}$. Recall 
+
+$$
+LR = 2 \left(l(\hat{\beta}_U) - l(\hat{\beta}_R) \right) \sim \chi^2_{1}
+$$
+
+Luckily, we already have the value of the objective function for each of those cases stored for us the optimization results, so this test statistic is easy to calculate!
+
+```{julia}
+l_U = -res.minimum;
+l_R = -res_restr.minimum;
+```
+
+```{julia}
+LR_stat = 2 * (l_U - l_R)
+```
+
+---
+
+It's also easy calculate the critical value for this test using the quantile of the $\chi^2_{1}$ distribution with $\alpha  = 0.05$
+
+```{julia}
+using Distributions
+crit_value = quantile(Chisq(1), 0.95);
+println("Critical value: $crit_value . Test statistic: $LR_stat")
+```
+
+Thus, we cannot reject the null hypothesis. We will stick with the restricted estimate as our main estimate now.
+
+```{julia}
+β_b_hat = β_MLE_restr[1:6]; # The usual
+β_t_hat = vcat(β_MLE_restr[7], β_MLE_restr[2], β_MLE_restr[8:11]); # Repeat the price coefficient
+β_hat = vcat(β_b_hat, β_t_hat);
+```
+
+## Bias?
+
+Let's now compare our estimates with the true values.
+
+
+```{julia}
+true_β'
+```
+
+```{julia}
+β_hat'
+```
+
+Looks like we got a significant bias here... All coefficients are larger in absolute value! Is this some kind of bias?
+
+---
+
+Nope! Remember, $\beta$ is not identified! We can only estimate $\beta/\sigma$, but in the MLE estimation, we assumed $\sigma = 1$.
+
+We know that the true value of $\sigma$ was $0.8$. Let's compare our estimates with the true $\beta/\sigma$.
+
+```{julia}
+true_β'./0.8
+```
+
+```{julia}
+β_hat'
+```
+
+Not perfect, but they align a lot closer now.
+
+## Calculating standard errors
+
+We know how to calculate asymptotic standard errors for the MLE using numerical differentiation.
+
+```{julia}
+using ForwardDiff, LinearAlgebra
+Im = -ForwardDiff.hessian(restr_neg_log_likelihood, β_MLE_restr) # Flip the signs
+V = inv(Im);
+SEs = sqrt.(diag(-V));
+```
+
+---
+
+And we can organize our results in a classic estimates table
+
+```{julia}
+res_df = DataFrame(
+  Coefficient = ["β_b0", "β_b1=β_t1", "β_b2", "β_b3", "β_b4", "β_b5", "β_t0", "β_t2", "β_t3", "β_t4", "β_t5"],
+  Estimate = β_MLE_restr,
+  StdError = SEs,
+  CI_lower = β_MLE_restr .+ quantile(Normal(), 0.025) .* SEs,
+  CI_upper = β_MLE_restr .+ quantile(Normal(), 0.975) .* SEs
+)
+println(res_df)
+```
+
+
+## Empirical plan {background-color="orange"}
+
+1. [Estimate a discrete choice model based on the observed choices in rail cities]{.gray}
+2. **Use the estimated parameters to predict the mean choices on non-rail cities**
+3. Interpret the marginal effects and examine how different characteristics affect the probability of each choice
+4. Estimate the willingness to pay for different modes and characteristics
+5. Estimate the welfare gains/losses from introducing rail systems
+
+
+# 2. Prediction
+
+## Sanity check
+
+Before thinking about the non-rail cities, let's assess how well our model is predicting the mean choices in the same sample we used to estimate the model.
+
+That's easy to do: just apply the parameters to the same $X_b$ and $X_t$. Recall
+
+$$
+Pr[y_i = k | X_i] = \frac{e^{X_{ik}^\prime \beta_k}}{\sum_{j=1}^J e^{X_{ij}^\prime \beta_j}} = \frac{e^{V_{ik}}}{\sum_{j=1}^J e^{V_{ij}}}
+$$
+
+
+```{julia}
+# Predictions
+V_b_hat = X_b * β_hat[1:6];
+V_t_hat = X_t * β_hat[7:12];
+# The denominator is the same for all options
+denom_r = 1.0 .+ exp.(V_b_hat) .+ exp.(V_t_hat);
+```
+
+---
+
+Calculating the probabilities for each observation
+
+```{julia}
+prob_b_r = exp.(V_b_hat) ./ denom_r;
+prob_t_r = exp.(V_t_hat) ./ denom_r;
+prob_c_r = 1.0 .- prob_b_r .- prob_t_r;
+```
+
+So the predicted mean (or expected) probability of chosing the bus is
+
+```{julia}
+using Statistics
+mean_prob_b_r = mean(prob_b_r)
+```
+
+How does this compare to the observed share of bus riders?
+
+
+```{julia}
+sum(d_b)/N_r
+```
+
+Pretty good prediction!
+
+---
+
+How about for the train?
+
+```{julia}
+mean_prob_t_r = mean(prob_t_r)
+```
+
+How does this compare to the observed share of bus riders?
+
+
+```{julia}
+sum(d_t)/N_r
+```
+
+Also spot on!
+
+## Predicting for non-rail cities
+
+This sanity check helped us see how we can perform the same exercise, but now using the $X$ matrices for non-rail cities. 
+
+We can assemble those matrices the same way we did for rail cities. 
+```{julia}
+# Filter for nr cities
+df_nr = filter(row -> startswith(row[:city], "nr_"), df);
+N_nr = nrow(df_nr);
+```
+
+Assemble $X_b$ for non-rail
+
+```{julia}
+# Here we are combining a few steps at once
+X_b_nr = Matrix(df_nr[:, [:price_bus, :stops_bus, :density, :hhsize, :homeown]]);
+X_b_nr = hcat(ones(nrow(df_nr)), X_b_nr);
+```
+
+---
+
+Next, we need to assemble $X_t$. However, we must make a choice: these cities don't have rail prices or number of stops... For what kind of rail system do we want to predict?
+
+One option is to predict for a system that
+
+- Has a price that is 10% higher than the currently observed bus prices
+- Has exactly 10 train stops (so an initially small network)
+
+
+```{julia}
+X_t_nr = df_nr[:, [:price_bus, :stops_train, :density, :hhsize, :homeown]];
+X_t_nr.price_bus = 1.1 .* X_t_nr.price_bus; # 5% more expensive
+X_t_nr.stops_train = 10 .* ones(N_nr); # 10 stops
+X_t_nr = Matrix(X_t_nr);
+X_t_nr = hcat(ones(N_nr), X_t_nr);
+```
+
+---
+
+We can proceed with the calculation of probabilities like in the rail case.
+
+
+```{julia}
+# Predictions
+V_b_hat_nr = X_b_nr * β_hat[1:6];
+V_t_hat_nr = X_t_nr * β_hat[7:12];
+# The denominator is the same for all options
+denom_nr = 1.0 .+ exp.(V_b_hat_nr) .+ exp.(V_t_hat_nr);
+```
+
+
+```{julia}
+prob_b_nr = exp.(V_b_hat_nr) ./ denom_nr;
+prob_t_nr = exp.(V_t_hat_nr) ./ denom_nr;
+prob_c_nr = 1.0 .- prob_b_nr .- prob_t_nr;
+```
+
+---
+
+Finally, we calculate the predicted mean (expected) probabilities of each choice
+
+
+```{julia}
+mean_prob_b_nr = mean(prob_b_nr)
+```
+
+```{julia}
+mean_prob_t_nr = mean(prob_t_nr)
+```
+
+
+```{julia}
+mean_prob_c_nr = mean(prob_c_nr)
+```
+
+So, about 9% for bus, 15% for train, and 76% for cars! 
+
+As in the BART case, the predicted train ridership is below that of the survey. But, of course, we could play with different train prices and stops to have different predicted probabilities.
+
+
+## Empirical plan {background-color="orange"}
+
+1. [Estimate a discrete choice model based on the observed choices in rail cities]{.gray}
+2. [Use the estimated parameters to predict the mean choices on non-rail cities]{.gray}
+3. **Interpret the marginal effects and examine how different characteristics affect the probability of each choice**
+4. Estimate the willingness to pay for different modes and characteristics
+5. Estimate the welfare gains/losses from introducing rail systems
+
+
+# 3. Interpretation
+
+## The problem with raw $\beta$
+
+The raw $\beta$ coefficients in non-linear discrete choice models are hard to interpret. 
+
+- First, because these coefficients map observed characteristics to the latent variable, which is not very intuitive.
+- Second, because the $\beta$ themselves are divided by some non-identifiable $\sigma$, so their absolute value has little meaning.
+- Third, because unlike linear regressions, the marginal effect of some variable change in $x_j$ on $Y$ is not just $\beta_j$.
+
+For these reasons, we typically opt to interpret the calculated marginal effects implied by our estimates.
+
+## Marginal effects
+
+In the context of a discrete choice model, the marginal effect of a continuous covariate^[For discrete variables, we calculate probabilities at different levels and take the difference.] $x_a$ is given by
+
+$$
+\frac{\partial \Pr[Y = k | X]}{\partial x_a}
+$$
+
+But what $X$ do we choose? In linear models, it doesn't really matter because the marginal effect is determined by linear parameters, so
+$$
+E\left[\frac{\partial E[Y|X]}{\partial x_a}\right] = \frac{\partial E[Y|E[X]]}{\partial x_a} = \beta_a
+$$
+
+But in nonlinear models, that equality does not hold!
+
+---
+
+Here, we have two options:
+
+1. Calculate the mean marginal effect: $E\left[\frac{\partial \Pr[Y = k | X]}{\partial x_a}\right]$
+2. Calculate mean marginal effect on the mean: $\frac{\partial \Pr[Y = k | E[X]]}{\partial x_a}$
+
+While there is no single right approach, option 1 is typically preferred because
+
+- It averages out across your sample, so it's reflective of your observations.
+- Sometimes an "average individual" (i.e., one with all characteristics at the sample average) is implausible or not an interesting case.
+
+## Marginal effects in multinomial logit
+
+For the multinomial logit case, we have a closed-form expression of the marginal effect.
+
+For a simpler notation, let $p_{ik} = \Pr[Y_i = k | X_i]$. Then, the marginal effect on choice $k$ for a change in the vector of characteristics of choice $j$ is given by
+
+$$
+\frac{\partial p_{ik}}{\partial X_{ij}} =  p_{ik}(\delta_{ikj} - p_{ij})\beta
+$$
+
+where $\delta_{ijk} = 1$ if $j=k$ ("own" marginal effect) or $0$ otherwise ("cross" marginal effect).
+
+---
+
+For example, the marginal effect of the number of train stops (mapped to $\beta_{t,2}$) on the probability of choosing train is given by
+
+$$
+\frac{\partial p_{it}}{\partial x_{it,2}} =  p_{it}(1 - p_{it})\beta_{t,2}
+$$
+
+Similarly, the marginal effect of the same variable on the probability of choosing bus is
+
+$$
+\frac{\partial p_{ib}}{\partial x_{it,2}} =  p_{ib}(0 - p_{it})\beta_{t,2} = -p_{ib}p_{it}\beta_{t,2}
+$$
+
+Let's use these formulas to calculate the mean marginal effect of train prices and the number of stops.
+
+
+## Calculating marginal effects
+
+Let's use these formulas to calculate the average marginal effect of train stops.
+
+```{julia}
+mg_effect_t_trainstops = prob_t_nr .* (1.0 .- prob_t_nr) .* β_t_hat[3]; # Index 3 because we start from zero
+mg_effect_b_trainstops = -prob_b_nr .* prob_t_nr .* β_t_hat[3];
+println("AME of train stops on prob. of train: $(mean(mg_effect_t_trainstops)).\n And on prob. of bus: $(mean(mg_effect_b_trainstops))")
+```
+
+So, raising the number of stops from 10 to 11 would increase the share of train riders by about 2.8 percentage points (pp)! It would also reduce the number of bus riders by about 0.29 pp, so little substitution would happen between train and bus.
+
+- You could also use a numerical method to calculate these derivatives. In that case, you would need to do that for each observation then average the derivatives.
+
+---
+
+We can do a similar exercise with the marginal effect of train prices.
+
+```{julia}
+mg_effect_t_trainprice = prob_t_nr .* (1.0 .- prob_t_nr) .* β_t_hat[2]; # Index 2 because we start from zero
+mg_effect_b_trainprice = -prob_b_nr .* prob_t_nr .* β_t_hat[2];
+println("AME of train prices on prob. of train: $(mean(mg_effect_t_trainprice)).\n And on prob. of bus: $(mean(mg_effect_b_trainprice))")
+```
+
+So, increasing the price of trains by 1 (hundred dollars), would drop its ridership by a lot and increase bus ridership by about 1 pp.
+
+---
+
+Since we are dealing with marginal effects of price on demand, it's easy to calculate elasticities, too! 
+
+- Recall that the price elasticity of demand is defined as $\frac{\partial Q}{\partial P} \frac{P}{Q}$
+- Also, in expectation, the probability of a choice represents the market share of that choice. 
+  - In other words, the expected number of riders of trains among the N surveyed individuals is $E[Q] = N \times \Pr[y = t]$
+  - But the expected market share is $E[Q]/N = \Pr[y = t]$
+
+Therefore,
+
+```{julia}
+trainprices = X_t_nr[:,2] # Second column in X_t 
+elast_t_trainprice =  (1.0 .- prob_t_nr) .* β_t_hat[2] .* trainprices; # Since we divide by q, own probability drops out
+elast_b_trainprice = -prob_t_nr .* β_t_hat[2] .* trainprices;
+println("The mean elasticity of train demand w.r.t. train prices is: $(mean(elast_t_trainprice)).\n And for bus demand w.r.t. train prices is: $(mean(elast_b_trainprice))")
+```
+
+That's a pretty high own price elasticity in absolute terms. (Probably too high to be realistic...)
+
+## Empirical plan {background-color="orange"}
+
+1. [Estimate a discrete choice model based on the observed choices in rail cities]{.gray}
+2. [Use the estimated parameters to predict the mean choices on non-rail cities]{.gray}
+3. [Interpret the marginal effects and examine how different characteristics affect the probability of each choice]{.gray}
+4. **Estimate the willingness to pay for different modes and characteristics**
+5. Estimate the welfare gains/losses from introducing rail systems
+
+
+# 4. Willingness to pay
+
+## Defining willingness to pay
+
+A big advantage of having a characteristic that is measured in monetary value in the RUM framework is that we can use the model to derive WTP.
+
+In this framework, the WTP of a choice characteristic is the corresponding change in monetary value to a change in a characteristic *that keeps the (indirect) utility level constant*.
+
+Formally, let's think about a model that has income entering an additively separable term in the indirect utility function
+
+$$
+V_{ik} = \alpha I_i + X_{ik}\beta_{ik}
+$$
+
+Parameter $\alpha$ here has a very important role: **it defines the marginal utility of income**.
+
+---
+
+Then, for a change in some characteristics $x_{ik,a}$, we have
+$$
+\begin{align}
+dV & = 0 \\
+\alpha dI_i + \beta_{k,a} dx_{ik,a} & = 0 \\
+\frac{dI_i}{dx_{ik,a}} & = -\frac{\beta_{k,a}}{\alpha}
+\end{align}
+$$
+
+So, in exchange for a marginal increase in $x_{ik,a}$, this individual is willing to trade-off up to $\frac{\beta_{k,a}}{\alpha}$ monetary units of their income (i.e., a compensating variation). This is the WTP!
+
+---
+
+But what if we have prices but not income? That's not an issue. That's because the price paid to obtain a choice is itself a negative change in the individual's income: $dI = -dp$
+
+Therefore, we just reframe the indirect utility as $V_{ik} = -\alpha p_k + X_{ik}\beta_{ik}$ and all else is the same!
+
+With that, we can easily calculate, for example, the mean WTP for an additional train stop:
+
+$$
+E\left[WTP_{\mbox{train stop}}\right] = \frac{\beta_{t,2}}{-\beta_{t,1}}
+$$
+
+```{julia}
+α = -β_t_hat[2]
+WTP_trainstop = β_t_hat[3]/α;
+println("The mean WTP for an additional trainstop is $(round(WTP_trainstop*100, digits=2)) dollars/year per person.")
+```
+
+Of course, you can do that with other product characteristics, too!
+
+
+## Empirical plan {background-color="orange"}
+
+1. [Estimate a discrete choice model based on the observed choices in rail cities]{.gray}
+2. [Use the estimated parameters to predict the mean choices on non-rail cities]{.gray}
+3. [Interpret the marginal effects and examine how different characteristics affect the probability of each choice]{.gray}
+4. [Estimate the willingness to pay for different modes and characteristics]{.gray}
+5. **Estimate the welfare gains/losses from introducing rail systems**
+
+
+# 5. Welfare consequences
+
+With WTP estimates, we can calculate, for example, how much individuals who are riding the train would be willing to pay for expansions of the network. But it's hard to think about how those chances would affect all individuals, including those that currently don't choose trains. For instance, some might not be affected at all, while some might switch from cars or buses, thus willing to pay something for those changes.
+
+Questions like these are addressed by taking a broader perspective based on welfare changes. (Since we don't consider producer costs here, welfare will be essentially a measure of consumer surplus.)
+
+To do that, we need to consider how changes in characteristics affect possibly the utility of all choices $U_{ik}$ and the total utility of an individual $U_i$
+
+$$
+U_i(X_i, \nu_{i}) = \max_{k=0,\dots,K} U_{ik}(X_{ik}, \nu_{ik}) = \max \left\{U_{i0}(X_{i0}, \nu_{i0}), \dots, U_{iK}(X_{iK}, \nu_{iK}) \right\}
+$$
+
+
+---
+
+In order to calculate the monetary value of a welfare change, we need to define the compensating variation relative to a change in characteristics from $X_i$ to $\tilde{X}_i$
+
+$$
+\max_{k=0,\dots,K} U(I_i - p_k, X_{ik}, \nu_{ik}) = \max_{k=0,\dots,K} U(I_i - CV_i - p_k, \tilde{X}_{ik}, \nu_{ik})
+$$
+
+However, calculating this $CV$ requires integrating over all idiosyncratic terms $\nu$, which can be pretty difficult to solve.
+
+---
+
+Luckily for us, the multinomial logit results in a nice closed-form expression!
+
+$$
+E[CV_i] = \frac{1}{\alpha}\left[\log\left(\sum_{k=1}^K e^{\tilde{X}_{ik}^\prime \beta_k}\right) - \log\left(\sum_{k=1}^K e^{X_{ik}^\prime \beta_k}\right)\right]
+$$
+
+So, it's proportional to the log-difference of the denominator of the expression for choice probabilities!
+
+---
+
+With the previous expression, we can now evaluate the change in individual consumer surplus from introducing the train option in the non-rail cities!
+
+$$
+E[\Delta CS] = \frac{1}{N} \sum_{i=1}^N \frac{1}{\alpha} \left[\underbrace{\log\left(1 + e^{V_{ib}} + e^{V_{it}} \right)}_{\mbox{With train}} - \underbrace{\log\left(1 + e^{V_{ib}} \right)}_{\mbox{Without train}}\right]
+$$
+
+
+```{julia}
+denom_nr_withtrain = 1.0 .+ exp.(V_b_hat_nr) .+ exp.(V_t_hat_nr);
+denom_nr_notrain = 1.0 .+ exp.(V_b_hat_nr)
+
+ΔCS = 1/α * mean(log.(denom_nr_withtrain) - log.(denom_nr_notrain));
+println("The mean change in individual surplus from adding the train system is $(round(ΔCS*100, digits=2)) dollars/year per person.")
+```
+
+Supposing the survey in non-rail systems were representative for a population of 2 million potential commuters, the total value of the train system would be about 34.4 million dollars per year! 
+
+Then, a benefit-cost analysis could compare the present value of this benefit over a number of years with the costs of implementing it.
+
+
+## Final words
+
+- This tutorial walked you through all the steps of setting up a structural model and estimating it.
+- Combined with the first part, we:
+  - Developed a model.
+  - Simulated agent behavior consistent with the model.
+  - Applied structural econometric methods to estimate the model.
+  - Used the estimated model to perform economic analysis.
+
+---
+
+- It is a great practice to follow these steps in any empirical work before you start actually working with the data.
+- One benefit is that it helps you think very carefully about what mechanisms your empirical model can capture and what it misses.
+- The big benefit here is that you can very transparently test whether your estimation procedure is robust to changes in the model underlying your assumptions.
+  - For example, it's easy now to add an omitted variable in the data and estimate the model ignoring it to see how bad the bias is.
+  - Or change the distribution of tastes and see how it impacts your estimates.
+  - Or whatever robustness check or and senstivity analysis you want to make. 
+  - The effect of these changes is often hard to anticipate, so having control over all the steps allows you to gauge their impacts and more easily establish how robust your empirical strategy is.
+
