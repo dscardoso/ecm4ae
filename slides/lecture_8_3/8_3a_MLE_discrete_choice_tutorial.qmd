@@ -90,7 +90,7 @@ $$
 U_{it} > U_{ic} \Rightarrow \nu_{it} - \nu_{ic} > -\left(V_{it} - V_{ic} \right) 
 $$
 
-Note that each choice has its own $\beta$, so we are modeling a Multinomial case
+Note that each choice has its own $\beta$, so we are modeling a Multinomial case with choice-specific parameters. This is a common approach in the discrete choice literature, but it is not the only one. We could also have a model with generic parameters, where the same $\beta$ applies to all choices, and the differences in utility come from the observed characteristics $X_{ik}$.
 
 ---
 
