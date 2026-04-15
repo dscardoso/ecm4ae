@@ -4,6 +4,19 @@ This is a list of recommended materials and resources to complement our discussi
 
 If you have suggestions of materials, please share them with me.
 
+## Recommended textbooks 
+
+Computational methods:
+
+- [MF02] Miranda, Mario J. and Paul L. Fackler. Applied Computational Economics and Finance. Cambridge, MA MIT Press, 2002.
+- [J98] Judd, Kenneth L. Numerical Methods in Economics. Cambridge, MA MIT Press, 1998.
+- [NW06] Nocedal, J. and S. J. Wright. Numerical Optimization. New York Springer, 2nd edition, 2006.
+
+Econometrics:
+
+- [CT05] Cameron, A. Colin, and Trivedi, Pravin K.. Microeconometrics Methods and Applications. United Kingdom Cambridge University Press, 2005.
+- [G18] Greene, William H. Econometric Analysis. 8th Edition. United Kingdom Pearson, 2018.
+
 
 ## Unit 1: Intro to Scientific Computing
 
@@ -140,8 +153,35 @@ If you have suggestions of materials, please share them with me.
 - Timmins, C., & Schlenker, W. (2009). Reduced-form versus structural modeling in environmental and resource economics. Annu. Rev. Resour. Econ., 1(1), 351-380. [[Link]](https://doi.org/10.1146/annurev.resource.050708.144119)
 
 
+
 ## Tutorials & Extra resources
 
 - Manipulating data with [DataFrames.jl](https://julia.school/julia/dataframes)
 - [Simulation examples of estimator convergence rates](https://mcknaus.github.io/assets/notebooks/SNB/SNB_Convergence_rates.nb), by Michael Knaus
+
+
+
+## Unit 7: Generalized Method of Moments
+
+### Readings
+
+-	[CT05] Chapter 6
+-	[G18] Chapter 13
+-	[Michael Creel's lecture notes](https://github.com/mcreel/Econometrics), Ch. 16
+- Appendix from Hortaçsu, A., & Joo, J. (2023). Structural econometric modeling in industrial organization and quantitative marketing: theory and applications. 
+
+
+## Unit 8: Maximum Likelihood Estimator
+
+### Readings
+
+- [CT05] Chapters 11 and 12
+- [G18] Chapter 15
+- [Michael Creel's lecture notes](https://github.com/mcreel/Econometrics), Ch. 22
+- Appendix from Hortaçsu, A., & Joo, J. (2023). Structural econometric modeling in industrial organization and quantitative marketing: theory and applications. 
+
+For discrete choice modeling:
+
+- Hortaçsu, A., & Joo, J. (2023). Structural econometric modeling in industrial organization and quantitative marketing: theory and applications. Ch. 2.1 and 2.2
+- Train, K. (2009). Discrete Choice Methods with Simulation. Available at [https://eml.berkeley.edu/books/choice2.html](https://eml.berkeley.edu/books/choice2.html)
 
