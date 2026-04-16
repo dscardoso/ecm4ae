@@ -1,0 +1,507 @@
+---
+title: "AGEC 592 - Lecture 9.2, part a"
+subtitle: "Mixed logit tutorial: Data generation"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false
+format:
+  revealjs:
+    output-file: ACE592_9_2a_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_9_2a_notes.html
+    toc: false
+    number-sections: true
+    # axe:
+    #   output: document
+    code-fold: false
+    html-math-method: katex
+---
+
+
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  [Function approximation (postponed)]{.gray}
+6.  [Structural estimation: Intro]{.gray}
+7.  [Generalized Method of Moments]{.gray}
+8.  [Maximum Likelihood Estimator]{.gray}
+9.  **Simulation-based methods**
+    1.  [Bootstrapping, SML, & MSM]{.gray}
+    2.  **Mixed logit tutorial**
+
+
+## Main references for today {background-color="orange"}
+
+- Cameron & Trivedi (2005), Greene (2018)
+- Train (2009)
+
+
+# What's new vs. lecture 8.3?
+
+## From fixed to random coefficients
+
+In lecture 8.3 we assumed every individual shares the same $\beta$, aka, the standard Multinomial Logit (MNL)
+
+**What changes in mixed logit:**
+
+- Individual tastes now *vary* across the population via **random coefficients** $\beta_i$
+- This breaks the IIA property **in the aggregate**: substitution patterns now reflect similarity of tastes
+- The choice probability requires integrating over the distribution of $\beta_i$: no closed form, so we will need **Maximum Simulated Likelihood** (part b)
+
+. . .
+
+**What stays the same:**
+
+- Transportation scenario, three modes (bus / car / train), city structure
+- Same Julia packages, same revealed-preference data-generation logic
+- Car remains the outside option ($V_{ic} = 0$)
+
+
+## Three random parameters, others fixed
+
+We make three coefficients random:
+
+| Coefficient                | Distribution             | Scope                             | Why                                                 |
+| :------------------------- | :----------------------- | :-------------------------------- | :-------------------------------------------------- |
+| $\beta_{i,\text{price}}$   | Log-normal, always $< 0$ | Generic (price enters both modes) | Guarantees negative price effect; WTP always finite |
+| $\beta_{i,\text{stops,b}}$ | Normal                   | Bus-specific                      | Heterogeneous valuation of bus service              |
+| $\beta_{i,\text{stops,t}}$ | Normal                   | Train-specific                    | Heterogeneous valuation of train service            |
+| All others                 | Fixed                    | —                                 | Keeps MSL tractable; focus on key heterogeneity     |
+
+**Price is generic**: one $\beta_{i,\text{price}}$ per individual, shared by bus and train. This reflects the interpretation of price as income lost, which is a person-level trait (the marginal utility of income), not a mode-specific preference.
+
+**Stops are alternative-specific**: bus and train stops represent different technologies with potentially different valuation profiles. We preserve the idea from 8.3 but adding heterogeneity.
+
+
+# Model
+
+## Utility specification
+
+$$
+U_{ik} = X_{ik}^\prime \beta_i + \nu_{ik}, \quad \nu_{ik} \sim \text{T1EV}
+$$
+
+The individual-specific random coefficients are:
+
+$$
+\beta_{i,\text{price}} = -e^{\left(b_p + s_p \cdot \eta_{i,p}\right)}, \quad \eta_{i,p} \sim N(0,1)
+$$
+
+$$
+\beta_{i,\text{stops,b}} = b_{sb} + s_{sb} \cdot \eta_{i,sb}, \quad \eta_{i,sb} \sim N(0,1)
+$$
+
+$$
+\beta_{i,\text{stops,t}} = b_{st} + s_{st} \cdot \eta_{i,st}, \quad \eta_{i,st} \sim N(0,1)
+$$
+
+All three $\eta$'s are independent across coefficients and across individuals. The log-normal parameterization for price follows Train (2009, Ch. 6).
+
+
+## True parameter values: fixed 
+
+| Group                       | Parameter      | Symbol                 | Value |
+| :-------------------------- | :------------- | :--------------------- | ----: |
+| Bus fixed                   | Intercept      | $\beta_{b,0}$          |  −1.0 |
+|                             | Density        | $\beta_{b,\text{den}}$ |   0.3 |
+|                             | Household size | $\beta_{b,\text{hh}}$  |  −0.2 |
+|                             | Home ownership | $\beta_{b,\text{ho}}$  |  −0.3 |
+| Train fixed                 | Intercept      | $\beta_{t,0}$          |  −0.6 |
+|                             | Density        | $\beta_{t,\text{den}}$ |   0.6 |
+|                             | Household size | $\beta_{t,\text{hh}}$  |  −0.1 |
+|                             | Home ownership | $\beta_{t,\text{ho}}$  |  −0.2 |
+
+
+## True parameter values: random
+
+| Group                       | Parameter      | Symbol                 | Value |
+| :-------------------------- | :------------- | :--------------------- | ----: |
+| Random price (log-normal)   | Location       | $b_p$                  | −0.25 |
+|                             | Scale          | $s_p$                  |   0.3 |
+| Random bus stops (normal)   | Mean           | $b_{sb}$               |   0.1 |
+|                             | Std dev        | $s_{sb}$               |  0.05 |
+| Random train stops (normal) | Mean           | $b_{st}$               |   0.2 |
+|                             | Std dev        | $s_{st}$               |  0.07 |
+
+
+Mean $\beta_{i,\text{price}} = -e^{b_p+\frac{1}{2}s_p^2} \approx -0.806$: same ballpark as the fixed $-0.8$ in lecture 8.3.
+
+
+## True parameter values
+
+**Total: 14 parameters.** Compare to 8.3b's restricted model with 11 parameters: here we have the same 8 alternative-specific fixed coefficients plus 6 random-coefficient parameters (location and scale for price, bus stops, and train stops).
+
+```{julia}
+# True parameter values
+β_b_fixed = [-1.0,  0.3, -0.2, -0.3]   # intercept, density, hhsize, homeown
+β_t_fixed = [-0.6,  0.6, -0.1, -0.2]   # intercept, density, hhsize, homeown
+b_p  = -0.25;  s_p  = 0.3    # log-normal price: location, scale
+b_sb =  0.1;  s_sb = 0.05   # normal bus stops: mean, std dev
+b_st =  0.2;  s_st = 0.07;   # normal train stops: mean, std dev
+```
+
+
+# Data generation: rail cities
+
+## Survey assumptions
+
+We estimate the model using data from **30 rail cities** (same as 8.3). We reduce the survey size to **N = 500 per city** (down from 2000 in 8.3a) so that Part B MSL + bootstrap runs comfortably on a laptop.
+
+```{julia}
+using Random, Distributions, Statistics, DataFrames
+Random.seed!(592)
+
+N_survey   = 500   # Individuals per city (reduced for classroom responsiveness)
+N_r_cities = 30;    # Rail cities used for estimation
+```
+
+## City-level attributes
+
+We're going to generate data for rail cities the same way as in lecture 8.3a.
+
+```{julia}
+density_r = rand(Uniform(4, 12), N_r_cities)
+
+busstops_r = 5 .+ density_r .* 6 .+ rand(Uniform(-3, 3), N_r_cities)
+busstops_r = round.(busstops_r, digits=0)
+
+busprice_r = 100 .+ busstops_r .* 15 .+ rand(Uniform(-50, 50), N_r_cities)
+busprice_r = busprice_r ./ 100
+
+trainstops_r = 3 .+ density_r .* 2 .+ rand(Uniform(0, 5), N_r_cities)
+trainstops_r = round.(trainstops_r, digits=0)
+
+trainprice_r = busprice_r .* 100 .+ trainstops_r .* 5 .+ rand(Uniform(0, 50), N_r_cities)
+trainprice_r = trainprice_r ./ 100;
+```
+
+## City-level attributes
+
+```{julia}
+cities_r = DataFrame(
+    city        = ["r_$(i)" for i in 1:N_r_cities],
+    price_bus   = busprice_r,
+    stops_bus   = busstops_r,
+    price_train = trainprice_r,
+    stops_train = trainstops_r,
+    density     = density_r
+)
+println(cities_r[1:5, :])
+```
+
+
+
+## Synthetic individuals
+
+Also generating individual-level characteristics the same way as in lecture 8.3a
+
+```{julia}
+homeown_r = rand(Bernoulli(0.50), N_survey * N_r_cities)
+hhsize_r  = 1 .+ rand(Poisson(1.5), N_survey * N_r_cities)
+
+survey_r = DataFrame(
+    city    = repeat(["r_$(i)" for i in 1:N_r_cities], N_survey),
+    hhsize  = hhsize_r,
+    homeown = homeown_r
+)
+
+data_r = leftjoin(survey_r, cities_r, on=:city)
+println(data_r[1:5, :])
+```
+
+## Drawing individual-level parameters $\beta_i$
+
+This is the key new step. Here, we draw **three independent** $\eta$'s per person: one for price, one for bus stops, one for train stops.
+
+```{julia}
+N_r = nrow(data_r)
+
+η_p_r  = randn(N_r)   # draws for price coefficient
+η_sb_r = randn(N_r)   # draws for bus stops coefficient
+η_st_r = randn(N_r)   # draws for train stops coefficient
+
+# Individual-specific coefficients
+β_price_r  = -exp.(b_p  .+ s_p  .* η_p_r)    # always negative (log-normal)
+β_bstops_r =  b_sb .+ s_sb .* η_sb_r          # bus stops (normal)
+β_tstops_r =  b_st .+ s_st .* η_st_r          # train stops (normal)
+
+# Store temporarily in the DataFrame (dropped before export)
+data_r.β_price_i  = β_price_r
+data_r.β_bstops_i = β_bstops_r
+data_r.β_tstops_i = β_tstops_r;
+```
+
+## Mean utility with individual-specific $\beta$
+
+Another key change from 8.3: price uses a common individual-specific $\beta_{i,\text{price}}$, but bus and train stops use separate individual-specific coefficients.
+
+```{julia}
+data_r.V_ib = zeros(N_r)
+data_r.V_it = zeros(N_r)
+
+for i in 1:N_r
+    # Bus utility: intercept + price×β_price_i + bus_stops×β_bstops_i + fixed sociodemographics
+    data_r.V_ib[i] = (β_b_fixed[1]
+        + data_r.price_bus[i]  * data_r.β_price_i[i]
+        + data_r.stops_bus[i]  * data_r.β_bstops_i[i]
+        + data_r.density[i]    * β_b_fixed[2]
+        + data_r.hhsize[i]     * β_b_fixed[3]
+        + data_r.homeown[i]    * β_b_fixed[4])
+
+    # Train utility: intercept + price×β_price_i + train_stops×β_tstops_i + fixed sociodemographics
+    data_r.V_it[i] = (β_t_fixed[1]
+        + data_r.price_train[i] * data_r.β_price_i[i]
+        + data_r.stops_train[i] * data_r.β_tstops_i[i]
+        + data_r.density[i]     * β_t_fixed[2]
+        + data_r.hhsize[i]      * β_t_fixed[3]
+        + data_r.homeown[i]     * β_t_fixed[4])
+end
+```
+
+Price enters both alternatives with the same individual coefficient $\beta_{i,\text{price}}$ (the "generic" part). Bus and train stops have separate individual coefficients.
+
+
+## Idiosyncratic T1EV shocks
+
+Same assumption as 8.3a: scale $\sigma = 0.8$.
+
+```{julia}
+data_r.ϵ_ib = rand(Logistic(0.0, 0.8), N_r)
+data_r.ϵ_it = rand(Logistic(0.0, 0.8), N_r)
+```
+
+## Simulating choices
+
+Revealed preference conditions are identical to 8.3a (what changed is only how $V_{ik}$ was computed).
+
+```{julia}
+# Choose train if U_it > U_ib and U_it > U_ic (= 0)
+data_r.d_it = (data_r.V_it .+ data_r.ϵ_it .> 0.0) .&
+              (data_r.V_it .+ data_r.ϵ_it .> data_r.V_ib .+ data_r.ϵ_ib);
+
+# Choose bus if U_ib > U_it and U_ib > U_ic
+data_r.d_ib = (data_r.V_ib .+ data_r.ϵ_ib .> 0.0) .&
+              (data_r.V_ib .+ data_r.ϵ_ib .> data_r.V_it .+ data_r.ϵ_it);
+```
+
+## Market shares in rail cities
+
+```{julia}
+share_bus_r   = sum(data_r.d_ib) / N_r
+share_train_r = sum(data_r.d_it) / N_r
+share_car_r   = 1.0 - share_bus_r - share_train_r
+println("Rail city shares - Bus: $(round(share_bus_r*100, digits=1))%  " *
+        "Train: $(round(share_train_r*100, digits=1))%  " *
+        "Car: $(round(share_car_r*100, digits=1))%")
+```
+
+These are not the same as in 8.3a because of the different price distribution (a coding error in 8.3!) and the added heterogeneity.
+
+## Distribution of $\beta_{i,\text{price}}$
+
+```{julia}
+#| code-fold: true
+using Plots, LaTeXStrings
+histogram(data_r.β_price_i,
+    xlabel = L"\beta_{i,\text{price}}", ylabel = "Count", label = "",
+    title  = "Price coefficient")
+vline!([mean(data_r.β_price_i)], label="Mean", linewidth=2, color=:red)
+```
+
+Strictly negative and right-skewed: guaranteed by the log-normal parameterization.
+
+## Distribution of bus and train stops coefficients
+
+```{julia}
+#| code-fold: true
+p1 = histogram(data_r.β_bstops_i,
+    xlabel=L"\beta_{i,\text{stops,b}}", ylabel="Count", label="",
+    title="Bus stops: N($(b_sb), $(s_sb)²)")
+vline!(p1, [mean(data_r.β_bstops_i)], label="Mean", linewidth=2, color=:red)
+
+p2 = histogram(data_r.β_tstops_i,
+    xlabel=L"\beta_{i,\text{stops,t}}", ylabel="Count", label="",
+    title="Train stops: N($(b_st), $(s_st)²)")
+vline!(p2, [mean(data_r.β_tstops_i)], label="Mean", linewidth=2, color=:red)
+
+plot(p1, p2, layout=(1,2))
+```
+
+## Implied WTP for a bus stop and a train stop
+
+WTP now varies across individuals because of the random coefficients! For each person $i$ we can compute:
+$$
+\text{WTP}_{i,\text{bus stop}} = \frac{\beta_{i,\text{stops,b}}}{|\beta_{i,\text{price}}|}, \qquad
+\text{WTP}_{i,\text{train stop}} = \frac{\beta_{i,\text{stops,t}}}{|\beta_{i,\text{price}}|}
+$$
+
+```{julia}
+WTP_bus_i   = data_r.β_bstops_i ./ abs.(data_r.β_price_i)
+WTP_train_i = data_r.β_tstops_i ./ abs.(data_r.β_price_i)
+
+println("WTP bus stop - Mean: $(round(mean(WTP_bus_i)*100,   digits=2)) \$/yr  " *
+        "Median: $(round(median(WTP_bus_i)*100,   digits=2)) \$/yr")
+println("WTP train stop - Mean: $(round(mean(WTP_train_i)*100, digits=2)) \$/yr  " *
+        "Median: $(round(median(WTP_train_i)*100, digits=2)) \$/yr")
+```
+
+
+## Distribution of WTP for bus and train stops
+
+Because $|\beta_{i,\text{price}}|$ is log-normally distributed (lower-bounded away from zero), neither WTP ratio blows up.
+
+- Specifying $\beta_{i,\text{price}}$ as normal would actually lead to undefined mean WTP because of the positive tail (people with $\beta_{i,\text{price}}$ close to zero have huge WTP).
+
+```{julia}
+#| code-fold: true
+p3 = histogram(WTP_bus_i,   xlabel="WTP bus stop (100\$/yr)",   label="", xlims=(-1,1))
+vline!(p3, [mean(WTP_bus_i)], label="Mean", linewidth=2, color=:red)
+
+p4 = histogram(WTP_train_i, xlabel="WTP train stop (100\$/yr)", label="", xlims=(-1,1))
+vline!(p4, [mean(WTP_train_i)], label="Mean", linewidth=2, color=:red)
+
+plot(p3, p4, layout=(1,2), plot_title="Individual WTP")
+```
+
+
+# Data generation: non-rail cities
+
+## Non-rail city attributes
+
+Same generation as 8.3a; these cities are **not** used for estimation but serve as the welfare counterfactual in Part B.
+
+```{julia}
+N_nr_cities = 30
+
+density_nr  = rand(Uniform(1, 8), N_nr_cities)
+busstops_nr = 5 .+ density_nr .* 6 .+ rand(Uniform(-3, 3), N_nr_cities)
+busstops_nr = round.(busstops_nr, digits=0)
+price_nr    = 100 .+ busstops_nr .* 15 .+ rand(Uniform(-50, 50), N_nr_cities)
+price_nr    = price_nr ./ 100
+
+cities_nr = DataFrame(
+    city        = ["nr_$(i)" for i in 1:N_nr_cities],
+    price_bus   = price_nr,
+    stops_bus   = busstops_nr,
+    price_train = zeros(N_nr_cities),
+    stops_train = zeros(N_nr_cities),
+    density     = density_nr
+);
+```
+
+## Non-rail individuals
+
+```{julia}
+homeown_nr = rand(Bernoulli(0.75), N_survey * N_nr_cities)
+hhsize_nr  = 1 .+ rand(Poisson(2.0), N_survey * N_nr_cities)
+
+survey_nr = DataFrame(
+    city    = repeat(["nr_$(i)" for i in 1:N_nr_cities], N_survey),
+    hhsize  = hhsize_nr,
+    homeown = homeown_nr
+)
+
+data_nr = leftjoin(survey_nr, cities_nr, on=:city)
+N_nr    = nrow(data_nr);
+```
+
+## Individual tastes for non-rail cities
+
+Generation of individual-specific $\beta$'s is the same as for rail cities.
+
+```{julia}
+η_p_nr  = randn(N_nr)
+η_sb_nr = randn(N_nr)
+η_st_nr = randn(N_nr)
+
+β_price_nr  = -exp.(b_p  .+ s_p  .* η_p_nr)
+β_bstops_nr =  b_sb .+ s_sb .* η_sb_nr
+β_tstops_nr =  b_st .+ s_st .* η_st_nr
+
+data_nr.β_price_i  = β_price_nr
+data_nr.β_bstops_i = β_bstops_nr
+data_nr.β_tstops_i = β_tstops_nr;
+```
+
+## Mean utility and choices (non-rail)
+
+Non-rail cities have no train; we only compute $V_{ib}$.
+
+```{julia}
+data_nr.V_ib = zeros(N_nr)
+for i in 1:N_nr
+    data_nr.V_ib[i] = (β_b_fixed[1]
+        + data_nr.price_bus[i] * data_nr.β_price_i[i]
+        + data_nr.stops_bus[i] * data_nr.β_bstops_i[i]
+        + data_nr.density[i]   * β_b_fixed[2]
+        + data_nr.hhsize[i]    * β_b_fixed[3]
+        + data_nr.homeown[i]   * β_b_fixed[4])
+end
+
+data_nr.ϵ_ib = rand(Logistic(0.0, 0.8), N_nr)
+data_nr.ϵ_it = rand(Logistic(0.0, 0.8), N_nr)
+
+data_nr.d_ib = (data_nr.V_ib .+ data_nr.ϵ_ib .> 0.0)
+data_nr.d_it = zeros(Int, N_nr);   # no train available
+```
+
+
+
+# Exporting the data
+
+## Prepare for export
+
+We drop the individual-level $\beta$'s and round continuous variables to two decimals to mimic real survey data.
+
+```{julia}
+export_cols = [:city, :price_bus, :price_train, :stops_bus, :stops_train, :density, :hhsize, :homeown, :d_ib, :d_it]
+stacked = vcat(data_nr[:, export_cols], data_r[:,  export_cols])
+
+stacked.price_bus   = round.(stacked.price_bus, digits=2)
+stacked.price_train = round.(stacked.price_train, digits=2)
+stacked.density     = round.(stacked.density, digits=2)
+stacked.stops_bus   = Int.(stacked.stops_bus)
+stacked.stops_train = Int.(stacked.stops_train)
+stacked.hhsize      = Int.(stacked.hhsize)
+stacked.homeown     = Int.(stacked.homeown)
+stacked.d_ib        = Int.(stacked.d_ib)
+stacked.d_it        = Int.(stacked.d_it)
+println(stacked[1:8, :])
+```
+
+---
+
+```{julia}
+using CSV
+CSV.write("./transportation_mode_survey_mixed.csv", stacked)
+```
+
+
+## Up next
+
+In **Part B** we will:
+
+1. Estimate the mixed logit via **Maximum Simulated Likelihood (MSL)**
+2. Compute **bootstrap standard errors** (resampling decision-makers with replacement)
+3. Derive **WTP distributions** for bus stops and train stops under heterogeneity
+4. Calculate **welfare (compensating variation)** from introducing trains in non-rail cities
+5. Compare methods to calculate confidence intervals for WTP and welfare

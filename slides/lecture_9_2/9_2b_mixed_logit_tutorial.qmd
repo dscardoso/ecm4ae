@@ -1,0 +1,696 @@
+---
+title: "AGEC 592 - Lecture 9.2, part b"
+subtitle: "Mixed logit tutorial: MSL estimation, WTP, and welfare"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false
+format:
+  revealjs:
+    output-file: ACE592_9_2b_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_9_2b_notes.html
+    toc: false
+    number-sections: true
+    axe:
+      output: document
+    code-fold: true
+    html-math-method: katex
+---
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  [Function approximation (postponed)]{.gray}
+6.  [Structural estimation: Intro]{.gray}
+7.  [Generalized Method of Moments]{.gray}
+8.  [Maximum Likelihood Estimator]{.gray}
+9.  **Simulation-based methods**
+    1.  [Bootstrapping, SML, & MSM]{.gray}
+    2.  **Mixed logit tutorial** ← *you are here (part b)*
+
+
+## Main references for today {background-color="orange"}
+
+- Train (2009), *Discrete Choice Methods with Simulation*, Cambridge University Press
+- Greene (2018), *Econometric Analysis*, 8th ed.
+- Adams (2021), *Learning Microeconometrics with R*
+- Krinsky & Robb (1986), "On Approximating the Statistical Properties of Elasticities," *Review of Economics and Statistics*
+- Krinsky & Robb (1990), "On Approximating the Statistical Properties of Elasticities: A Correction," *Review of Economics and Statistics*
+
+
+## Empirical plan {background-color="orange"}
+
+1. **Estimate** the mixed logit via Maximum Simulated Likelihood (MSL)
+2. **Bootstrap standard errors** by resampling decision-makers
+3. **WTP under heterogeneity** — bus and train stops, closed-form cross-check
+4. **Confidence intervals for WTP** — Bootstrap vs. Krinsky & Robb
+5. **Welfare** — compensating variation for introducing trains in non-rail cities
+6. **Confidence intervals for ΔCS** — Bootstrap vs. Krinsky & Robb
+7. **Comparison** to 8.3b MNL results
+
+
+# 1. Data and setup
+
+## Load data
+
+```{julia}
+using CSV, DataFrames, Random, Distributions, Statistics, LinearAlgebra, Optim, ForwardDiff, Plots, LaTeXStrings
+Random.seed!(592)
+
+df = CSV.read("transportation_mode_survey_mixed.csv", DataFrame)
+println(df[1:8, :])
+```
+
+## Split rail / non-rail
+
+```{julia}
+df_r  = filter(row -> startswith(row[:city], "r_"),  df)
+df_nr = filter(row -> startswith(row[:city], "nr_"), df)
+N_r   = nrow(df_r)
+N_nr  = nrow(df_nr)
+println("Rail observations: $N_r   Non-rail observations: $N_nr")
+```
+
+## Data preparation — design matrices
+
+Same structure as 8.3b. Columns: [intercept, price, stops, density, hhsize, homeown].
+
+```{julia}
+ones_r = ones(N_r)
+
+X_b = hcat(ones_r, Matrix{Float64}(df_r[:, [:price_bus,   :stops_bus,   :density, :hhsize, :homeown]]))
+X_t = hcat(ones_r, Matrix{Float64}(df_r[:, [:price_train, :stops_train, :density, :hhsize, :homeown]]))
+
+d_b = Vector{Float64}(df_r.d_ib)
+d_t = Vector{Float64}(df_r.d_it)
+```
+
+## Recall the model
+
+Parameter vector $\theta$ (**14 elements**):
+
+| Index | Symbol | Meaning |
+|:------|:-------|:--------|
+| 1–4 | $\beta_{b,0},\,\beta_{b,\text{den}},\,\beta_{b,\text{hh}},\,\beta_{b,\text{ho}}$ | Bus fixed: intercept, density, hhsize, homeown |
+| 5–8 | $\beta_{t,0},\,\beta_{t,\text{den}},\,\beta_{t,\text{hh}},\,\beta_{t,\text{ho}}$ | Train fixed: intercept, density, hhsize, homeown |
+| 9–10 | $b_p,\,s_p$ | Log-normal price: location, scale |
+| 11–12 | $b_{sb},\,s_{sb}$ | Normal bus stops: mean, std dev |
+| 13–14 | $b_{st},\,s_{st}$ | Normal train stops: mean, std dev |
+
+Compare to 8.3b's restricted model (11 parameters): we have the same 8 alternative-specific fixed coefficients plus 6 random-coefficient parameters — location and scale for each of the three random coefficients.
+
+Utility for individual $i$, draw $s$:
+
+$$
+V_{ib}^{(s)} = \beta_{b,0} + \beta_{i,p}^{(s)} p_b + \beta_{i,sb}^{(s)} \text{stops}_b + \beta_{b,\text{den}} d + \beta_{b,\text{hh}} h + \beta_{b,\text{ho}} o
+$$
+
+$$
+V_{it}^{(s)} = \beta_{t,0} + \beta_{i,p}^{(s)} p_t + \beta_{i,st}^{(s)} \text{stops}_t + \beta_{t,\text{den}} d + \beta_{t,\text{hh}} h + \beta_{t,\text{ho}} o
+$$
+
+where $\beta_{i,p}^{(s)} = -\exp(b_p + s_p \eta_{i,p}^{(s)})$, $\beta_{i,sb}^{(s)} = b_{sb} + s_{sb} \eta_{i,sb}^{(s)}$, $\beta_{i,st}^{(s)} = b_{st} + s_{st} \eta_{i,st}^{(s)}$.
+
+
+# 2. Maximum Simulated Likelihood
+
+## Pre-draw simulation draws
+
+We draw $\eta$'s **once, outside the optimizer**, and hold them fixed — the *common random numbers* technique, which smooths the simulated log-likelihood surface.
+
+We need **three matrices**: one per random coefficient.
+
+```{julia}
+S = 200   # simulation draws for point estimation
+
+η_p  = randn(N_r, S)   # N × S draws for price
+η_sb = randn(N_r, S)   # N × S draws for bus stops
+η_st = randn(N_r, S)   # N × S draws for train stops
+```
+
+> **Pedagogical note (from 9.1):** MSL is consistent only if $N, S \to \infty$ with $\sqrt{N}/S \to 0$. With $N = 15{,}000$ and $S = 200$ we have $\sqrt{N}/S \approx 0.61$ — adequate for a classroom exercise. Simulation noise is a *distinct* source of error from sampling noise: bootstrap captures the latter but not the former. Experiment with larger $S$ to see how much estimates shift.
+>
+> *Halton sequences (quasi-random, low-discrepancy draws) are the production choice; they require fewer draws for the same accuracy. We use pseudo-random draws here for simplicity.*
+
+
+## Simulated log-likelihood function
+
+For individual $i$ and draw $s$, the log-probability of the observed choice is
+
+$$
+\ell_i^{(s)} = d_{ib} V_{ib}^{(s)} + d_{it} V_{it}^{(s)} - \log\!\left(1 + e^{V_{ib}^{(s)}} + e^{V_{it}^{(s)}}\right)
+$$
+
+The simulated log-probability averages these over $S$ draws using the log-sum-exp identity to avoid underflow:
+
+$$
+\log\!\left(\frac{1}{S}\sum_s e^{\ell_i^{(s)}}\right) = \underbrace{\log\!\sum_s e^{\ell_i^{(s)}}}_{\text{log-sum-exp}} - \log S
+$$
+
+We compute log-sum-exp via the max-shift trick: $\log\sum_s e^{a_s} = c + \log\sum_s e^{a_s - c}$, $c = \max_s a_s$.
+
+```{julia}
+function logsumexp_rows(A::AbstractMatrix)
+    # A is N × S; returns N-vector of row log-sum-exp values
+    c = maximum(A, dims=2)
+    c .+ log.(sum(exp.(A .- c), dims=2))[:, 1]
+end
+
+function neg_msl(θ; X_b=X_b, X_t=X_t, d_b=d_b, d_t=d_t, η_p=η_p, η_sb=η_sb, η_st=η_st)
+    S_loc = size(η_p, 2)
+
+    # Unpack θ
+    β_b_fix = θ[1:4]    # bus fixed:   intercept, density, hhsize, homeown
+    β_t_fix = θ[5:8]    # train fixed: intercept, density, hhsize, homeown
+    b_p_loc  = θ[9];   s_p_loc  = θ[10]   # log-normal price
+    b_sb_loc = θ[11];  s_sb_loc = θ[12]   # normal bus stops
+    b_st_loc = θ[13];  s_st_loc = θ[14]   # normal train stops
+
+    ℓ = zeros(eltype(θ), size(X_b, 1), S_loc)
+
+    for s in 1:S_loc
+        # Individual-specific coefficients for this draw
+        β_p_s  = -exp.(b_p_loc  .+ s_p_loc  .* η_p[:,  s])   # N-vector, always < 0
+        β_sb_s =       b_sb_loc .+ s_sb_loc .* η_sb[:, s]    # N-vector
+        β_st_s =       b_st_loc .+ s_st_loc .* η_st[:, s]    # N-vector
+
+        # X_b / X_t columns: [1, price, stops, density, hhsize, homeown]
+        V_ib = (X_b[:, 1] .* β_b_fix[1]
+             .+ X_b[:, 2] .* β_p_s           # price_bus   × β_price_i
+             .+ X_b[:, 3] .* β_sb_s          # stops_bus   × β_bstops_i
+             .+ X_b[:, 4] .* β_b_fix[2]      # density
+             .+ X_b[:, 5] .* β_b_fix[3]      # hhsize
+             .+ X_b[:, 6] .* β_b_fix[4])     # homeown
+
+        V_it = (X_t[:, 1] .* β_t_fix[1]
+             .+ X_t[:, 2] .* β_p_s           # price_train × β_price_i
+             .+ X_t[:, 3] .* β_st_s          # stops_train × β_tstops_i
+             .+ X_t[:, 4] .* β_t_fix[2]      # density
+             .+ X_t[:, 5] .* β_t_fix[3]      # hhsize
+             .+ X_t[:, 6] .* β_t_fix[4])     # homeown
+
+        log_denom = log.(1.0 .+ exp.(V_ib) .+ exp.(V_it))
+        ℓ[:, s]   = d_b .* V_ib .+ d_t .* V_it .- log_denom
+    end
+
+    sim_log_prob = logsumexp_rows(ℓ) .- log(S_loc)
+    return -sum(sim_log_prob)
+end
+```
+
+## Sanity check at true parameters
+
+```{julia}
+θ_true = [-1.0,  0.3, -0.2, -0.3,    # bus fixed
+          -0.6,  0.6, -0.1, -0.2,    # train fixed
+          -0.3,  0.3,                  # b_p,  s_p
+           0.1,  0.08,                 # b_sb, s_sb
+           0.2,  0.1]                  # b_st, s_st
+
+ll_true = -neg_msl(θ_true)
+ll_zero = -neg_msl(zeros(14))
+println("Log-likelihood at true θ: $(round(ll_true, digits=2))")
+println("Log-likelihood at θ = 0:  $(round(ll_zero, digits=2))")
+println("True θ gives higher LL: $(ll_true > ll_zero)")
+```
+
+## Starting values and estimation
+
+**Important:** start all scale parameters ($s_p$, $s_{sb}$, $s_{st}$) at a small positive value, not zero — zero is a saddle point where $\partial\ell/\partial s = 0$ and BFGS can stall.
+
+```{julia}
+θ_init = [0.0,  0.0,  0.0,  0.0,    # bus fixed
+          0.0,  0.0,  0.0,  0.0,    # train fixed
+          0.0,  0.1,                  # b_p,  s_p  (s_p  > 0!)
+          0.0,  0.1,                  # b_sb, s_sb (s_sb > 0!)
+          0.0,  0.1]                  # b_st, s_st (s_st > 0!)
+
+println("Starting optimization...")
+t_start = time()
+res = optimize(neg_msl, θ_init, BFGS(),
+               Optim.Options(show_trace=false, iterations=2000))
+println("Done in $(round(time()-t_start, digits=1)) seconds")
+println("Converged: $(Optim.converged(res))")
+θ_hat = res.minimizer
+```
+
+## Sensitivity to starting values
+
+```{julia}
+θ_init2 = vcat(0.1 .* ones(8), [0.0, 0.2, 0.0, 0.15, 0.0, 0.15])
+θ_init3 = vcat(zeros(8),       [0.0, 0.3, 0.0, 0.1,  0.0, 0.2])
+
+res_1 = optimize(neg_msl, θ_init2, BFGS(), Optim.Options(show_trace=false, iterations=2000))
+res_2 = optimize(neg_msl, θ_init3, BFGS(), Optim.Options(show_trace=false, iterations=2000))
+
+println("LL (start 1): $(round(-res.minimum,   digits=4))")
+println("LL (start 2): $(round(-res_1.minimum, digits=4))")
+println("LL (start 3): $(round(-res_2.minimum, digits=4))")
+println("Max LL difference: $(round(maximum([-res.minimum, -res_1.minimum, -res_2.minimum]) - minimum([-res.minimum, -res_1.minimum, -res_2.minimum]), digits=5))")
+```
+
+Differences < 1e-3 confirm we found the global optimum.
+
+## Point estimates vs. truth
+
+```{julia}
+param_names = ["β_b0", "β_b_density", "β_b_hhsize", "β_b_homeown",
+               "β_t0", "β_t_density", "β_t_hhsize", "β_t_homeown",
+               "b_p  (price loc)",    "s_p  (price scale)",
+               "b_sb (bus stops mean)", "s_sb (bus stops sd)",
+               "b_st (train stops mean)", "s_st (train stops sd)"]
+
+results_df = DataFrame(
+    Parameter = param_names,
+    True      = θ_true,
+    Estimate  = round.(θ_hat, digits=4)
+)
+println(results_df)
+```
+
+> **Note:** If any scale parameter $\hat{s}$ collapses near zero, the data cannot distinguish heterogeneity from homogeneity in that coefficient — a signal of weak identification, not a code bug. Try increasing $N_\text{survey}$ in Part A.
+
+
+# 3. Bootstrap standard errors
+
+## Bootstrap design
+
+We resample **decision-makers with replacement** — in this cross-section one row = one individual, but this distinction matters in panels or clustered data. We use:
+
+- $B = 100$ bootstrap replicates
+- $S = 100$ simulation draws **inside each bootstrap** (reduced from 200; bootstrap sampling variance dominates simulation variance at this ratio)
+- Warm-start each replicate from $\hat\theta$
+
+```{julia}
+B      = 100
+S_boot = 100
+
+# Pre-draw η's for bootstrap at smaller S
+η_p_boot  = randn(N_r, S_boot)
+η_sb_boot = randn(N_r, S_boot)
+η_st_boot = randn(N_r, S_boot)
+
+function neg_msl_boot(θ, idx)
+    neg_msl(θ;
+        X_b  = X_b[idx, :],       X_t   = X_t[idx, :],
+        d_b  = d_b[idx],           d_t   = d_t[idx],
+        η_p  = η_p_boot[idx, :],  η_sb  = η_sb_boot[idx, :],
+        η_st = η_st_boot[idx, :])
+end
+```
+
+---
+
+```{julia}
+# Note: Threads.@threads can parallelize this loop — we use serial for reproducibility.
+boot_estimates = zeros(B, 14)
+t_boot = time()
+for b in 1:B
+    idx   = rand(1:N_r, N_r)
+    res_b = optimize(θ -> neg_msl_boot(θ, idx), θ_hat, BFGS(),
+                     Optim.Options(show_trace=false, iterations=1000))
+    boot_estimates[b, :] = res_b.minimizer
+    if b % 10 == 0
+        println("Bootstrap replicate $b / $B  ($(round(time()-t_boot, digits=1)) s elapsed)")
+    end
+end
+println("Bootstrap done in $(round(time()-t_boot, digits=1)) seconds")
+```
+
+## Bootstrap results table
+
+```{julia}
+boot_SE = std(boot_estimates, dims=1)[1, :]
+boot_lo = [quantile(boot_estimates[:, j], 0.025) for j in 1:14]
+boot_hi = [quantile(boot_estimates[:, j], 0.975) for j in 1:14]
+
+boot_df = DataFrame(
+    Parameter = param_names,
+    Estimate  = round.(θ_hat,   digits=4),
+    Boot_SE   = round.(boot_SE, digits=4),
+    CI_lo     = round.(boot_lo, digits=4),
+    CI_hi     = round.(boot_hi, digits=4)
+)
+println(boot_df)
+```
+
+For the fixed $\beta$'s, `Boot_SE` should be comparable in magnitude to the Hessian-based SEs in 8.3b. For scale parameters ($s_p$, $s_{sb}$, $s_{st}$), bootstrap SEs may be larger if asymptotic normality of $\hat\theta$ is not yet a good approximation — one motivation for using bootstrap over the Hessian.
+
+
+# 4. WTP under heterogeneity
+
+## Two WTP distributions
+
+With bus and train stops having separate random coefficients, we now have **two WTP distributions**:
+
+$$
+\text{WTP}_{i,\text{bus stop}} = \frac{\beta_{i,\text{stops,b}}}{|\beta_{i,\text{price}}|}, \qquad
+\text{WTP}_{i,\text{train stop}} = \frac{\beta_{i,\text{stops,t}}}{|\beta_{i,\text{price}}|}
+$$
+
+We approximate each by drawing $R = 1{,}000$ triples $(\eta_p, \eta_{sb}, \eta_{st})$ from the estimated distribution.
+
+```{julia}
+R = 1000
+Random.seed!(42)
+η_p_R  = randn(R)
+η_sb_R = randn(R)
+η_st_R = randn(R)
+
+b_p_hat  = θ_hat[9];  s_p_hat  = θ_hat[10]
+b_sb_hat = θ_hat[11]; s_sb_hat = θ_hat[12]
+b_st_hat = θ_hat[13]; s_st_hat = θ_hat[14]
+
+β_price_draws  = -exp.(b_p_hat  .+ s_p_hat  .* η_p_R)
+β_bstops_draws =  b_sb_hat .+ s_sb_hat .* η_sb_R
+β_tstops_draws =  b_st_hat .+ s_st_hat .* η_st_R
+
+WTP_bus_draws   = β_bstops_draws ./ abs.(β_price_draws)
+WTP_train_draws = β_tstops_draws ./ abs.(β_price_draws)
+
+E_WTP_bus   = mean(WTP_bus_draws)
+E_WTP_train = mean(WTP_train_draws)
+
+println("E[WTP bus stop]   (MC, R=$R): $(round(E_WTP_bus*100,   digits=2)) \$/year")
+println("E[WTP train stop] (MC, R=$R): $(round(E_WTP_train*100, digits=2)) \$/year")
+```
+
+## Analytical cross-check
+
+Since $\beta_{\text{stops,b}}$ and $\beta_{\text{price}}$ are independent:
+
+$$
+E[\text{WTP}_{\text{bus stop}}] = E[\beta_{\text{stops,b}}] \cdot E\!\left[\frac{1}{|\beta_{\text{price}}|}\right] = b_{sb} \cdot \exp\!\left(-b_p + \frac{s_p^2}{2}\right)
+$$
+
+and similarly $E[\text{WTP}_{\text{train stop}}] = b_{st} \cdot \exp(-b_p + s_p^2/2)$.
+
+The factor $\exp(-b_p + s_p^2/2)$ uses the log-normal moment $E[e^X] = e^{\mu + \sigma^2/2}$ with $X = -(b_p + s_p\eta_p) \sim N(-b_p, s_p^2)$.
+
+```{julia}
+lognormal_factor = exp(-b_p_hat + s_p_hat^2 / 2)
+
+E_WTP_bus_analytic   = b_sb_hat * lognormal_factor
+E_WTP_train_analytic = b_st_hat * lognormal_factor
+
+println("E[WTP bus stop]   (analytical): $(round(E_WTP_bus_analytic*100,   digits=2)) \$/year  " *
+        "MC diff: $(round(abs(E_WTP_bus   - E_WTP_bus_analytic)*100,   digits=3)) \$/yr")
+println("E[WTP train stop] (analytical): $(round(E_WTP_train_analytic*100, digits=2)) \$/year  " *
+        "MC diff: $(round(abs(E_WTP_train - E_WTP_train_analytic)*100, digits=3)) \$/yr")
+```
+
+Both should agree to within a few cents, confirming the MC integral has converged.
+
+
+# 5. Confidence intervals for WTP
+
+## Two approaches
+
+| Method | Key idea | Cost | Assumption |
+|:-------|:---------|:-----|:-----------|
+| **Bootstrap** | Resample data → re-optimize → recompute E[WTP] | High ($B$ re-optimizations) | Distribution-free |
+| **Krinsky & Robb (1986, 1990)** | Draw $\theta^{(k)} \sim N(\hat\theta, \hat V)$ → recompute E[WTP] | Low (no re-optimization) | Asymptotic normality of $\hat\theta$ |
+
+K&R is dramatically cheaper but relies on normality, which can fail for scale parameters near zero. Present both and compare.
+
+## Bootstrap CI for E[WTP]
+
+For each bootstrap replicate, we already have $\hat\theta_b$. Recompute E[WTP] using the same $R$ draws.
+
+```{julia}
+WTP_bus_boot   = zeros(B)
+WTP_train_boot = zeros(B)
+
+for b in 1:B
+    b_p_b  = boot_estimates[b, 9];  s_p_b  = boot_estimates[b, 10]
+    b_sb_b = boot_estimates[b, 11]; s_sb_b = boot_estimates[b, 12]
+    b_st_b = boot_estimates[b, 13]; s_st_b = boot_estimates[b, 14]
+
+    β_price_b  = -exp.(b_p_b  .+ s_p_b  .* η_p_R)
+    β_bstops_b =  b_sb_b .+ s_sb_b .* η_sb_R
+    β_tstops_b =  b_st_b .+ s_st_b .* η_st_R
+
+    WTP_bus_boot[b]   = mean(β_bstops_b ./ abs.(β_price_b))
+    WTP_train_boot[b] = mean(β_tstops_b ./ abs.(β_price_b))
+end
+
+println("Bootstrap 95% CI — E[WTP bus stop]:   [$(round(quantile(WTP_bus_boot,   0.025)*100, digits=2)), $(round(quantile(WTP_bus_boot,   0.975)*100, digits=2))] \$/yr")
+println("Bootstrap 95% CI — E[WTP train stop]: [$(round(quantile(WTP_train_boot, 0.025)*100, digits=2)), $(round(quantile(WTP_train_boot, 0.975)*100, digits=2))] \$/yr")
+```
+
+## Krinsky & Robb CI for WTP
+
+**Step 1:** Compute the Hessian of the simulated log-likelihood at $\hat\theta$ to obtain the asymptotic variance $\hat V = (-\nabla^2 \hat\ell)^{-1}$.
+
+```{julia}
+neg_msl_θ = θ -> neg_msl(θ)
+
+println("Computing Hessian via ForwardDiff (this may take ~1 min)...")
+t_hess = time()
+H = ForwardDiff.hessian(neg_msl_θ, θ_hat)
+println("Hessian done in $(round(time()-t_hess, digits=1)) seconds")
+
+V_hat = inv(H)
+
+evals = eigvals(V_hat)
+println("All eigenvalues of V̂ positive: $(all(evals .> 0))")
+println("Min eigenvalue: $(round(minimum(evals), digits=6))")
+```
+
+---
+
+**Step 2:** Draw $K = 5{,}000$ parameter vectors $\theta^{(k)} \sim \mathcal{N}(\hat\theta, \hat V)$.
+
+```{julia}
+K   = 5000
+mvn = MvNormal(θ_hat, Symmetric(V_hat))
+Θ_KR = rand(mvn, K)'   # K × 14 matrix
+
+WTP_bus_KR   = zeros(K)
+WTP_train_KR = zeros(K)
+
+for k in 1:K
+    b_p_k  = Θ_KR[k, 9];  s_p_k  = Θ_KR[k, 10]
+    b_sb_k = Θ_KR[k, 11]; s_sb_k = Θ_KR[k, 12]
+    b_st_k = Θ_KR[k, 13]; s_st_k = Θ_KR[k, 14]
+
+    β_price_k  = -exp.(b_p_k  .+ s_p_k  .* η_p_R)
+    β_bstops_k =  b_sb_k .+ s_sb_k .* η_sb_R
+    β_tstops_k =  b_st_k .+ s_st_k .* η_st_R
+
+    WTP_bus_KR[k]   = mean(β_bstops_k ./ abs.(β_price_k))
+    WTP_train_KR[k] = mean(β_tstops_k ./ abs.(β_price_k))
+end
+
+println("K&R 95% CI — E[WTP bus stop]:   [$(round(quantile(WTP_bus_KR,   0.025)*100, digits=2)), $(round(quantile(WTP_bus_KR,   0.975)*100, digits=2))] \$/yr")
+println("K&R 95% CI — E[WTP train stop]: [$(round(quantile(WTP_train_KR, 0.025)*100, digits=2)), $(round(quantile(WTP_train_KR, 0.975)*100, digits=2))] \$/yr")
+```
+
+## Side-by-side WTP comparison
+
+```{julia}
+wtp_compare = DataFrame(
+    WTP_for      = ["Bus stop", "Train stop", "Bus stop", "Train stop"],
+    Method       = ["Bootstrap", "Bootstrap", "Krinsky & Robb", "Krinsky & Robb"],
+    Point_est    = round.([E_WTP_bus, E_WTP_train, E_WTP_bus, E_WTP_train] .* 100, digits=2),
+    CI_lo        = round.([quantile(WTP_bus_boot,   0.025), quantile(WTP_train_boot, 0.025),
+                           quantile(WTP_bus_KR,     0.025), quantile(WTP_train_KR,   0.025)] .* 100, digits=2),
+    CI_hi        = round.([quantile(WTP_bus_boot,   0.975), quantile(WTP_train_boot, 0.975),
+                           quantile(WTP_bus_KR,     0.975), quantile(WTP_train_KR,   0.975)] .* 100, digits=2)
+)
+println(wtp_compare)
+```
+
+**Interpretation:** Bootstrap intervals are distribution-free — they resample the data and re-estimate, so they naturally account for any non-normality in $\hat\theta$. K&R is ~$B$ times cheaper (no re-optimization) but relies on asymptotic normality. For the scale parameters ($s_p$, $s_{sb}$, $s_{st}$), normality may be a poor approximation when $N$ is moderate, making bootstrap the safer choice.
+
+
+# 6. Welfare: compensating variation
+
+## Setting
+
+Same counterfactual as 8.3b: apply the estimated model to **non-rail cities**, then compute the gain from introducing a train option with prices 10% above the bus price and 10 stops.
+
+```{julia}
+ones_nr = ones(N_nr)
+X_b_nr  = hcat(ones_nr, Matrix{Float64}(df_nr[:, [:price_bus, :stops_bus, :density, :hhsize, :homeown]]))
+
+# Counterfactual train: price = 1.1 × bus price, 10 stops
+X_t_nr       = copy(X_b_nr)
+X_t_nr[:, 2] = 1.1 .* df_nr.price_bus   # price column
+X_t_nr[:, 3] = 10.0 .* ones_nr          # stops column
+```
+
+## Welfare formula under mixed logit
+
+$$
+\Delta CS_i = E_\eta\!\left[\frac{1}{|\beta_{i,\text{price}}(\eta)|}\left(\log\!\left(1 + e^{V_{ib}(\eta)} + e^{V_{it}(\eta)}\right) - \log\!\left(1 + e^{V_{ib}(\eta)}\right)\right)\right]
+$$
+
+Inner expectation over $(\eta_p, \eta_{sb}, \eta_{st})$ by MC ($R$ draws); outer average over individuals.
+
+Note: we use the **train stops** random coefficient for $V_{it}$ in the counterfactual, since the new train system would have train-stop-specific valuation.
+
+```{julia}
+function compute_mean_ΔCS(θ, X_b_c, X_t_c, η_p_d, η_sb_d, η_st_d)
+    R_c  = length(η_p_d)
+    N_c  = size(X_b_c, 1)
+    b_p_c  = θ[9];  s_p_c  = θ[10]
+    b_sb_c = θ[11]; s_sb_c = θ[12]
+    b_st_c = θ[13]; s_st_c = θ[14]
+    β_b_fx = θ[1:4]; β_t_fx = θ[5:8]
+
+    ΔCS_i = zeros(eltype(θ), N_c)
+
+    for r in 1:R_c
+        β_p_r  = -exp(b_p_c  + s_p_c  * η_p_d[r])
+        β_sb_r =      b_sb_c + s_sb_c * η_sb_d[r]
+        β_st_r =      b_st_c + s_st_c * η_st_d[r]
+
+        V_ib_r = (X_b_c[:, 1] .* β_b_fx[1]
+               .+ X_b_c[:, 2] .* β_p_r
+               .+ X_b_c[:, 3] .* β_sb_r    # bus stops × β_bstops
+               .+ X_b_c[:, 4] .* β_b_fx[2]
+               .+ X_b_c[:, 5] .* β_b_fx[3]
+               .+ X_b_c[:, 6] .* β_b_fx[4])
+
+        V_it_r = (X_t_c[:, 1] .* β_t_fx[1]
+               .+ X_t_c[:, 2] .* β_p_r
+               .+ X_t_c[:, 3] .* β_st_r    # train stops × β_tstops
+               .+ X_t_c[:, 4] .* β_t_fx[2]
+               .+ X_t_c[:, 5] .* β_t_fx[3]
+               .+ X_t_c[:, 6] .* β_t_fx[4])
+
+        log_with    = log.(1.0 .+ exp.(V_ib_r) .+ exp.(V_it_r))
+        log_without = log.(1.0 .+ exp.(V_ib_r))
+
+        ΔCS_i .+= (1.0 / abs(β_p_r)) .* (log_with .- log_without)
+    end
+
+    ΔCS_i ./= R_c
+    return mean(ΔCS_i), ΔCS_i
+end
+
+mean_ΔCS, ΔCS_i = compute_mean_ΔCS(θ_hat, X_b_nr, X_t_nr, η_p_R, η_sb_R, η_st_R)
+println("Mean ΔCS per commuter: $(round(mean_ΔCS*100, digits=2)) \$/year")
+println("Aggregate (2M commuters): $(round(mean_ΔCS*100*2e6/1e6, digits=1)) million \$/year")
+```
+
+## Heterogeneity in ΔCS
+
+A key message of mixed logit: we now have a *distribution* of welfare gains, not just a mean.
+
+```{julia}
+histogram(ΔCS_i .* 100,
+    xlabel = "ΔCS per commuter (\$/year)", ylabel = "Count", label = "",
+    title  = "Distribution of welfare gains from introducing trains")
+vline!([mean_ΔCS*100], label="Mean", linewidth=2, color=:red)
+```
+
+## Confidence intervals for mean ΔCS
+
+### Bootstrap CI
+
+```{julia}
+ΔCS_boot = zeros(B)
+for b in 1:B
+    ΔCS_boot[b], _ = compute_mean_ΔCS(boot_estimates[b, :], X_b_nr, X_t_nr, η_p_R, η_sb_R, η_st_R)
+end
+
+println("Bootstrap 95% CI for mean ΔCS: [$(round(quantile(ΔCS_boot, 0.025)*100, digits=2)), $(round(quantile(ΔCS_boot, 0.975)*100, digits=2))] \$/year")
+```
+
+### Krinsky & Robb CI
+
+Reuse the same $K$ parameter draws from the WTP step.
+
+```{julia}
+ΔCS_KR = zeros(K)
+for k in 1:K
+    ΔCS_KR[k], _ = compute_mean_ΔCS(Θ_KR[k, :], X_b_nr, X_t_nr, η_p_R, η_sb_R, η_st_R)
+end
+
+println("K&R 95% CI for mean ΔCS:       [$(round(quantile(ΔCS_KR, 0.025)*100, digits=2)), $(round(quantile(ΔCS_KR, 0.975)*100, digits=2))] \$/year")
+```
+
+## Side-by-side ΔCS comparison
+
+```{julia}
+cs_compare = DataFrame(
+    Method    = ["Bootstrap", "Krinsky & Robb"],
+    Mean_ΔCS  = [round(mean_ΔCS*100, digits=2), round(mean_ΔCS*100, digits=2)],
+    CI_lo     = [round(quantile(ΔCS_boot, 0.025)*100, digits=2),
+                 round(quantile(ΔCS_KR,   0.025)*100, digits=2)],
+    CI_hi     = [round(quantile(ΔCS_boot, 0.975)*100, digits=2),
+                 round(quantile(ΔCS_KR,   0.975)*100, digits=2)],
+    CI_width  = [round((quantile(ΔCS_boot, 0.975) - quantile(ΔCS_boot, 0.025))*100, digits=2),
+                 round((quantile(ΔCS_KR,   0.975) - quantile(ΔCS_KR,   0.025))*100, digits=2)]
+)
+println(cs_compare)
+```
+
+
+# 7. Comparison to MNL (8.3b)
+
+## Mixed logit vs. MNL
+
+The mixed logit and MNL were estimated on different data (N=500 vs N=2000 per city), so a perfect numerical match is not expected. The conceptual comparison is what matters.
+
+```{julia}
+# MNL benchmark: from 8.3b restricted model with common price coefficient
+# β_stops / |β_price| evaluated at σ = 0.8 scale
+WTP_bus_MNL   = 0.1 / 0.8   # β_b2 / |β_price| from 8.3b true params
+WTP_train_MNL = 0.2 / 0.8   # β_t2 / |β_price| from 8.3b true params
+
+comparison = DataFrame(
+    Quantity    = ["E[WTP bus stop] (\$/yr)", "E[WTP train stop] (\$/yr)", "Mean ΔCS (\$/yr)"],
+    Mixed_logit = [round(E_WTP_bus*100,   digits=2),
+                   round(E_WTP_train*100, digits=2),
+                   round(mean_ΔCS*100,    digits=2)],
+    MNL_8_3b    = [round(WTP_bus_MNL*100,   digits=2),
+                   round(WTP_train_MNL*100, digits=2),
+                   "see 8.3b"]
+)
+println(comparison)
+```
+
+**Key takeaways:**
+
+- Mixed logit gives a **distribution** of WTP and ΔCS, not just a point estimate — the ΔCS histogram above quantifies who benefits more and who benefits less from the new rail system
+- When heterogeneity is moderate ($s_p$, $s_{sb}$, $s_{st}$ not too large), the *mean* WTP from mixed logit is close to the MNL value — but now we know something MNL cannot tell us: how much that mean masks underlying heterogeneity
+- K&R intervals tend to align with MNL delta-method intervals when $\hat\theta$ is approximately normal; they diverge when scale parameters are weakly identified
+- Bus and train stops now have separate WTP distributions, reflecting their different valuation profiles — in 8.3b these were fixed and alternative-specific, here they are random and alternative-specific
+
+
+# Takeaways
+
+## What we learned
+
+1. **Random coefficients → intractable likelihood → MSL.** Pre-drawing $\eta$'s (common random numbers) and the log-sum-exp trick are the two critical implementation details. With 3 random coefficients, we need 3 η matrices — one per coefficient.
+
+2. **Bootstrap SEs resample decision-makers** (not cities, not observations — the distinction matters in clustered or panel data). Warm-starting from $\hat\theta$ is essential for computational feasibility.
+
+3. **Two paths to CIs for nonlinear functions of $\hat\theta$:**
+   - *Bootstrap*: distribution-free, robust for scale parameters near zero, but slow ($B$ re-optimizations)
+   - *Krinsky & Robb*: cheap (no re-optimization), relies on asymptotic normality, widely used for reporting WTP in demand studies
+
+4. **Mixed logit unlocks welfare heterogeneity.** The ΔCS distribution — not just its mean — is the economically meaningful output. Some commuters gain much more than others; policy analysis that ignores this distribution misses important equity considerations.
+
+5. **More parameters, more structure.** Going from 11 (MNL restricted) to 14 (mixed logit) parameters adds interpretable content: separate heterogeneity in bus-stop and train-stop valuations, plus heterogeneity in the price sensitivity. Each extra parameter comes with an identification cost — always check that scale parameters don't collapse to zero.

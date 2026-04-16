@@ -1,0 +1,407 @@
+---
+title: "AGEC 592 - Lecture 9.1"
+subtitle: "A brief survey of simulation-based methods"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_9_1_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_9_1_notes.html
+    toc: false
+    number-sections: true
+    # axe:
+    #   output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+## Course Roadmap {background-color="orange"}
+
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  [Function approximation (postponed)]{.gray}
+6.  [Structural estimation: Intro]{.gray}
+7.  [Generalized Method of Moments]{.gray}
+8.  [Maximum Likelihood Estimator]{.gray}
+8.  **Simulation-based methods**
+    1.  Bootstrapping, SML, & MSM
+    2.  Mixed logit tutorial
+
+
+## Main references for today {background-color="orange"}
+
+- Cameron & Trivedi (2005), Greene (2018)
+- Michael Creel's "Econometrics with Julia" (2025)
+
+
+# Why simulate?
+
+## Why simulate?
+
+- Much of this course has been based on how we can leverage modern computer power to relax modeling assumptions and work with complex mathematical objects
+- Although we have used numerical optimization methods to estimate MLE and GMM, much of the derivations have been based on tractable functional forms
+
+. . .
+
+- Yet again, many of those functional forms are there because they are convenient to work with analytically. But there are instances where such simplifications impose unrealistic restrictions on the model
+  - E.g., the multinomial logit model has a nice and tractable expression for probabilities. But it requires the IIA assumption, which imposes very limiting substitution patterns that largely ignore product characteristics
+
+## Why simulate?
+
+Simulation-based methods allow us to use computer power to work with mathematical objects that would be intractable otherwise. 
+For example
+
+- Bootstrapping let us obtain more accurate results with finite sample than what asymptotic theory gives us
+- Simulated Maximum Likelihood and the Method of Simulated Moments allow us to estimate models where the objective function may not have a closed-form solution
+  - In most cases, this refers to a difficult, high-dimensional integral. So, simulation here essentially means Monte Carlo integration!
+
+## Agenda
+
+- This lecture will be a short survey of simulation-based methods. We won't have time to see deeper details, so the plan is just to introduce the idea
+- Many popular extensions of the empirical models we saw in the course use these methods, so it's good to have a general understanding
+  - E.g., mixed logit/BLP, latent class choice models, etc
+
+. . .
+ 
+- We will cover the basics of
+  - Bootstrapping
+  - Maximum Simulated Likelihood
+  - Method of Simulated Moments
+
+
+# Bootstrapping
+
+
+## Issues with asymptotic variance estimators
+
+- We might be interested in the standard errors or confidence intervals of some function $f(\hat{\theta})$
+  - One solution is to use the *[Delta method](https://en.wikipedia.org/wiki/Delta_method)*: basically, a first-order Taylor expansion of the asymptotic variance of $\hat{\theta}$
+  - Another solution is to resample $B$ times from the data and estimate $\hat{\theta}_b$ for each resample $\rightarrow$ sample from the distribution of $\hat{\theta}$. This the **bootstrap** method
+  
+. . .
+
+- Consistent estimators might still have large bias in finite samples
+  - Bootstrapping is also useful to adjust for this type of bias (provided that the conditions for its correctness are satisfied)
+
+
+## Bootstrap: basic algorithm
+
+- Observations $(z_1, \dots, z_N)$ are drawn from some measure $P$, so we can form a nonparametric estimate $\hat{P}$ by assuming that each observation has weight $1/N$
+
+. . .
+
+Basic bootstrap algorithm:
+
+1. Simulate a new sample $Z^* = (z^*_1, \dots, z^*_N) \sim \hat{P}$. This is, draw $n$ values **with replacement** from our data
+  
+. . .
+
+2. Compute any statistic of $f(Z^*)$ you would like
+  - Could be something simple, like an OLS coefficient, or complicated, like Nash equilibrium parameters
+  
+. . .
+
+3. Repeat 1 and 2 $B$ times^[See Cameron & Trivedi for guidance on how to choose $B$.] and calculate $Var(f_b)$ or $CI(f_1, \dots, f_B)$
+
+
+
+## Bootstrap: bias correction
+
+
+Key idea: $\hat{\theta}^*_1, \dots, \hat{\theta}^*_B$ approximates the sampling distribution of $\hat{\theta}$
+
+. . .
+
+- We can then calculate 
+
+$$E[\hat{\theta}^*] = \bar{\theta^*} = \frac{1}{B} \sum^B_{b=1}\hat{\theta}^*_b$$
+
+
+
+## Bootstrap: bias correction
+
+- We can use $\bar{\theta^*}$ to bias correct our estimates
+  - Recall $\theta = E[\hat{\theta}] - Bias(\hat{\theta})$
+  - From bootstrap: $Bias_{bs}(\hat{\theta}) = \bar{\theta^*} - \hat{\theta}$
+
+Then, 
+
+$$\hat{\theta} - Bias_{bs}(\hat{\theta}) = \hat{\theta} - (\bar{\theta^*} - \hat{\theta}) = 2\hat{\theta} - \bar{\theta^*}$$
+
+. . .
+
+- Most nonlinear models are *consistent but biased*, especially in small samples
+  - But correcting bias is not for free: there's always the bias-variance trade-off
+
+
+
+## Bootstrap: variance
+
+We can also use the sampled values $\hat{\theta}^*_1, \dots, \hat{\theta}^*_B$ to calculate the **bootstrapped variance** of the estimator
+
+$$Var(\hat{\theta}^*) = \frac{1}{B-1} \sum^B_{b=1}(\hat{\theta}^*_b - \bar{\theta^*})^2$$
+
+
+
+
+## Bootstrap: confidence intervals
+
+We can also calculate **bootstrapped confidence intervals**. There are two basic ways
+
+1. Empirical quantiles (preferred with small samples)
+   - Sort values $\hat{\theta}^*_B$ and take
+
+$$CI: [\hat{\theta}^*_{\alpha/2}, \hat{\theta}^*_{1-\alpha/2}]$$
+
+. . .
+
+2. Asymptotical refinement (relies on CLT)
+
+$$CI: \hat{\theta} \pm 1.96 \sqrt{Var(\hat{\theta}^*)}$$
+
+
+
+## Bootstrap isn't magic
+
+Bootstrapped statistics are easy to program
+
+- But for complicated models, it can take a lot of time to resample and estimate multiple times
+  - Good thing though: this is highly parallelizable
+  
+. . .
+
+But bootstrapping isn't magic: it depends on asymptotic theory and will fail if you use it incorrectly
+
+- If you are constructing standard errors for something that isn't asymptotically normal, it won't work
+- It samples with replacement $=$ i.i.d. But if i.i.d. does not hold in your data, it might fail
+  - Common violations of i.i.d: time series, panel data, clusters, etc
+  - But it can be fixed in certain cases! See Cameron & Trivedi for examples of subsampling, block, and nested bootstrapping
+
+
+# Maximum Simulated Likelihood (MSL)
+
+## MSL motivation
+
+MSL is typically used when we don't have closed-form expressions for the likelihood function. Let's start with an example
+
+. . .
+
+- Let's get back to the Random Utility Model, only this time with a twist
+
+$$
+\begin{align}
+u_{ik} = X_{ik}\beta_i + \nu_{ik}, \\
+\mbox{with }\beta_i = \beta + \zeta_i
+\end{align}
+$$
+
+where $\zeta_i$ is a random variable with mean zero and distribution $F_\zeta$. 
+
+- This change yields a **nonlinear random parameter model**
+- It is the base for the mixed logit models and variations, for example
+
+## MSL motivation
+
+$$
+\begin{align}
+u_{ik} = X_{ik}\beta_i + \nu_{ik} \\
+\beta_i = \beta + \zeta_i
+\end{align}
+$$
+
+The challenge here is that, when we calculate the likelihood based on the probability of choosing, say, $k$ over the outside option $0$, we have
+
+$$
+P_{ik}(\beta) = \Pr[\epsilon_{ik} < - V_{i}|X_{ik}] = \Pr[\epsilon_{ik} < - X_{ik}(\beta + \zeta_i)|X_{ik}]
+$$ 
+
+where $\epsilon_{ik} = \nu_{ik} - \nu_{i0}$. But $\zeta_i$ is also a random variable, so this probability is much harder to calculate!
+
+
+## MSL motivation
+
+Assuming $\nu_{ik}\sim$ T1EV as before, we want to calculate an integral over $\zeta$ 
+
+$$
+\begin{align}
+P_{ik}(\beta) = \Pr[\epsilon_{ik} < -X_{ik}(\beta + \zeta_i)|X_{ik}] & = \int_{\zeta} \Pr[\epsilon_{ik} < -X_{ik}(\beta + z)|X_{ik}] f_\zeta(z)dz \\ 
+  & =  \int_{\zeta} \left[\int_{-\infty}^{-X_{ik}(\beta + z)}f_\epsilon(s)ds\right] f_\zeta(z)dz \\
+  & =  \int_{\zeta} \left[\frac{e^{X_{ik}(\beta + z)}}{1 + e^{X_{ik}(\beta + z)}} \right] f_\zeta(z)dz
+\end{align}
+$$
+
+where $f_\epsilon(s)=\frac{e^{-s}}{(1 + e^{-x})^2}$ is the standard logistic density and $f_\zeta$ is the density of $F_\zeta$.
+
+- Even for simple distributions, this integral will not have closed-form expressions, so it's analytically intractable!
+- Instead of working with those difficult (impossible?) integrals, MSL estimation relies on numerical approximations of $P_{ik}(\beta)$
+
+
+
+## MSL general idea
+
+In generic terms, MSL is motivated by the fact that we need to evaluate some density
+
+$$
+f(y|x, \theta) = \int_{Z} h(y|x, \theta, \zeta)f_\zeta(\zeta)d\zeta 
+$$
+
+where $h(\cdot)$ and $f_\zeta(\cdot)$ are known functions and $\zeta$ is a random variable (possibly a vector) with support $Z$ and density $f_\zeta$. 
+
+However, $f$ does not have a closed-form solution, so we can't program the MLE estimator directly
+
+$$
+\hat\theta_{MLE} \equiv \arg\max_\theta l(\theta) = \sum_{i=1}^N \ln f(y_i|x_i, \theta)
+$$
+
+## MSL general idea
+
+The key idea of MSL is to work with approximations of $f(y_i|x_i, \theta)$ instead
+
+- If we are integrating over a few dimensions, then deterministic approximations like the trapezoid rule or Gaussian quadrature could work
+- If the integral is over many dimensions, then Monte Carlo integration (and its variations) is the best feasible option
+  - In fact, these are generally preferred because their approximation errors have well-established statistical properties
+
+. . .
+
+For the latter case, in "MSL speak", we have a *Monte Carlo direct simulator*
+
+$$
+\hat{f}(y_i|x_i, \theta; \zeta_i^S) = \frac{1}{S}\sum_{s=1}^S h(y|x, \theta, \zeta_{i,s})
+$$
+
+where $\zeta_i^S$ is a vector of $S$ i.i.d. draws from the the distribution of $\zeta$ (thus, weighted by density $f_\zeta$)
+
+- This is just the standard Monte Carlo integration we saw in unit 2 of this course!
+
+
+
+## MSL general idea
+
+Therefore, the Maximum Simulated Likelihood estimator is given by
+
+$$
+\hat\theta_{MSL} \equiv \arg\max_\theta \hat{l}(\theta) = \sum_{i=1}^N \ln \hat{f}(y_i|x_i, \theta)
+$$
+
+- If $\hat{f}$ is differentiable, we can use the usual gradient-based optimization methods we saw in unit 4
+  - But beware that we need to calculate numerical derivatives of a numerical integral, so we need a lot of draws to have accurate approximations $\hat{f}$
+
+. . .
+
+- It can be shown that the MSL is asymptotically equivalent to the MLE if $N,S \rightarrow \infty$ and $\sqrt{N}/S \rightarrow 0$
+- However, even if the MSL is consistent, the variance of the estimator can be inflated due to approximation error in the simulation
+
+# Method of Simulated Moments
+
+## MSM motivation
+
+- The key idea of MSM are quite similar to MSL: we have an analytically intractable objective function that we will approximate via simulation
+- Recall that the "standard" Method of Moments relies on moment conditions of the form
+
+$$
+E[g(y_i, x_i, \theta)] = 0
+$$
+
+for which the sample analogue is
+
+$$
+\frac{1}{N}\sum_{i=1}^{N}g(y_i, x_i, \theta) = 0
+$$
+
+## MSM motivation
+
+Suppose, for example, that we are modeling some optimal decision agents make
+
+$$
+y_i^* = f(x_i, \theta)
+$$
+
+So, one of our moment conditions could be
+
+$$
+E[g(y_i, x_i, \theta)] = E[x_i \times (y_i - f(x_i, \theta))] = 0
+$$
+
+where $x_i$ is a vector of observed characteristics and $\theta$ is a vector of model parameters.
+
+- I.e., under the true parameter $\theta$, the observed optimal choices on average match the choices predicted by our model
+  - For the column of 1s (intercept), this is a zero-mean residual condition
+  - For the other elements in $x_i$, this is an orthogonality condition
+
+
+## MSM motivation
+
+- However, many models might yield moment functions that do not have closed form expressions
+- For example, suppose instead that agents make an optimal decisions 
+
+$$
+y_i^* = f(x_i, \theta, \zeta_i)
+$$
+
+where $\zeta_i$ is an unobserved random variable that affects decision-making and has distribution $F_\zeta$.
+
+. . .
+
+In this case, the moment condition becomes
+
+$$
+E[g(y_i, x_i, \theta)] = E\left[x_i\times E_\zeta[y_i - f(x_i, \theta, \zeta_i)]\right] = E\left[x_i\times\left(y_i - \int_{\zeta}  f(x_i, \theta, \zeta_i) f_\zeta(z)dz \right)\right]
+$$
+
+So moment function $g$ might not have a closed-form solution except in very fortunate/simplistic cases.
+
+## MSM general idea
+
+- Once again, we will replace this complicated integral by an approximation
+- If we use the Monte Carlo simulator, it yields
+
+$$
+\hat{g}(y_i, x_i, \theta; \zeta_i^S) = \frac{1}{S}\sum_{s=1}^S g(y_i,x_i, \theta, \zeta_{i,s})
+$$
+
+where $\zeta_i^S$ again is a vector of $S$ i.i.d. draws from the the distribution of $\zeta$.
+
+. . .
+
+This gives the MSM estimator
+
+$$
+\hat\theta_{MSM} \equiv \arg\min_\theta \left[\frac{1}{N}\sum_{i=1}^N \hat{g}(y_i, x_i, \theta; \zeta_i^S) \right]^\prime \left[\frac{1}{N}\sum_{i=1}^N \hat{g}(y_i, x_i, \theta; \zeta_i^S) \right]
+$$
+
+
+## MSM general idea
+
+$$
+\hat\theta_{MSM} \equiv \arg\min_\theta \left[\frac{1}{N}\sum_{i=1}^N \hat{g}(y_i, x_i, \theta; \zeta_i^S) \right]^\prime \left[\frac{1}{N}\sum_{i=1}^N \hat{g}(y_i, x_i, \theta; \zeta_i^S) \right]
+$$
+
+- It can be shown that under the same assumptions of the Method of Moments and an unbiased simulator, the MSM estimator is consistent and asymptotically normal **even with a fixed S**
+  - So, technically, MSM will be consistent even with $S=1$
+  - But approximation/simulation errors substantially increase the variance of the estimator, so we still want to have a high number of $S$ draws
+
+## Up next
+
+- This concludes our short survey of simulation methods
+- Of course, there's a lot more to learn about these methods!
+- In the next and "final" part of our course, we will go over mixed logit models to see simulation-based estimation in action, and to see how it can be used to relax the IIA assumption of the multinomial logit model

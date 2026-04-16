@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="9_1_Simulation_based_summary_files/libs/clipboard/clipboard.min.js"></script>
+<script src="9_1_Simulation_based_summary_files/libs/quarto-html/tabby.min.js"></script>
+<script src="9_1_Simulation_based_summary_files/libs/quarto-html/popper.min.js"></script>
+<script src="9_1_Simulation_based_summary_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="9_1_Simulation_based_summary_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="9_1_Simulation_based_summary_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="9_1_Simulation_based_summary_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Diego S. Cardoso">
+  <title>AGEC 592 - Lecture 9.1</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="9_1_Simulation_based_summary_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="9_1_Simulation_based_summary_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="9_1_Simulation_based_summary_files/libs/revealjs/dist/theme/quarto-7ed0139e1fda49eecd9b2d5bc445076f.css">
+  <link href="9_1_Simulation_based_summary_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="9_1_Simulation_based_summary_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="9_1_Simulation_based_summary_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="9_1_Simulation_based_summary_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="9_1_Simulation_based_summary_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="9_1_Simulation_based_summary_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">AGEC 592 - Lecture 9.1</h1>
+  <p class="subtitle">A brief survey of simulation-based methods</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Diego S. Cardoso 
+</div>
+        <p class="quarto-title-affiliation">
+            University of Illinois Urbana-Champaign
+          </p>
+    </div>
+</div>
+
+</section>
+<section id="course-roadmap" class="slide level2" data-background-color="orange">
+<h2>Course Roadmap</h2>
+<ol type="1">
+<li><span class="gray">Introduction to Scientific Computing</span></li>
+<li><span class="gray">Fundamentals of numerical methods</span></li>
+<li><span class="gray">Systems of equations</span></li>
+<li><span class="gray">Optimization</span></li>
+<li><span class="gray">Function approximation (postponed)</span></li>
+<li><span class="gray">Structural estimation: Intro</span></li>
+<li><span class="gray">Generalized Method of Moments</span></li>
+<li><span class="gray">Maximum Likelihood Estimator</span></li>
+<li><strong>Simulation-based methods</strong>
+<ol type="1">
+<li>Bootstrapping, SML, &amp; MSM</li>
+<li>Mixed logit tutorial</li>
+</ol></li>
+</ol>
+</section>
+<section id="main-references-for-today" class="slide level2" data-background-color="orange">
+<h2>Main references for today</h2>
+<ul>
+<li>Cameron &amp; Trivedi (2005), Greene (2018)</li>
+<li>Michael Creel’s “Econometrics with Julia” (2025)</li>
+</ul>
+</section>
+<section>
+<section id="why-simulate" class="title-slide slide level1 center">
+<h1>Why simulate?</h1>
+
+</section>
+<section id="why-simulate-1" class="slide level2">
+<h2>Why simulate?</h2>
+<ul>
+<li>Much of this course has been based on how we can leverage modern computer power to relax modeling assumptions and work with complex mathematical objects</li>
+<li>Although we have used numerical optimization methods to estimate MLE and GMM, much of the derivations have been based on tractable functional forms</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Yet again, many of those functional forms are there because they are convenient to work with analytically. But there are instances where such simplifications impose unrealistic restrictions on the model
+<ul>
+<li>E.g., the multinomial logit model has a nice and tractable expression for probabilities. But it requires the IIA assumption, which imposes very limiting substitution patterns that largely ignore product characteristics</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="why-simulate-2" class="slide level2">
+<h2>Why simulate?</h2>
+<p>Simulation-based methods allow us to use computer power to work with mathematical objects that would be intractable otherwise. For example</p>
+<ul>
+<li>Bootstrapping let us obtain more accurate results with finite sample than what asymptotic theory gives us</li>
+<li>Simulated Maximum Likelihood and the Method of Simulated Moments allow us to estimate models where the objective function may not have a closed-form solution
+<ul>
+<li>In most cases, this refers to a difficult, high-dimensional integral. So, simulation here essentially means Monte Carlo integration!</li>
+</ul></li>
+</ul>
+</section>
+<section id="agenda" class="slide level2">
+<h2>Agenda</h2>
+<ul>
+<li>This lecture will be a short survey of simulation-based methods. We won’t have time to see deeper details, so the plan is just to introduce the idea</li>
+<li>Many popular extensions of the empirical models we saw in the course use these methods, so it’s good to have a general understanding
+<ul>
+<li>E.g., mixed logit/BLP, latent class choice models, etc</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>We will cover the basics of
+<ul>
+<li>Bootstrapping</li>
+<li>Maximum Simulated Likelihood</li>
+<li>Method of Simulated Moments</li>
+</ul></li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="bootstrapping" class="title-slide slide level1 center">
+<h1>Bootstrapping</h1>
+
+</section>
+<section id="issues-with-asymptotic-variance-estimators" class="slide level2">
+<h2>Issues with asymptotic variance estimators</h2>
+<ul>
+<li>We might be interested in the standard errors or confidence intervals of some function <span class="math inline">\(f(\hat{\theta})\)</span>
+<ul>
+<li>One solution is to use the <em><a href="https://en.wikipedia.org/wiki/Delta_method">Delta method</a></em>: basically, a first-order Taylor expansion of the asymptotic variance of <span class="math inline">\(\hat{\theta}\)</span></li>
+<li>Another solution is to resample <span class="math inline">\(B\)</span> times from the data and estimate <span class="math inline">\(\hat{\theta}_b\)</span> for each resample <span class="math inline">\(\rightarrow\)</span> sample from the distribution of <span class="math inline">\(\hat{\theta}\)</span>. This the <strong>bootstrap</strong> method</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Consistent estimators might still have large bias in finite samples
+<ul>
+<li>Bootstrapping is also useful to adjust for this type of bias (provided that the conditions for its correctness are satisfied)</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="bootstrap-basic-algorithm" class="slide level2">
+<h2>Bootstrap: basic algorithm</h2>
+<ul>
+<li>Observations <span class="math inline">\((z_1, \dots, z_N)\)</span> are drawn from some measure <span class="math inline">\(P\)</span>, so we can form a nonparametric estimate <span class="math inline">\(\hat{P}\)</span> by assuming that each observation has weight <span class="math inline">\(1/N\)</span></li>
+</ul>
+<div class="fragment">
+<p>Basic bootstrap algorithm:</p>
+<ol type="1">
+<li>Simulate a new sample <span class="math inline">\(Z^* = (z^*_1, \dots, z^*_N) \sim \hat{P}\)</span>. This is, draw <span class="math inline">\(n\)</span> values <strong>with replacement</strong> from our data</li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="2" type="1">
+<li>Compute any statistic of <span class="math inline">\(f(Z^*)\)</span> you would like</li>
+</ol>
+<ul>
+<li>Could be something simple, like an OLS coefficient, or complicated, like Nash equilibrium parameters</li>
+</ul>
+</div>
+<div class="fragment">
+<ol start="3" type="1">
+<li>Repeat 1 and 2 <span class="math inline">\(B\)</span> times<sup>1</sup> and calculate <span class="math inline">\(Var(f_b)\)</span> or <span class="math inline">\(CI(f_1, \dots, f_B)\)</span></li>
+</ol>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>See Cameron &amp; Trivedi for guidance on how to choose <span class="math inline">\(B\)</span>.</p></li></ol></aside></section>
+<section id="bootstrap-bias-correction" class="slide level2">
+<h2>Bootstrap: bias correction</h2>
+<p>Key idea: <span class="math inline">\(\hat{\theta}^*_1, \dots, \hat{\theta}^*_B\)</span> approximates the sampling distribution of <span class="math inline">\(\hat{\theta}\)</span></p>
+<div class="fragment">
+<ul>
+<li>We can then calculate</li>
+</ul>
+<p><span class="math display">\[E[\hat{\theta}^*] = \bar{\theta^*} = \frac{1}{B} \sum^B_{b=1}\hat{\theta}^*_b\]</span></p>
+</div>
+</section>
+<section id="bootstrap-bias-correction-1" class="slide level2">
+<h2>Bootstrap: bias correction</h2>
+<ul>
+<li>We can use <span class="math inline">\(\bar{\theta^*}\)</span> to bias correct our estimates
+<ul>
+<li>Recall <span class="math inline">\(\theta = E[\hat{\theta}] - Bias(\hat{\theta})\)</span></li>
+<li>From bootstrap: <span class="math inline">\(Bias_{bs}(\hat{\theta}) = \bar{\theta^*} - \hat{\theta}\)</span></li>
+</ul></li>
+</ul>
+<p>Then,</p>
+<p><span class="math display">\[\hat{\theta} - Bias_{bs}(\hat{\theta}) = \hat{\theta} - (\bar{\theta^*} - \hat{\theta}) = 2\hat{\theta} - \bar{\theta^*}\]</span></p>
+<div class="fragment">
+<ul>
+<li>Most nonlinear models are <em>consistent but biased</em>, especially in small samples
+<ul>
+<li>But correcting bias is not for free: there’s always the bias-variance trade-off</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="bootstrap-variance" class="slide level2">
+<h2>Bootstrap: variance</h2>
+<p>We can also use the sampled values <span class="math inline">\(\hat{\theta}^*_1, \dots, \hat{\theta}^*_B\)</span> to calculate the <strong>bootstrapped variance</strong> of the estimator</p>
+<p><span class="math display">\[Var(\hat{\theta}^*) = \frac{1}{B-1} \sum^B_{b=1}(\hat{\theta}^*_b - \bar{\theta^*})^2\]</span></p>
+</section>
+<section id="bootstrap-confidence-intervals" class="slide level2">
+<h2>Bootstrap: confidence intervals</h2>
+<p>We can also calculate <strong>bootstrapped confidence intervals</strong>. There are two basic ways</p>
+<ol type="1">
+<li>Empirical quantiles (preferred with small samples)
+<ul>
+<li>Sort values <span class="math inline">\(\hat{\theta}^*_B\)</span> and take</li>
+</ul></li>
+</ol>
+<p><span class="math display">\[CI: [\hat{\theta}^*_{\alpha/2}, \hat{\theta}^*_{1-\alpha/2}]\]</span></p>
+<div class="fragment">
+<ol start="2" type="1">
+<li>Asymptotical refinement (relies on CLT)</li>
+</ol>
+<p><span class="math display">\[CI: \hat{\theta} \pm 1.96 \sqrt{Var(\hat{\theta}^*)}\]</span></p>
+</div>
+</section>
+<section id="bootstrap-isnt-magic" class="slide level2">
+<h2>Bootstrap isn’t magic</h2>
+<p>Bootstrapped statistics are easy to program</p>
+<ul>
+<li>But for complicated models, it can take a lot of time to resample and estimate multiple times
+<ul>
+<li>Good thing though: this is highly parallelizable</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<p>But bootstrapping isn’t magic: it depends on asymptotic theory and will fail if you use it incorrectly</p>
+<ul>
+<li>If you are constructing standard errors for something that isn’t asymptotically normal, it won’t work</li>
+<li>It samples with replacement <span class="math inline">\(=\)</span> i.i.d. But if i.i.d. does not hold in your data, it might fail
+<ul>
+<li>Common violations of i.i.d: time series, panel data, clusters, etc</li>
+<li>But it can be fixed in certain cases! See Cameron &amp; Trivedi for examples of subsampling, block, and nested bootstrapping</li>
+</ul></li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="maximum-simulated-likelihood-msl" class="title-slide slide level1 center">
+<h1>Maximum Simulated Likelihood (MSL)</h1>
+
+</section>
+<section id="msl-motivation" class="slide level2">
+<h2>MSL motivation</h2>
+<p>MSL is typically used when we don’t have closed-form expressions for the likelihood function. Let’s start with an example</p>
+<div class="fragment">
+<ul>
+<li>Let’s get back to the Random Utility Model, only this time with a twist</li>
+</ul>
+<p><span class="math display">\[
+\begin{align}
+u_{ik} = X_{ik}\beta_i + \nu_{ik}, \\
+\mbox{with }\beta_i = \beta + \zeta_i
+\end{align}
+\]</span></p>
+<p>where <span class="math inline">\(\zeta_i\)</span> is a random variable with mean zero and distribution <span class="math inline">\(F_\zeta\)</span>.</p>
+<ul>
+<li>This change yields a <strong>nonlinear random parameter model</strong></li>
+<li>It is the base for the mixed logit models and variations, for example</li>
+</ul>
+</div>
+</section>
+<section id="msl-motivation-1" class="slide level2">
+<h2>MSL motivation</h2>
+<p><span class="math display">\[
+\begin{align}
+u_{ik} = X_{ik}\beta_i + \nu_{ik} \\
+\beta_i = \beta + \zeta_i
+\end{align}
+\]</span></p>
+<p>The challenge here is that, when we calculate the likelihood based on the probability of choosing, say, <span class="math inline">\(k\)</span> over the outside option <span class="math inline">\(0\)</span>, we have</p>
+<p><span class="math display">\[
+P_{ik}(\beta) = \Pr[\epsilon_{ik} &lt; - V_{i}|X_{ik}] = \Pr[\epsilon_{ik} &lt; - X_{ik}(\beta + \zeta_i)|X_{ik}]
+\]</span></p>
+<p>where <span class="math inline">\(\epsilon_{ik} = \nu_{ik} - \nu_{i0}\)</span>. But <span class="math inline">\(\zeta_i\)</span> is also a random variable, so this probability is much harder to calculate!</p>
+</section>
+<section id="msl-motivation-2" class="slide level2">
+<h2>MSL motivation</h2>
+<p>Assuming <span class="math inline">\(\nu_{ik}\sim\)</span> T1EV as before, we want to calculate an integral over <span class="math inline">\(\zeta\)</span></p>
+<p><span class="math display">\[
+\begin{align}
+P_{ik}(\beta) = \Pr[\epsilon_{ik} &lt; -X_{ik}(\beta + \zeta_i)|X_{ik}] &amp; = \int_{\zeta} \Pr[\epsilon_{ik} &lt; -X_{ik}(\beta + z)|X_{ik}] f_\zeta(z)dz \\
+  &amp; =  \int_{\zeta} \left[\int_{-\infty}^{-X_{ik}(\beta + z)}f_\epsilon(s)ds\right] f_\zeta(z)dz \\
+  &amp; =  \int_{\zeta} \left[\frac{e^{X_{ik}(\beta + z)}}{1 + e^{X_{ik}(\beta + z)}} \right] f_\zeta(z)dz
+\end{align}
+\]</span></p>
+<p>where <span class="math inline">\(f_\epsilon(s)=\frac{e^{-s}}{(1 + e^{-x})^2}\)</span> is the standard logistic density and <span class="math inline">\(f_\zeta\)</span> is the density of <span class="math inline">\(F_\zeta\)</span>.</p>
+<ul>
+<li>Even for simple distributions, this integral will not have closed-form expressions, so it’s analytically intractable!</li>
+<li>Instead of working with those difficult (impossible?) integrals, MSL estimation relies on numerical approximations of <span class="math inline">\(P_{ik}(\beta)\)</span></li>
+</ul>
+</section>
+<section id="msl-general-idea" class="slide level2">
+<h2>MSL general idea</h2>
+<p>In generic terms, MSL is motivated by the fact that we need to evaluate some density</p>
+<p><span class="math display">\[
+f(y|x, \theta) = \int_{Z} h(y|x, \theta, \zeta)f_\zeta(\zeta)d\zeta
+\]</span></p>
+<p>where <span class="math inline">\(h(\cdot)\)</span> and <span class="math inline">\(f_\zeta(\cdot)\)</span> are known functions and <span class="math inline">\(\zeta\)</span> is a random variable (possibly a vector) with support <span class="math inline">\(Z\)</span> and density <span class="math inline">\(f_\zeta\)</span>.</p>
+<p>However, <span class="math inline">\(f\)</span> does not have a closed-form solution, so we can’t program the MLE estimator directly</p>
+<p><span class="math display">\[
+\hat\theta_{MLE} \equiv \arg\max_\theta l(\theta) = \sum_{i=1}^N \ln f(y_i|x_i, \theta)
+\]</span></p>
+</section>
+<section id="msl-general-idea-1" class="slide level2">
+<h2>MSL general idea</h2>
+<p>The key idea of MSL is to work with approximations of <span class="math inline">\(f(y_i|x_i, \theta)\)</span> instead</p>
+<ul>
+<li>If we are integrating over a few dimensions, then deterministic approximations like the trapezoid rule or Gaussian quadrature could work</li>
+<li>If the integral is over many dimensions, then Monte Carlo integration (and its variations) is the best feasible option
+<ul>
+<li>In fact, these are generally preferred because their approximation errors have well-established statistical properties</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<p>For the latter case, in “MSL speak”, we have a <em>Monte Carlo direct simulator</em></p>
+<p><span class="math display">\[
+\hat{f}(y_i|x_i, \theta; \zeta_i^S) = \frac{1}{S}\sum_{s=1}^S h(y|x, \theta, \zeta_{i,s})
+\]</span></p>
+<p>where <span class="math inline">\(\zeta_i^S\)</span> is a vector of <span class="math inline">\(S\)</span> i.i.d. draws from the the distribution of <span class="math inline">\(\zeta\)</span> (thus, weighted by density <span class="math inline">\(f_\zeta\)</span>)</p>
+<ul>
+<li>This is just the standard Monte Carlo integration we saw in unit 2 of this course!</li>
+</ul>
+</div>
+</section>
+<section id="msl-general-idea-2" class="slide level2">
+<h2>MSL general idea</h2>
+<p>Therefore, the Maximum Simulated Likelihood estimator is given by</p>
+<p><span class="math display">\[
+\hat\theta_{MSL} \equiv \arg\max_\theta \hat{l}(\theta) = \sum_{i=1}^N \ln \hat{f}(y_i|x_i, \theta)
+\]</span></p>
+<ul>
+<li>If <span class="math inline">\(\hat{f}\)</span> is differentiable, we can use the usual gradient-based optimization methods we saw in unit 4
+<ul>
+<li>But beware that we need to calculate numerical derivatives of a numerical integral, so we need a lot of draws to have accurate approximations <span class="math inline">\(\hat{f}\)</span></li>
+</ul></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>It can be shown that the MSL is asymptotically equivalent to the MLE if <span class="math inline">\(N,S \rightarrow \infty\)</span> and <span class="math inline">\(\sqrt{N}/S \rightarrow 0\)</span></li>
+<li>However, even if the MSL is consistent, the variance of the estimator can be inflated due to approximation error in the simulation</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="method-of-simulated-moments" class="title-slide slide level1 center">
+<h1>Method of Simulated Moments</h1>
+
+</section>
+<section id="msm-motivation" class="slide level2">
+<h2>MSM motivation</h2>
+<ul>
+<li>The key idea of MSM are quite similar to MSL: we have an analytically intractable objective function that we will approximate via simulation</li>
+<li>Recall that the “standard” Method of Moments relies on moment conditions of the form</li>
+</ul>
+<p><span class="math display">\[
+E[g(y_i, x_i, \theta)] = 0
+\]</span></p>
+<p>for which the sample analogue is</p>
+<p><span class="math display">\[
+\frac{1}{N}\sum_{i=1}^{N}g(y_i, x_i, \theta) = 0
+\]</span></p>
+</section>
+<section id="msm-motivation-1" class="slide level2">
+<h2>MSM motivation</h2>
+<p>Suppose, for example, that we are modeling some optimal decision agents make</p>
+<p><span class="math display">\[
+y_i^* = f(x_i, \theta)
+\]</span></p>
+<p>So, one of our moment conditions could be</p>
+<p><span class="math display">\[
+E[g(y_i, x_i, \theta)] = E[x_i \times (y_i - f(x_i, \theta))] = 0
+\]</span></p>
+<p>where <span class="math inline">\(x_i\)</span> is a vector of observed characteristics and <span class="math inline">\(\theta\)</span> is a vector of model parameters.</p>
+<ul>
+<li>I.e., under the true parameter <span class="math inline">\(\theta\)</span>, the observed optimal choices on average match the choices predicted by our model
+<ul>
+<li>For the column of 1s (intercept), this is a zero-mean residual condition</li>
+<li>For the other elements in <span class="math inline">\(x_i\)</span>, this is an orthogonality condition</li>
+</ul></li>
+</ul>
+</section>
+<section id="msm-motivation-2" class="slide level2">
+<h2>MSM motivation</h2>
+<ul>
+<li>However, many models might yield moment functions that do not have closed form expressions</li>
+<li>For example, suppose instead that agents make an optimal decisions</li>
+</ul>
+<p><span class="math display">\[
+y_i^* = f(x_i, \theta, \zeta_i)
+\]</span></p>
+<p>where <span class="math inline">\(\zeta_i\)</span> is an unobserved random variable that affects decision-making and has distribution <span class="math inline">\(F_\zeta\)</span>.</p>
+<div class="fragment">
+<p>In this case, the moment condition becomes</p>
+<p><span class="math display">\[
+E[g(y_i, x_i, \theta)] = E\left[x_i\times E_\zeta[y_i - f(x_i, \theta, \zeta_i)]\right] = E\left[x_i\times\left(y_i - \int_{\zeta}  f(x_i, \theta, \zeta_i) f_\zeta(z)dz \right)\right]
+\]</span></p>
+<p>So moment function <span class="math inline">\(g\)</span> might not have a closed-form solution except in very fortunate/simplistic cases.</p>
+</div>
+</section>
+<section id="msm-general-idea" class="slide level2">
+<h2>MSM general idea</h2>
+<ul>
+<li>Once again, we will replace this complicated integral by an approximation</li>
+<li>If we use the Monte Carlo simulator, it yields</li>
+</ul>
+<p><span class="math display">\[
+\hat{g}(y_i, x_i, \theta; \zeta_i^S) = \frac{1}{S}\sum_{s=1}^S g(y_i,x_i, \theta, \zeta_{i,s})
+\]</span></p>
+<p>where <span class="math inline">\(\zeta_i^S\)</span> again is a vector of <span class="math inline">\(S\)</span> i.i.d. draws from the the distribution of <span class="math inline">\(\zeta\)</span>.</p>
+<div class="fragment">
+<p>This gives the MSM estimator</p>
+<p><span class="math display">\[
+\hat\theta_{MSM} \equiv \arg\min_\theta \left[\frac{1}{N}\sum_{i=1}^N \hat{g}(y_i, x_i, \theta; \zeta_i^S) \right]^\prime \left[\frac{1}{N}\sum_{i=1}^N \hat{g}(y_i, x_i, \theta; \zeta_i^S) \right]
+\]</span></p>
+</div>
+</section>
+<section id="msm-general-idea-1" class="slide level2">
+<h2>MSM general idea</h2>
+<p><span class="math display">\[
+\hat\theta_{MSM} \equiv \arg\min_\theta \left[\frac{1}{N}\sum_{i=1}^N \hat{g}(y_i, x_i, \theta; \zeta_i^S) \right]^\prime \left[\frac{1}{N}\sum_{i=1}^N \hat{g}(y_i, x_i, \theta; \zeta_i^S) \right]
+\]</span></p>
+<ul>
+<li>It can be shown that under the same assumptions of the Method of Moments and an unbiased simulator, the MSM estimator is consistent and asymptotically normal <strong>even with a fixed S</strong>
+<ul>
+<li>So, technically, MSM will be consistent even with <span class="math inline">\(S=1\)</span></li>
+<li>But approximation/simulation errors substantially increase the variance of the estimator, so we still want to have a high number of <span class="math inline">\(S\)</span> draws</li>
+</ul></li>
+</ul>
+</section>
+<section id="up-next" class="slide level2">
+<h2>Up next</h2>
+<ul>
+<li>This concludes our short survey of simulation methods</li>
+<li>Of course, there’s a lot more to learn about these methods!</li>
+<li>In the next and “final” part of our course, we will go over mixed logit models to see simulation-based estimation in action, and to see how it can be used to relax the IIA assumption of the multinomial logit model</li>
+</ul>
+
+</section></section>
+
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="9_1_Simulation_based_summary_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true,"theme":"whiteboard","chalkEffect":0.1},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
