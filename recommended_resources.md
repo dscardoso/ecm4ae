@@ -175,9 +175,9 @@ Econometrics:
 
 ### Readings
 
-- [CT05] Chapters 11 and 12
-- [G18] Chapter 15
-- [Michael Creel's lecture notes](https://github.com/mcreel/Econometrics), Ch. 22
+- [CT05] Chapters 5
+- [G18] Chapter 14
+- [Michael Creel's lecture notes](https://github.com/mcreel/Econometrics), Ch. 15
 - Appendix from Hortaçsu, A., & Joo, J. (2023). Structural econometric modeling in industrial organization and quantitative marketing: theory and applications. 
 
 For discrete choice modeling:
@@ -185,3 +185,12 @@ For discrete choice modeling:
 - Hortaçsu, A., & Joo, J. (2023). Structural econometric modeling in industrial organization and quantitative marketing: theory and applications. Ch. 2.1 and 2.2
 - Train, K. (2009). Discrete Choice Methods with Simulation. Available at [https://eml.berkeley.edu/books/choice2.html](https://eml.berkeley.edu/books/choice2.html)
 
+
+## Unit 9: Simulation-Based Estimation
+
+### Readings
+
+- [CT05] Chapters 11 and 12
+- [G18] Chapter 15
+- [Michael Creel's lecture notes](https://github.com/mcreel/Econometrics), Ch. 18
+- Appendix from Hortaçsu, A., & Joo, J. (2023). Structural econometric modeling in industrial organization and quantitative marketing: theory and applications. 
