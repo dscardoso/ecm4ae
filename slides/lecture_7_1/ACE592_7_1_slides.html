@@ -595,7 +595,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <section id="gmm-in-practice-fake-data" class="slide level2">
 <h2>GMM in practice: fake data</h2>
 <p>Let’s generate fake data for our estimation assuming true values <span class="math inline">\(\beta_0 = 2, \beta_1 = 3, \sigma = 1.5\)</span></p>
-<div id="63189edf" class="cell" data-execution_count="1">
+<div id="63189edf" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href=""></a><span class="im">using</span> <span class="bu">Statistics</span>, <span class="bu">Random</span></span>
 <span id="cb1-2"><a href=""></a><span class="co"># Generate some synthetic data for illustration</span></span>
 <span id="cb1-3"><a href=""></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">592</span>) <span class="co"># Set random seed for reproducibility</span></span>
@@ -657,7 +657,7 @@ g\left(y_i, x_i; \theta\right) = g\left(\left[\begin{matrix}\beta_0 \\ \beta_1\e
 <section id="gmm-in-practice-moment-conditions-1" class="slide level2">
 <h2>GMM in practice: moment conditions</h2>
 <p>Next, we program function <code>g_i(θ)</code> that receives parameter vector <span class="math inline">\(\theta\)</span> and returns those two moment conditions for all observations (<span class="math inline">\(N \times 2\)</span> matrix).</p>
-<div id="bcc14437" class="cell" data-execution_count="2">
+<div id="bcc14437" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href=""></a><span class="kw">function</span> <span class="fu">g_i</span>(θ; Y <span class="op">=</span> Y, X <span class="op">=</span> X)</span>
 <span id="cb3-2"><a href=""></a>  β_0, β_1 <span class="op">=</span> θ <span class="co"># Unpack parameters</span></span>
 <span id="cb3-3"><a href=""></a>  ϵ <span class="op">=</span> Y <span class="op">.-</span> β_0 <span class="op">.-</span> β_1 <span class="op">.*</span> X</span>
@@ -666,7 +666,7 @@ g\left(y_i, x_i; \theta\right) = g\left(\left[\begin{matrix}\beta_0 \\ \beta_1\e
 </div>
 <div class="fragment">
 <p>Testing with some parameter values.</p>
-<div id="3a21e7a6" class="cell" data-execution_count="3">
+<div id="3a21e7a6" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href=""></a>G <span class="op">=</span> <span class="fu">g_i</span>([<span class="fl">0.0</span>, <span class="fl">0.0</span>], Y<span class="op">=</span>Y, X<span class="op">=</span>X);</span>
 <span id="cb4-2"><a href=""></a>G[<span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,<span class="op">:</span>] <span class="co"># See the first few lines</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -684,7 +684,7 @@ g\left(y_i, x_i; \theta\right) = g\left(\left[\begin{matrix}\beta_0 \\ \beta_1\e
 <section id="gmm-in-practice-moment-conditions-2" class="slide level2">
 <h2>GMM in practice: moment conditions</h2>
 <p>And recall that we write the sample analogue: <span class="math inline">\(g_N(\theta) = \frac{1}{N} \sum_{i=1}^N g(y_i, x_i;\theta)\)</span></p>
-<div id="2dd529bb" class="cell" data-execution_count="4">
+<div id="2dd529bb" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href=""></a><span class="kw">function</span> <span class="fu">g_N</span>(θ; Y <span class="op">=</span> Y, X <span class="op">=</span> X)</span>
 <span id="cb6-2"><a href=""></a>  N <span class="op">=</span> <span class="fu">length</span>(Y) <span class="co"># Number of obs</span></span>
 <span id="cb6-3"><a href=""></a>  <span class="co"># Get moment vectors</span></span>
@@ -695,7 +695,7 @@ g\left(y_i, x_i; \theta\right) = g\left(\left[\begin{matrix}\beta_0 \\ \beta_1\e
 </div>
 <div class="fragment">
 <p>Testing with some parameter values.</p>
-<div id="fb9990a3" class="cell" data-execution_count="5">
+<div id="fb9990a3" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href=""></a><span class="fu">g_N</span>([<span class="fl">0.0</span>, <span class="fl">0.0</span>], Y<span class="op">=</span>Y, X<span class="op">=</span>X)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>2-element Vector{Float64}:
@@ -718,14 +718,14 @@ g\left(y_i, x_i; \theta\right) = g\left(\left[\begin{matrix}\beta_0 \\ \beta_1\e
 <p><span class="math display">\[
 Q_N(\theta) = g_N(z_i;\theta)^\prime W g_N(\theta)
 \]</span></p>
-<div id="3da9b760" class="cell" data-execution_count="6">
+<div id="3da9b760" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href=""></a><span class="im">using</span> <span class="bu">LinearAlgebra</span></span>
 <span id="cb9-2"><a href=""></a><span class="kw">function</span> <span class="fu">Q_N</span>(θ; W <span class="op">=</span> <span class="fu">I</span>(<span class="fl">2</span>), Y <span class="op">=</span> Y, X <span class="op">=</span> X)</span>
 <span id="cb9-3"><a href=""></a>    <span class="cf">return</span> <span class="fu">g_N</span>(θ; Y<span class="op">=</span>Y, X<span class="op">=</span>X)<span class="ch">' * W * g_N(θ; Y=Y, X=X)</span></span>
 <span id="cb9-4"><a href=""></a><span class="kw">end</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Testing with some an initial guess and the identity matrix as the weighting matrix.</p>
-<div id="70fc5ba0" class="cell" data-execution_count="7">
+<div id="70fc5ba0" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href=""></a>θ_0 <span class="op">=</span> [<span class="fl">0.0</span>, <span class="fl">0.0</span>] <span class="co"># Initial guess</span></span>
 <span id="cb10-2"><a href=""></a>W_0 <span class="op">=</span> <span class="fu">I</span>(<span class="fl">2</span>) <span class="co"># 2x2 identity matrix</span></span>
 <span id="cb10-3"><a href=""></a><span class="fu">Q_N</span>([<span class="fl">0.0</span>, <span class="fl">0.0</span>], W<span class="op">=</span>W_0, Y<span class="op">=</span>Y, X<span class="op">=</span>X)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -739,7 +739,7 @@ Q_N(\theta) = g_N(z_i;\theta)^\prime W g_N(\theta)
 <h2>GMM in practice: step 1</h2>
 <p>Next, we will do step 1 of the efficient GMM estimation. The GMM estimator is defined as <span class="math inline">\(\hat{\theta} = \arg \min_\theta Q_N(\theta)\)</span></p>
 <p>Since our parameters are unconstrained, we can program our optimization using Optim.</p>
-<div id="2c73ec45" class="cell" data-execution_count="8">
+<div id="2c73ec45" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href=""></a><span class="im">using</span> <span class="bu">Optim</span></span>
 <span id="cb12-2"><a href=""></a>res_step_1 <span class="op">=</span> Optim.<span class="fu">optimize</span>(θ <span class="op">-&gt;</span> <span class="fu">Q_N</span>(θ; W <span class="op">=</span> W_0), θ_0, <span class="fu">Newton</span>())</span>
 <span id="cb12-3"><a href=""></a>θ_1 <span class="op">=</span> res_step_1.minimizer <span class="co"># Step 1 estimate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -756,7 +756,7 @@ Q_N(\theta) = g_N(z_i;\theta)^\prime W g_N(\theta)
 <p><span class="math display">\[
 \hat{W} = \hat{S}^{-1} = \left\{E[g(y_i, x_i; \hat{\theta}) g(y_i, x_i; \hat{\theta})^\prime]\right\}^{-1}
 \]</span></p>
-<div id="9011be41" class="cell" data-execution_count="9">
+<div id="9011be41" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href=""></a>W_hat <span class="op">=</span> <span class="fu">inv</span>(<span class="fu">g_i</span>(θ_1)<span class="ch">'  * g_i(θ_1) ./N)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>2×2 Matrix{Float64}:
@@ -768,7 +768,7 @@ Q_N(\theta) = g_N(z_i;\theta)^\prime W g_N(\theta)
 <section id="gmm-in-practice-step-2" class="slide level2">
 <h2>GMM in practice: step 2</h2>
 <p>We can now obtain the final estimates by repeating the optimization with <span class="math inline">\(\hat{W}\)</span>.</p>
-<div id="47483482" class="cell" data-execution_count="10">
+<div id="47483482" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href=""></a>res_step_2 <span class="op">=</span> Optim.<span class="fu">optimize</span>(θ <span class="op">-&gt;</span> <span class="fu">Q_N</span>(θ; W <span class="op">=</span> W_hat), θ_0, <span class="fu">Newton</span>())</span>
 <span id="cb16-2"><a href=""></a>θ_2 <span class="op">=</span> res_step_2.minimizer <span class="co"># Step 2 estimate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
@@ -792,7 +792,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <li><span class="math inline">\(\hat{S} = E\left[g_i(z_i; \hat{\theta}) g_i(z_i;\hat{\theta})^\prime\right]\)</span></li>
 </ul>
 <p>To calculate <span class="math inline">\(\hat{D}\)</span>, we can use a numerical method!</p>
-<div id="d2330975" class="cell" data-execution_count="11">
+<div id="d2330975" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href=""></a><span class="im">using</span> <span class="bu">ForwardDiff</span></span>
 <span id="cb18-2"><a href=""></a>D_hat <span class="op">=</span> ForwardDiff.<span class="fu">jacobian</span>(g_N, θ_2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
@@ -805,7 +805,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <section id="gmm-in-practice-standard-errors-1" class="slide level2">
 <h2>GMM in practice: standard errors</h2>
 <p>Calculating the other components.</p>
-<div id="58aafb2f" class="cell" data-execution_count="12">
+<div id="58aafb2f" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href=""></a>S_hat <span class="op">=</span> <span class="fu">g_i</span>(θ_2)<span class="ch">'  * g_i(θ_2) ./N</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>2×2 Matrix{Float64}:
@@ -813,7 +813,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
  11.3775   75.7301</code></pre>
 </div>
 </div>
-<div id="19855327" class="cell" data-execution_count="13">
+<div id="19855327" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href=""></a>V_hat <span class="op">=</span> <span class="fu">inv</span>(D_hat<span class="op">'</span> <span class="op">*</span> <span class="fu">inv</span>(S_hat) <span class="op">*</span> D_hat) <span class="op">./</span>N</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>2×2 Matrix{Float64}:
@@ -822,7 +822,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 </div>
 </div>
 <p>So, the standard errors are the square root of the diagonal elements.</p>
-<div id="bf1cc485" class="cell" data-execution_count="14">
+<div id="bf1cc485" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb24-1"><a href=""></a>SEs <span class="op">=</span> <span class="fu">sqrt</span>.(<span class="fu">diag</span>(V_hat))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>2-element Vector{Float64}:
@@ -834,7 +834,7 @@ V(\hat{\theta}) = \frac{1}{N}(\hat{D}^\prime \hat{S}^{-1} \hat{D})^{-1}
 <section id="gmm-in-practice-estimation-results" class="slide level2">
 <h2>GMM in practice: estimation results</h2>
 <p>Again, we can organize the results in a table and print them nicely with 95% confidence intervals</p>
-<div id="2fbad323" class="cell" data-execution_count="15">
+<div id="2fbad323" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb26-1"><a href=""></a><span class="im">using</span> <span class="bu">DataFrames</span>, <span class="bu">Distributions</span></span>
 <span id="cb26-2"><a href=""></a>df <span class="op">=</span> <span class="fu">DataFrame</span>(</span>
 <span id="cb26-3"><a href=""></a>  Coefficient <span class="op">=</span> [<span class="st">"beta_0"</span>, <span class="st">"beta_1"</span>],</span>

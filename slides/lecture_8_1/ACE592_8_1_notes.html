@@ -70,8 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="8_1_MLE_review_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="8_1_MLE_review_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="8_1_MLE_review_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="8_1_MLE_review_files/libs/bootstrap/bootstrap-0e5f40ec6cc387305998617d35d5b2e2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script id="quarto-axe-checker-options" type="text/plain">eyJvdXRwdXQiOiJkb2N1bWVudCJ9</script>
+<link href="8_1_MLE_review_files/libs/bootstrap/bootstrap-a7cd8eb72964fb8ab32fd0d4b85bf9b9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
   <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
@@ -491,7 +490,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <p><span class="math display">
 \ln L(\theta) = -\frac{n}{2} \ln(2\pi) - \frac{n}{2} \ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2
 </span></p>
-<div id="7175bba4" class="cell" data-execution_count="1">
+<div id="7175bba4" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">log_likelihood</span>(θ) </span>
@@ -508,7 +507,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <h2 data-number="4.3" class="anchored" data-anchor-id="mle-in-practice-fake-data"><span class="header-section-number">4.3</span> MLE in practice: fake data</h2>
 <p>To estimate <span class="math inline">\beta_0</span>, <span class="math inline">\beta_1</span>, and <span class="math inline">\sigma^2</span>, we need to maximize this log-likelihood function. We’ll use Julia’s JuMP for that</p>
 <p>But, firt, let’s generate some fake data for our estimation assuming true values <span class="math inline">\beta_0 = 2, \beta_1 = 3, \sigma = 1.5</span></p>
-<div id="5938d0b4" class="cell" data-execution_count="2">
+<div id="5938d0b4" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">JuMP</span>, <span class="bu">Ipopt</span>, <span class="bu">Statistics</span>, <span class="bu">Random</span></span>
@@ -556,7 +555,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 <section id="mle-in-practice-optimization-setup" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="mle-in-practice-optimization-setup"><span class="header-section-number">4.4</span> MLE in practice: optimization setup</h2>
 <p>Now, we can program our optimization in JuMP</p>
-<div id="14948630" class="cell" data-execution_count="3">
+<div id="14948630" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model</span></span>
@@ -575,7 +574,7 @@ y_i = \beta_0 + \beta_1 x_i + \epsilon_i
 </section>
 <section id="mle-in-practice-optimization" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="mle-in-practice-optimization"><span class="header-section-number">4.5</span> MLE in practice: optimization</h2>
-<div id="694a79c7" class="cell" data-execution_count="4">
+<div id="694a79c7" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve the model</span></span>
@@ -654,7 +653,7 @@ EXIT: Optimal Solution Found.</code></pre>
 </section>
 <section id="mle-in-practice-optimization-1" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="mle-in-practice-optimization-1"><span class="header-section-number">4.6</span> MLE in practice: optimization</h2>
-<div id="1928142e" class="cell" data-execution_count="5">
+<div id="1928142e" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieve the estimated parameters</span></span>
@@ -686,7 +685,7 @@ Var(\hat{\theta}_{MLE}) = \left\{-\left. \frac{\partial^2 l(\theta)}{\partial \t
 <ul>
 <li>We can use ForwardDiff.Hessian, for example! Let’s calculate the information matrix first</li>
 </ul>
-<div id="4a4b0ef4" class="cell" data-execution_count="6">
+<div id="4a4b0ef4" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ForwardDiff</span>, <span class="bu">LinearAlgebra</span></span>
@@ -707,7 +706,7 @@ Var(\hat{\theta}_{MLE}) = \left\{-\left. \frac{\partial^2 l(\theta)}{\partial \t
 Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \theta \partial \theta^{\prime}}\right|_{\theta=\hat{\theta}_{MLE}} \right\}^{-1}
 </span></p>
 <p>Now, we invert it and take the squared root of its diagonal</p>
-<div id="fb6ab23a" class="cell" data-execution_count="7">
+<div id="fb6ab23a" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> <span class="fu">inv</span>(Im);</span>
@@ -724,7 +723,7 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 <section id="mle-in-practice-estimation-results" class="level2" data-number="4.9">
 <h2 data-number="4.9" class="anchored" data-anchor-id="mle-in-practice-estimation-results"><span class="header-section-number">4.9</span> MLE in practice: estimation results</h2>
 <p>We can organize the results in a table and print them nicely with 95% confidence intervals</p>
-<div id="5c9d3e90" class="cell" data-execution_count="8">
+<div id="5c9d3e90" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span>, <span class="bu">Distributions</span></span>
@@ -764,7 +763,7 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 <li>Let’s now test the hypothesis that <span class="math inline">\beta_0 = \beta_1</span>. This is, <span class="math inline">H_0: \beta_0 - \beta_1 = 0</span></li>
 <li>This will require estimating a <strong>restricted model.</strong> One way to do this is to optimize again but look for only for a value of <span class="math inline">\beta_0</span> and using it also for <span class="math inline">\beta_1</span></li>
 </ul>
-<div id="a4229f1a" class="cell" data-execution_count="9">
+<div id="a4229f1a" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model</span></span>
@@ -783,7 +782,7 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 <section id="mle-in-practice-testing-1" class="level2" data-number="4.11">
 <h2 data-number="4.11" class="anchored" data-anchor-id="mle-in-practice-testing-1"><span class="header-section-number">4.11</span> MLE in practice: testing</h2>
 <p>Let’s see the results!</p>
-<div id="c27d07ab" class="cell" data-execution_count="10">
+<div id="c27d07ab" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>β<span class="fl">0</span>_hat_R <span class="op">=</span> <span class="fu">value</span>(β<span class="fl">0</span>);</span>
@@ -806,14 +805,14 @@ Var(\hat{\theta}_{MLE}) = \left\{- \left. \frac{\partial^2 l(\theta)}{\partial \
 <p><span class="math display">
 LR = 2 \left(l(\hat{\theta}_U) - l(\hat{\theta}_R) \right) \sim \chi^2_{[df]}
 </span></p>
-<div id="8709a3c7" class="cell" data-execution_count="11">
+<div id="8709a3c7" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>l_U <span class="op">=</span> <span class="fu">log_likelihood</span>([β<span class="fl">0</span>_hat, β<span class="fl">1</span>_hat, σ_hat]);</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>l_R <span class="op">=</span> <span class="fu">log_likelihood</span>([β<span class="fl">0</span>_hat_R, β<span class="fl">0</span>_hat_R, σ_hat_R]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="eb8c0ac5" class="cell" data-execution_count="12">
+<div id="eb8c0ac5" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>LR_stat <span class="op">=</span> <span class="fl">2</span> <span class="op">*</span> (l_U <span class="op">-</span> l_R)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -826,7 +825,7 @@ LR = 2 \left(l(\hat{\theta}_U) - l(\hat{\theta}_R) \right) \sim \chi^2_{[df]}
 <section id="mle-in-practice-testing-3" class="level2" data-number="4.13">
 <h2 data-number="4.13" class="anchored" data-anchor-id="mle-in-practice-testing-3"><span class="header-section-number">4.13</span> MLE in practice: testing</h2>
 <p>We can calculate the critical value of this test using the quantile of the <span class="math inline">\chi^2_{1}</span> distribution with <span class="math inline">\alpha  = 0.05</span></p>
-<div id="07600131" class="cell" data-execution_count="13">
+<div id="07600131" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>crit_value <span class="op">=</span> <span class="fu">quantile</span>(<span class="fu">Chisq</span>(<span class="fl">1</span>), <span class="fl">0.95</span>);</span>
@@ -839,7 +838,7 @@ LR = 2 \left(l(\hat{\theta}_U) - l(\hat{\theta}_R) \right) \sim \chi^2_{[df]}
 <p>So we can confidently reject this hypothesis.</p>
 <p>. . .</p>
 <p>We can also calculate the exact probability of the test (p-value)</p>
-<div id="7cce67ec" class="cell" data-execution_count="14">
+<div id="7cce67ec" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu">cdf</span>(<span class="fu">Chisq</span>(<span class="fl">1</span>), LR_stat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>

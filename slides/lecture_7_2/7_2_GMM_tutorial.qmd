@@ -26,8 +26,8 @@ format:
     output-file: ACE592_7_2_notes.html
     toc: false
     number-sections: true
-    axe:
-      output: document # Accessibility check
+    # axe:
+    #   output: document # Accessibility check
     code-fold: true
     html-math-method: katex
 ---
