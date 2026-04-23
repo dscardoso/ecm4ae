@@ -44,6 +44,10 @@ _(Tip: If you want to export as PDF, open the slide deck on your browser and pre
   - Lecture 8.3, part a - Random Utility Models tutorial: Data generation [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_3/ACE592_8_3a_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_3/ACE592_8_3a_notes.html)
   - Lecture 8.3, part b - Random Utility Models tutorial: Estimation and analysis [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_3/ACE592_8_3b_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_8_3/ACE592_8_3b_notes.html)
 
+- Unit 9 - Simulation-based Methods
+  - Lecture 9.1 - A brief survey [[slides]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_9_1/ACE592_9_1_slides.html) [[notes]](https://raw.githack.com/dscardoso/ecm4ae/main/slides/lecture_9_1/ACE592_9_1_notes.html)
+
+
 
 ## Recommended additional resources
 
