@@ -164,14 +164,14 @@ b_st =  0.2;  s_st = 0.07;   # normal train stops: mean, std dev
 
 ## Survey assumptions
 
-We estimate the model using data from **30 rail cities** (same as 8.3). We reduce the survey size to **N = 500 per city** (down from 2000 in 8.3a) so that Part B MSL + bootstrap runs comfortably on a laptop.
+We estimate the model using data from **10 rail cities** (down from 10 in 8.3a) and reduce the survey size to **N = 200 per city** (down from 2000 in 8.3a) so that Part B MSL + bootstrap runs comfortably on a laptop.
 
 ```{julia}
 using Random, Distributions, Statistics, DataFrames
 Random.seed!(592)
 
-N_survey   = 500   # Individuals per city (reduced for classroom responsiveness)
-N_r_cities = 30;    # Rail cities used for estimation
+N_survey   = 200   # Individuals per city (reduced for classroom responsiveness)
+N_r_cities = 10;    # Rail cities used for estimation
 ```
 
 ## City-level attributes
@@ -390,7 +390,7 @@ plot(p3, p4, layout=(1,2), plot_title="Individual WTP")
 Same generation as 8.3a; these cities are **not** used for estimation but serve as the welfare counterfactual in Part B.
 
 ```{julia}
-N_nr_cities = 30
+N_nr_cities = 10
 
 density_nr  = rand(Uniform(1, 8), N_nr_cities)
 busstops_nr = 5 .+ density_nr .* 6 .+ rand(Uniform(-3, 3), N_nr_cities)
