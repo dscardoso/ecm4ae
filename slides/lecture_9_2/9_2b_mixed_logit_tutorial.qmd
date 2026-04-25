@@ -60,8 +60,6 @@ format:
 3. **WTP under heterogeneity**: bus and train stops, closed-form cross-check
 4. **Confidence intervals for WTP**: Bootstrap vs. Krinsky & Robb
 5. **Welfare**: compensating variation for introducing trains in non-rail cities
-6. **Confidence intervals for CS changes**: Bootstrap vs. Krinsky & Robb
-7. **Comparison** to 8.3b MNL results
 
 
 # 1. Data and setup
@@ -69,9 +67,7 @@ format:
 ## Load data
 
 ```{julia}
-using CSV, DataFrames, Random, Distributions, Statistics, GLM, LinearAlgebra, Optim, ForwardDiff, FiniteDiff, Plots, LaTeXStrings
-Random.seed!(592)
-
+using CSV, DataFrames, Random, QuasiMonteCarlo, Distributions, Statistics, GLM, LinearAlgebra, Optim, ForwardDiff, FiniteDiff, Plots, LaTeXStrings
 df = CSV.read("./slides/lecture_9_2/transportation_mode_survey_mixed.csv", DataFrame)
 println(df[1:8, :])
 ```
@@ -129,24 +125,58 @@ where $\beta_{i,p}^{(s)} = -\exp(b_p + s_p \eta_{i,p}^{(s)})$, $\beta_{i,sb}^{(s
 
 # 2. Maximum Simulated Likelihood
 
-## Pre-draw simulation draws
+## PSimulation draws
 
-We draw $\eta$'s **once, outside the optimizer**, and hold them fixed: the *common random numbers* technique, which smooths the simulated log-likelihood surface.
+As it will soon become clear, we will push the boundaries of computation resource in this exercise, so we need to squeeze every bit of efficiency we can get. We will run quasi-Monte Carlo integration with [Halton sequences](https://en.wikipedia.org/wiki/Halton_sequence) using the [FastHalton](https://github.com/npfrazier/FastHalton.jl) package. This sequence has better convergence properties for numerical integration, meaning they require fewer draws for the same accuracy compared to default pseudo-random generator in Julia ([Xoshiro256](https://en.wikipedia.org/wiki/Xorshift#xoshiro))
 
-We need **three matrices**: one per random coefficient.
+Let's illustrate how Halton draws make more efficient use of draws compared to pseudo-random numbers. The left panel shows pseudo-random draws in the unit square, which can have clusters and gaps. The right panel shows Halton draws, which are more evenly spread out, leading to better coverage of the integration space and faster convergence of the simulated likelihood.
 
 ```{julia}
-S = 200;  # simulation (Monte Carlo) draws for point estimation
-
-η_p  = randn(N_r, S);   # N × S draws for price
-η_sb = randn(N_r, S);   # N × S draws for bus stops
-η_st = randn(N_r, S);   # N × S draws for train stops
+#| code-fold: true
+Random.seed!(592)
+n_draws = 400
+# Pseudo-random draws
+pseudo_draws = rand(n_draws, 2)
+# Halton draws (transposed to match dimensions). We use the Randomized version to scramble the results to avoid low-dispersion regions.
+halton_draws = QuasiMonteCarlo.sample(n_draws, 2, RandomizedHaltonSample())'
+p1 = scatter(pseudo_draws[:, 1], pseudo_draws[:, 2], xlabel="U[0,1]", ylabel="U[0,1]", title="Pseudo-random draws", label="")
+p2 = scatter(halton_draws[:, 1], halton_draws[:, 2], xlabel="U[0,1]", ylabel="U[0,1]", title="Halton draws", label="")
+plot(p1, p2, layout=(1,2), plot_title="Draws for Simulation")
 ```
 
-**From 9.1:** MSL is consistent if $N, S \to \infty$ with $\sqrt{N}/S \to 0$. With $N = 15,000$ and $S = 200$ we have $\sqrt{N}/S \approx 0.61$. It's OK for a classroom exercise... 
 
-- Simulation noise is a distinct source of error from sampling noise: bootstrap captures the latter only! Experiment with larger $S$ to see how much estimates shift.
-- In practice, researchers use [Halton sequences](https://en.wikipedia.org/wiki/Halton_sequence) (quasi-Monte Carlo). They require fewer draws for the same accuracy.
+## Generating Halton Draws for $\eta$
+
+We draw $\eta$'s **once, outside the optimizer**, and hold them fixed: this is the *common random numbers* technique, which smooths the simulated log-likelihood surface. We need **three matrices**. Let's write a function to generate Halton draws from $U([0,1]^3)$ and maps to standard normal distributions using the inverse CDF transformation.
+
+```{julia}
+# N is number of units, S is number of simulation draws
+function drawHalton_η(N, S) 
+    # Draw each dimension as a vector of length N*S
+    ηs = QuasiMonteCarlo.sample(N * S, 3, RandomizedHaltonSample())
+    # Apply inverse CDF transformation to get standard normal draws
+    ηs = quantile.(Normal(), ηs) # 3 × (N*S) matrix of standard normal draws
+    # Then, reshape into N × S matrices for each parameter
+    η_p =  reshape(ηs[1, :], N, S) # price draws
+    η_sb = reshape(ηs[2, :], N, S) # bus stops draws
+    η_st = reshape(ηs[3, :], N, S) # train stops draws
+    return η_p, η_sb, η_st
+end;
+```
+
+## Generating Halton Draws for $\eta$
+
+Next, let's get a draw of $\eta$'s for our $N = 2,000$ rail observations and $S = 100$ simulation draws. This will give us three matrices of size $2000 \times 100$.
+
+Recall that MSL is consistent if $N, S \to \infty$ with $\sqrt{N}/S \to 0$. With $N = 2,000$ and $S = 100$ we have $\sqrt{N}/S \approx 0.44$. It's OK for a classroom exercise... 
+
+```{julia}
+Random.seed!(592)
+S = 100
+η_p, η_sb, η_st = drawHalton_η(N_r, S)
+# Show first row of each
+display(vcat(η_p[1, 1:5]', η_sb[1, 1:5]', η_st[1, 1:5]'))
+```
 
 
 ## Simulated log-likelihood function
@@ -201,7 +231,7 @@ function neg_msl(θ; X_b=X_b, X_t=X_t, d_b=d_b, d_t=d_t, η_p=η_p, η_sb=η_sb,
     # Taking the log of the mean from S draws using log-sum-exp (columns)
     sim_log_prob = log.(sum(exp.(logl), dims=2)) .- log(S)  # N × 1 vector of log individual log-likelihoods
     return -sum(sim_log_prob) # Then return the sum over individuals (rows)
-end
+end;
 ```
 
 ## Sanity check at true parameters
@@ -215,7 +245,7 @@ Does the true $\theta$ gives a higher log-likelihood than the zero vector?
            0.1,  0.08,               # b_sb, s_sb
            0.2,  0.1]                # b_st, s_st
 ll_true = -neg_msl(θ_true)
-ll_zero = -neg_msl(zeros(14))
+ll_zero = -neg_msl(zeros(14));
 println("Log-likelihood at true θ: $(round(ll_true, digits=2))")
 println("Log-likelihood at θ = 0:  $(round(ll_zero, digits=2))")
 ```
@@ -231,7 +261,7 @@ For the scale parameters ($s_p$, $s_{sb}$, $s_{st}$) it's very important to star
              -0.750502, 0.746791, -0.127614, -0.237695, # train fixed: intercept, density, hhsize, homeown
              -0.928098, 0.1, # b_p,  s_p  (s_p  > 0!)
               0.101601, 0.1, # b_sb, s_sb (s_sb > 0!)
-              0.219426, 0.1] # b_st, s_st (s_st > 0!)
+              0.219426, 0.1]; # b_st, s_st (s_st > 0!)
 ```
 
 *Note:* In practice, don't forget to try different initial values to assert your optimizer is finding a global maximum, not a local one. With 14 parameters, the likelihood surface can be weird with some local maxima.
@@ -274,17 +304,47 @@ println(results_df)
 
 ## Point estimates vs. truth
 
-Wait a minute! What's that sign on $s_{st}$?
+Wait a minute! What's that sign on $s$ parameters?
 
 ```{julia}
-θ_hat[14]
+θ_hat[[10, 12, 14]]'
 ```
 
 We can't have negative SD!
 
 . . .
 
-In this case, it's actually not a big deal because of how we setup the model: the random coefficient is $\beta_{i,st} = b_{st} + s_{st} \eta_{i,st}$, so $s_{st} < 0$ just means the distribution of $\beta_{i,st}$ is flipped around its mean $b_{st}$. The likelihood is symmetric in $s_{st}$, so the optimizer can find either the positive or negative solution. In practice, we can just take the absolute value of $s_{st}$ for interpretation and inference.
+In this case, it's actually not a big deal because of how we setup the model: the random coefficient is $\beta_{i,k} = b_{k} + s_{k} \eta_{i,k}$, so $s_{k} < 0$ just means the distribution of $\beta_{i,k}$ is flipped around its mean $b_{k}$. The likelihood is symmetric in $s_{k}$, so the optimizer can find either the positive or negative solution. In practice, we can just take the absolute value of $s_{k}$ for interpretation and inference.
+
+
+## Asymptotic standard errors
+
+We compute the Hessian of the simulated log-likelihood at $\hat\theta$ to obtain the asymptotic variance $\hat V = (-\nabla^2 \hat l)^{-1}$.
+
+Here, we use `FiniteDiff` because autodiff does not work; we'd need to reprogram our MSL functions to be compatible with ForwardDiff. With finite difference we lose accuracy but are faster.
+
+```{julia}
+t_hess = time()
+H = FiniteDiff.finite_difference_hessian(neg_msl, θ_hat)
+println("Hessian done in $(round(time()-t_hess, digits=1)) seconds")
+V_hat = inv(H)
+asym_SE = sqrt.(diag(V_hat))
+```
+
+## Asymptotic standard errors
+
+Print results table with asymptotic SEs and 95% CIs. As it's clear, we lose a lot of statistical power compared to the MNL model in 8.3b, which is expected given the much higher complexity of the mixed logit model and the relatively small sample size we have for demonstration purposes.
+
+```{julia}
+results_df = DataFrame(
+    Parameter = param_names,
+    Estimate  = round.(θ_hat, digits=4),
+    Asym_SE   = round.(asym_SE, digits=4),
+    CI_lo     = round.(θ_hat .+ quantile(Normal(), 0.025) .* asym_SE, digits=4),
+    CI_hi     = round.(θ_hat .+ quantile(Normal(), 0.975) .* asym_SE, digits=4)
+)
+println(results_df)
+```
 
 
 # 3. Bootstrap standard errors
@@ -300,17 +360,12 @@ We resample **decision-makers with replacement**: in this cross-section one row 
 ```{julia}
 B      = 100
 S_boot = 50
-# Pre-draw η's for bootstrap at smaller S
-η_p_boot  = randn(N_r, S_boot)
-η_sb_boot = randn(N_r, S_boot)
-η_st_boot = randn(N_r, S_boot)
-function neg_msl_boot(θ, idx)
-    neg_msl(θ;
-        X_b  = X_b[idx, :],  X_t = X_t[idx, :],
-        d_b  = d_b[idx], d_t   = d_t[idx],
-        η_p  = η_p_boot[idx, :],  η_sb  = η_sb_boot[idx, :],
+function neg_msl_boot(θ, idx, η_p_boot, η_sb_boot, η_st_boot)
+    neg_msl(θ; X_b = X_b[idx, :], X_t = X_t[idx, :], 
+        d_b = d_b[idx], d_t   = d_t[idx],
+        η_p = η_p_boot[idx, :],  η_sb = η_sb_boot[idx, :],
         η_st = η_st_boot[idx, :])
-end
+end;
 ```
 
 ## Bootstrap loop
@@ -321,8 +376,9 @@ end
 boot_estimates = zeros(B, 14)
 t_boot = time()
 Threads.@threads for b in 1:B # This is forcing parallel processing
-    idx   = rand(1:N_r, N_r)
-    res_b = optimize(θ -> neg_msl_boot(θ, idx), θ_hat, BFGS(), Optim.Options(x_abstol=1e-2)) # Even higher tol here for illustration
+    idx   = rand(1:N_r, N_r) # Random resample
+    η_p_boot, η_sb_boot, η_st_boot = drawHalton_η(N_r, S_boot) # New draws for this bootstrap replicate
+    res_b = optimize(θ -> neg_msl_boot(θ, idx, η_p_boot, η_sb_boot, η_st_boot), θ_hat, BFGS(), Optim.Options(x_abstol=1e-3)) # Even higher tol here for illustration
     # Check it actually converged; if not, we can either discard this replicate
     if Optim.converged(res_b)
         boot_estimates[b, :] = res_b.minimizer
@@ -340,7 +396,7 @@ B_effective = size(boot_estimates_eff, 1)
 
 ## Bootstrap results table
 
-For the fixed $\beta$'s, `Boot_SE` should be comparable in magnitude to the Hessian-based SEs in 8.3b. For scale parameters ($s_p$, $s_{sb}$, $s_{st}$), bootstrap SEs may be larger if asymptotic normality of $\hat\theta$ is not yet a good approximation.
+For the fixed $\beta$'s, `Boot_SE` should be comparable in magnitude to asymptotic ones. For scale parameters ($s_p$, $s_{sb}$, $s_{st}$), bootstrap SEs may be larger if asymptotic normality of $\hat\theta$ is not yet a good approximation.
 
 ```{julia}
 #| code-fold: true
@@ -351,6 +407,7 @@ boot_hi = [quantile(boot_estimates_eff[:, j], 0.975) for j in 1:14]
 boot_df = DataFrame(
     Parameter = param_names,
     Estimate  = round.(θ_hat,   digits=4),
+    Asym_SE   = round.(asym_SE, digits=4),
     Boot_SE   = round.(boot_SE, digits=4),
     CI_lo     = round.(boot_lo, digits=4),
     CI_hi     = round.(boot_hi, digits=4)
@@ -376,13 +433,11 @@ We approximate each by drawing $R = 1{,}000$ triples $(\eta_p, \eta_{sb}, \eta_{
 
 ```{julia}
 R = 1000
-Random.seed!(592+1) # New seed
-η_p_R  = randn(R)
-η_sb_R = randn(R)
-η_st_R = randn(R)
-b_p_hat  = θ_hat[9];  s_p_hat  = abs(θ_hat[10])
-b_sb_hat = θ_hat[11]; s_sb_hat = abs(θ_hat[12])
-b_st_hat = θ_hat[13]; s_st_hat = abs(θ_hat[14])
+Random.seed!(592*5) # New seed
+η_p_R, η_sb_R, η_st_R = drawHalton_η(R, 1) # Draw R triples of η's for WTP simulation
+b_p_hat  = θ_hat[9];  s_p_hat  = θ_hat[10]
+b_sb_hat = θ_hat[11]; s_sb_hat = θ_hat[12]
+b_st_hat = θ_hat[13]; s_st_hat = θ_hat[14]
 
 β_price_draws  = -exp.(b_p_hat  .+ s_p_hat  .* η_p_R)
 β_bstops_draws =  b_sb_hat .+ s_sb_hat .* η_sb_R
@@ -435,6 +490,10 @@ println("E[WTP train stop] (analytical): $(round(E_WTP_train_analytic*100, digit
 
 Both should agree to within a few cents, confirming the MC integral has converged. In this case, train stops are a bit off, suggesting low accuracy (which we expected anyway from making $S$ and $R$ small for demonstration purposes).
 
+## Relaxing IIA
+
+One advantage of Mixed Logit is that it relaxes the IIA assumption. For example, cross-product marginal effects are now functions of the characteristics of the alternatives and the distribution of preferences. 
+
 
 # 5. Confidence intervals for WTP
 
@@ -454,13 +513,13 @@ K&R is dramatically cheaper but relies on normality, which can fail for scale pa
 For each bootstrap replicate, we already have $\hat\theta_b$. Recompute $E[WTP]$ using the same $R$ draws.
 
 ```{julia}
-WTP_bus_boot   = zeros(B)
-WTP_train_boot = zeros(B)
+WTP_bus_boot   = zeros(B_effective)
+WTP_train_boot = zeros(B_effective)
 
-for b in 1:B
-    b_p_b  = boot_estimates_eff[b, 9];  s_p_b  = abs(boot_estimates_eff[b, 10])
-    b_sb_b = boot_estimates_eff[b, 11]; s_sb_b = abs(boot_estimates_eff[b, 12])
-    b_st_b = boot_estimates_eff[b, 13]; s_st_b = abs(boot_estimates_eff[b, 14])
+for b in 1:B_effective
+    b_p_b  = boot_estimates_eff[b, 9];  s_p_b  = boot_estimates_eff[b, 10]
+    b_sb_b = boot_estimates_eff[b, 11]; s_sb_b = boot_estimates_eff[b, 12]
+    b_st_b = boot_estimates_eff[b, 13]; s_st_b = boot_estimates_eff[b, 14]
 
     β_price_b  = -exp.(b_p_b  .+ s_p_b  .* η_p_R)
     β_bstops_b =  b_sb_b .+ s_sb_b .* η_sb_R
@@ -476,18 +535,7 @@ println("Bootstrap 95% CI - E[WTP train stop]: [$(round(quantile(WTP_train_boot,
 
 ## Krinsky & Robb CI for WTP
 
-**Step 1:** Compute the Hessian of the simulated log-likelihood at $\hat\theta$ to obtain the asymptotic variance $\hat V = (-\nabla^2 \hat l)^{-1}$.
-
-(We use FiniteDiff because autodiff does not work here; we'd need to reprogram our MSL functions to be compatible with ForwardDiff... With finite difference we lose accuracy but are faster.)
-
-```{julia}
-t_hess = time()
-H = FiniteDiff.finite_difference_hessian(θ -> neg_msl(θ), θ_hat)
-println("Hessian done in $(round(time()-t_hess, digits=1)) seconds")
-V_hat = inv(H)
-```
-
----
+**Step 1:** Compute the Hessian of the simulated log-likelihood at $\hat\theta$ to obtain the asymptotic variance $\hat V = (-\nabla^2 \hat l)^{-1}$. We already did this in step 3 to calculate asymptotic SEs, so we can reuse `V_hat` from there.
 
 **Step 2:** Draw $K = 5,000$ parameter vectors $\theta^{(k)} \sim \mathcal{N}(\hat\theta, \hat V)$.
 
@@ -495,10 +543,8 @@ V_hat = inv(H)
 K   = 5000
 mvn = MvNormal(θ_hat, V_hat) # Multivariate normal distribution for K&R draws
 Θ_KR = rand(mvn, K)'   # K × 14 matrix
-
 WTP_bus_KR   = zeros(K)
 WTP_train_KR = zeros(K)
-
 for k in 1:K
     b_p_k  = Θ_KR[k, 9];  s_p_k  = abs(Θ_KR[k, 10])
     b_sb_k = Θ_KR[k, 11]; s_sb_k = abs(Θ_KR[k, 12])
@@ -562,15 +608,13 @@ Note: we use the **train stops** random coefficient for $V_{it}$ in the counterf
 
 ```{julia}
 function compute_mean_ΔCS(θ, X_b_c, X_t_c, η_p_d, η_sb_d, η_st_d)
-    R_c  = length(η_p_d)
-    N_c  = size(X_b_c, 1)
+    # Unpack parameters
+    R_c  = length(η_p_d); N_c  = size(X_b_c, 1)
+    β_b_fx = θ[1:4]; β_t_fx = θ[5:8]
     b_p_c  = θ[9];  s_p_c  = θ[10]
     b_sb_c = θ[11]; s_sb_c = θ[12]
     b_st_c = θ[13]; s_st_c = θ[14]
-    β_b_fx = θ[1:4]; β_t_fx = θ[5:8]
-
-    ΔCS_i = zeros(eltype(θ), N_c)
-
+    ΔCS_i = zeros(N_c) # Initialize vector
     for r in 1:R_c
         β_p_r  = -exp(b_p_c  + s_p_c  * η_p_d[r])
         β_sb_r =      b_sb_c + s_sb_c * η_sb_d[r]
@@ -616,81 +660,15 @@ histogram(ΔCS_i .* 100,
 vline!([mean_ΔCS*100], label="Mean", linewidth=2, color=:red)
 ```
 
-## Confidence intervals for mean ΔCS
+## Comparisons with Multinomial Logit (MNL)
 
-### Bootstrap CI
+- When heterogeneity is moderate ($s_p$, $s_{sb}$, $s_{st}$ not too large), the *mean* WTP from mixed logit is close to the MNL value. But now we know something MNL cannot tell us: how much that mean hides underlying heterogeneity
+- K&R intervals tend to align with MNL delta-method intervals when $\hat\theta$ is approximately normal. But they diverge when scale parameters are imprecisely estimated
+- Mixed logit gives a **distribution** of WTP and $\Delta$ CS, so not a point estimate. The $\Delta$ CS histogram above quantifies who benefits more and who benefits less from the new rail system
 
-```{julia}
-ΔCS_boot = zeros(B)
-for b in 1:B
-    ΔCS_boot[b], _ = compute_mean_ΔCS(boot_estimates[b, :], X_b_nr, X_t_nr, η_p_R, η_sb_R, η_st_R)
-end
+# Takeaways
 
-println("Bootstrap 95% CI for mean ΔCS: [$(round(quantile(ΔCS_boot, 0.025)*100, digits=2)), $(round(quantile(ΔCS_boot, 0.975)*100, digits=2))] \$/year")
-```
-
-### Krinsky & Robb CI
-
-Reuse the same $K$ parameter draws from the WTP step.
-
-```{julia}
-ΔCS_KR = zeros(K)
-for k in 1:K
-    ΔCS_KR[k], _ = compute_mean_ΔCS(Θ_KR[k, :], X_b_nr, X_t_nr, η_p_R, η_sb_R, η_st_R)
-end
-
-println("K&R 95% CI for mean ΔCS:       [$(round(quantile(ΔCS_KR, 0.025)*100, digits=2)), $(round(quantile(ΔCS_KR, 0.975)*100, digits=2))] \$/year")
-```
-
-## Side-by-side ΔCS comparison
-
-```{julia}
-cs_compare = DataFrame(
-    Method    = ["Bootstrap", "Krinsky & Robb"],
-    Mean_ΔCS  = [round(mean_ΔCS*100, digits=2), round(mean_ΔCS*100, digits=2)],
-    CI_lo     = [round(quantile(ΔCS_boot, 0.025)*100, digits=2),
-                 round(quantile(ΔCS_KR,   0.025)*100, digits=2)],
-    CI_hi     = [round(quantile(ΔCS_boot, 0.975)*100, digits=2),
-                 round(quantile(ΔCS_KR,   0.975)*100, digits=2)],
-    CI_width  = [round((quantile(ΔCS_boot, 0.975) - quantile(ΔCS_boot, 0.025))*100, digits=2),
-                 round((quantile(ΔCS_KR,   0.975) - quantile(ΔCS_KR,   0.025))*100, digits=2)]
-)
-println(cs_compare)
-```
-
-
-# 7. Comparison to MNL (8.3b)
-
-## Mixed logit vs. MNL
-
-The mixed logit and MNL were estimated on different data (N=500 vs N=2000 per city), so a perfect numerical match is not expected. The conceptual comparison is what matters.
-
-```{julia}
-# MNL benchmark: from 8.3b restricted model with common price coefficient
-# β_stops / |β_price| evaluated at σ = 0.8 scale
-WTP_bus_MNL   = 0.1 / 0.8   # β_b2 / |β_price| from 8.3b true params
-WTP_train_MNL = 0.2 / 0.8   # β_t2 / |β_price| from 8.3b true params
-
-comparison = DataFrame(
-    Quantity    = ["E[WTP bus stop] (\$/yr)", "E[WTP train stop] (\$/yr)", "Mean ΔCS (\$/yr)"],
-    Mixed_logit = [round(E_WTP_bus*100,   digits=2),
-                   round(E_WTP_train*100, digits=2),
-                   round(mean_ΔCS*100,    digits=2)],
-    MNL_8_3b    = [round(WTP_bus_MNL*100,   digits=2),
-                   round(WTP_train_MNL*100, digits=2),
-                   "see 8.3b"]
-)
-println(comparison)
-```
-
-**Key lessons:**
-
-- Mixed logit gives a **distribution** of WTP and ΔCS, so not a point estimate. The ΔCS histogram above quantifies who benefits more and who benefits less from the new rail system
-- When heterogeneity is moderate ($s_p$, $s_{sb}$, $s_{st}$ not too large), the *mean* WTP from mixed logit is close to the MNL value. But now we know something MNL cannot tell us: how much that mean masks underlying heterogeneity
-- K&R intervals tend to align with MNL delta-method intervals when $\hat\theta$ is approximately normal. But they diverge when scale parameters are weakly identified
-- Bus and train stops now have separate WTP distributions, reflecting their different valuation profiles. In lecture 8.3b these were fixed and alternative-specific, here they are random and alternative-specific
-
-## More lessons
+## Key lessons
 
 1. Random coefficients $\rightarrow$ intractable likelihood $\rightarrow$ MSL.
    - Pre-drawing $\eta$'s (common random numbers) and the log-sum-exp trick are the two critical implementation details. With 3 random coefficients, we need 3 $\eta$ matrices.
@@ -708,7 +686,6 @@ println(comparison)
 5. More parameters, more structure. Going from 11 (MNL restricted) to 14 (mixed logit) parameters adds interpretable content: separate heterogeneity in bus-stop and train-stop valuations, plus heterogeneity in the price sensitivity. 
    - But each extra parameter comes with an identification cost
    - Also, always check that scale parameters don't collapse to zero
-
 
 ## The End {background-color="orange"}
 

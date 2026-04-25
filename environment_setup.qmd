@@ -15,5 +15,5 @@ Pkg.add("Optim"); Pkg.add("LineSearches"); # Lecture 4.1
 Pkg.add("JuMP"); Pkg.add("Ipopt"); # Lecture 4.4
 Pkg.add("PATHSolver"); Pkg.add("LaTeXStrings"); Pkg.add("DataFrames") # Lecture 4.5
 Pkg.add("CSV"); Pkg.add("GLM"); # Lecture 7.2
-Pkg.add("FiniteDiff"); # Lecture 9.2
+Pkg.add("FiniteDiff"); Pkg.add("QuasiMonteCarlo")# Lecture 9.2
 ```
