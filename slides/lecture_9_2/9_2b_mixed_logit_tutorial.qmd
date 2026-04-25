@@ -68,7 +68,7 @@ format:
 
 ```{julia}
 using CSV, DataFrames, Random, QuasiMonteCarlo, Distributions, Statistics, GLM, LinearAlgebra, Optim, ForwardDiff, FiniteDiff, Plots, LaTeXStrings
-df = CSV.read("./slides/lecture_9_2/transportation_mode_survey_mixed.csv", DataFrame)
+df = CSV.read("./transportation_mode_survey_mixed.csv", DataFrame)
 println(df[1:8, :])
 ```
 
@@ -127,7 +127,7 @@ where $\beta_{i,p}^{(s)} = -\exp(b_p + s_p \eta_{i,p}^{(s)})$, $\beta_{i,sb}^{(s
 
 ## PSimulation draws
 
-As it will soon become clear, we will push the boundaries of computation resource in this exercise, so we need to squeeze every bit of efficiency we can get. We will run quasi-Monte Carlo integration with [Halton sequences](https://en.wikipedia.org/wiki/Halton_sequence) using the [FastHalton](https://github.com/npfrazier/FastHalton.jl) package. This sequence has better convergence properties for numerical integration, meaning they require fewer draws for the same accuracy compared to default pseudo-random generator in Julia ([Xoshiro256](https://en.wikipedia.org/wiki/Xorshift#xoshiro))
+As it will soon become clear, we will push the boundaries of computation resource in this exercise, so we need to squeeze every bit of efficiency we can get. We will run quasi-Monte Carlo integration with [Halton sequences](https://en.wikipedia.org/wiki/Halton_sequence) using the [QuasiMonteCarlo](https://github.com/SciML/QuasiMonteCarlo.jl) package. This sequence has better convergence properties for numerical integration, meaning they require fewer draws for the same accuracy compared to default pseudo-random generator in Julia ([Xoshiro256](https://en.wikipedia.org/wiki/Xorshift#xoshiro))
 
 Let's illustrate how Halton draws make more efficient use of draws compared to pseudo-random numbers. The left panel shows pseudo-random draws in the unit square, which can have clusters and gaps. The right panel shows Halton draws, which are more evenly spread out, leading to better coverage of the integration space and faster convergence of the simulated likelihood.
 
@@ -252,9 +252,9 @@ println("Log-likelihood at θ = 0:  $(round(ll_zero, digits=2))")
 
 ## Starting values
 
-In MSL, good starting values are crucial for convergence and speed up your estimation. A common approach is to start with the MNL estimates for the fixed coefficients and small positive values for the scale parameters. Let's the fixed coefficients we estimated in 8.3b as starting values for the fixed part of the mixed logit.
+In MSL, good starting values are crucial for convergence and speed up your estimation. A common approach is to start with the MNL estimates for the fixed coefficients and small positive values for the scale parameters. Let's use the coefficients we estimated in 8.3b as starting values for the fixed part of the mixed logit.
 
-For the scale parameters ($s_p$, $s_{sb}$, $s_{st}$) it's very important to start at a small positive value, not zero! Zero is a saddle point where $\partial l/\partial s = 0$ and derivative-based methods can crash.
+For the scale parameters ($s_p$, $s_{sb}$, $s_{st}$) it's very important to start at a positive value, not zero! Zero is a saddle point where $\partial l/\partial s = 0$ and derivative-based methods can crash.
 
 ```{julia}
 θ_hat_MNL = [-1.264940, 0.477165, -0.266855, -0.421171, # bus fixed: intercept, density, hhsize, homeown
@@ -270,7 +270,7 @@ For the scale parameters ($s_p$, $s_{sb}$, $s_{st}$) it's very important to star
 
 ```{julia}
 t_start = time()
-# Picking a relatively weak tolerance for demonstration; for actual research, use much tighter and check convergence carefully!
+# Picking a high tolerance for demonstration; for actual research, use much tighter and check convergence carefully!
 res = optimize(neg_msl, θ_hat_MNL, BFGS(), Optim.Options(x_abstol=1e-4))
 println("Done in $(round(time()-t_start, digits=1)) seconds")
 println("Converged? $(Optim.converged(res))")
@@ -333,7 +333,7 @@ asym_SE = sqrt.(diag(V_hat))
 
 ## Asymptotic standard errors
 
-Print results table with asymptotic SEs and 95% CIs. As it's clear, we lose a lot of statistical power compared to the MNL model in 8.3b, which is expected given the much higher complexity of the mixed logit model and the relatively small sample size we have for demonstration purposes.
+Next, we print results table with asymptotic SEs and 95% CIs. As it's clear, we lose a lot of statistical power compared to the MNL model in 8.3b, which is expected given the much higher complexity of the mixed logit model and the relatively small sample size we have for demonstration purposes.
 
 ```{julia}
 results_df = DataFrame(
@@ -490,23 +490,105 @@ println("E[WTP train stop] (analytical): $(round(E_WTP_train_analytic*100, digit
 
 Both should agree to within a few cents, confirming the MC integral has converged. In this case, train stops are a bit off, suggesting low accuracy (which we expected anyway from making $S$ and $R$ small for demonstration purposes).
 
+## Cross-product marginal effects
+
+In a 3-alternative model (bus, train, car), applying the chain rule to the logit denominator gives the cross-effect of train stops on bus probability, conditional on a draw $\eta$:
+
+$$
+\frac{\partial P_{ib}(\eta)}{\partial \text{stops}_t} = -\beta_{i,\text{st}}(\eta)\cdot P_{ib}(\eta)\cdot P_{it}(\eta)
+$$
+
+Integrating over the distribution of preferences:
+
+- In MNL, we have $-\hat\beta_{st}\cdot P_{ib}^{\text{MNL}}\cdot P_{it}^{\text{MNL}}$
+  - Varies across $i$ via product of aggregate probabilities only
+- In Mixed Logit, we have $-E_{\eta}[\beta_{i,st}(\eta)\cdot P_{ib}(\eta)\cdot P_{it}(\eta)]$
+  - Varies across $i$ via the full joint distribution of $(\beta_{i,st},\,P_{ib}(\eta),\,P_{it}(\eta))$ 
+
 ## Relaxing IIA
 
-One advantage of Mixed Logit is that it relaxes the IIA assumption. For example, cross-product marginal effects are now functions of the characteristics of the alternatives and the distribution of preferences. 
+So, an advantage of Mixed Logit is that it relaxes the IIA assumption!
 
+- IIA in MNL: any two commuters with the same $(P_{ib}^{\text{MNL}},\,P_{it}^{\text{MNL}})$ have *identical* cross-effects, regardless of their demographics.
+
+- IIA broken in MXL: the expectation $E_\eta[\beta_{i,st}(\eta)\cdot P_{ib}(\eta)\cdot P_{it}(\eta)]$ is a non-linear average. Even at the same aggregate probabilities, individuals with different $x_i$ profiles can have different cross-effects because $\beta_{i,st}$ co-varies differently with the draw-level probabilities.
+
+Let's see a comparison between the MNL and Mixed Logit cross-effects for our sample of commuters.
+
+## Relaxing IIA: MNL vs. Mixed Logit
+
+Calculate the MNL cross-effects using the MNL estimates
+
+```{julia}
+# MNL cross-effects
+β_p_MNL_v  = -exp(θ_hat_MNL[9])
+β_sb_MNL_v = θ_hat_MNL[11];  β_st_MNL_v = θ_hat_MNL[13]
+Vb_MNL = (X_b[:,1] .* θ_hat_MNL[1] .+ X_b[:,2] .* β_p_MNL_v
+       .+ X_b[:,3] .* β_sb_MNL_v  .+ X_b[:,4] .* θ_hat_MNL[2]
+       .+ X_b[:,5] .* θ_hat_MNL[3] .+ X_b[:,6] .* θ_hat_MNL[4])
+Vt_MNL = (X_t[:,1] .* θ_hat_MNL[5] .+ X_t[:,2] .* β_p_MNL_v
+       .+ X_t[:,3] .* β_st_MNL_v  .+ X_t[:,4] .* θ_hat_MNL[6]
+       .+ X_t[:,5] .* θ_hat_MNL[7] .+ X_t[:,6] .* θ_hat_MNL[8])
+denom_MNL_v = 1.0 .+ exp.(Vb_MNL) .+ exp.(Vt_MNL)
+P_b_MNL_v   = exp.(Vb_MNL) ./ denom_MNL_v
+P_t_MNL_v   = exp.(Vt_MNL) ./ denom_MNL_v
+dPb_MNL = -β_st_MNL_v .* P_b_MNL_v .* P_t_MNL_v;  # N-vector
+```
+
+## Relaxing IIA: MNL vs. Mixed Logit
+
+Next, we calculate the Mixed Logit cross-effects using the simulated $\beta_{i,st}(\eta)$ and probabilities from the MXL model. Then, print the mean cross-effects for both.
+
+```{julia}
+# Mixed logit cross-effects: -E_η[β_{i,st}(η) · P_ib(η) · P_it(η)]  (using η_p, η_sb, η_st from estimation)
+dPb_MXL = zeros(N_r)
+for s in 1:S
+    β_p_s  = -exp.(b_p_hat  .+ s_p_hat  .* η_p[:, s])
+    β_sb_s =       b_sb_hat .+ s_sb_hat .* η_sb[:, s]
+    β_st_s =       b_st_hat .+ s_st_hat .* η_st[:, s]
+    V_ib_s = (X_b[:,1] .* θ_hat[1] .+ X_b[:,2] .* β_p_s
+           .+ X_b[:,3] .* β_sb_s   .+ X_b[:,4] .* θ_hat[2]
+           .+ X_b[:,5] .* θ_hat[3] .+ X_b[:,6] .* θ_hat[4])
+    V_it_s = (X_t[:,1] .* θ_hat[5] .+ X_t[:,2] .* β_p_s
+           .+ X_t[:,3] .* β_st_s   .+ X_t[:,4] .* θ_hat[6]
+           .+ X_t[:,5] .* θ_hat[7] .+ X_t[:,6] .* θ_hat[8])
+    denom_s = 1.0 .+ exp.(V_ib_s) .+ exp.(V_it_s)
+    dPb_MXL .+= β_st_s .* (exp.(V_ib_s) ./ denom_s) .* (exp.(V_it_s) ./ denom_s)
+end
+dPb_MXL = -(dPb_MXL ./ S)
+
+println("MNL: $(round(mean(dPb_MNL), digits=6))")
+println("Mixed Logit: $(round(mean(dPb_MXL), digits=6))")
+```
+
+## Relaxing IIA: MNL vs. Mixed Logit
+
+Plotting the marginal effects $\partial P_{ib} / \partial \text{stops}_t$ for MNL vs. MXL across individuals:
+
+Points on the red line would mean IIA holds: mixed logit and MNL give identical individual cross-effects. But the differences show that MXL cross-effects depend on the full $x_i$ profile!
+
+```{julia}
+#| code-fold: true
+lo = min(minimum(dPb_MNL), minimum(dPb_MXL)) * 1.05
+hi = max(maximum(dPb_MNL), maximum(dPb_MXL)) * 1.05
+p5 = scatter(dPb_MNL, dPb_MXL;
+    xlabel = "MNL Marginal effect", ylabel = "MXL Marginal effect",
+    label = "", alpha = 0.4)
+plot!(p5, [lo, hi], [lo, hi]; label = "45° line (IIA)")
+```
 
 # 5. Confidence intervals for WTP
 
 ## Two approaches
 
-1. Bootstrap: resample data, re-estimate $\hat\theta_b$, recompute E[WTP] for each $b$ $\rightarrow$ empirical distribution of $E[WTP]$
+1. Bootstrap: resample data, re-estimate $\hat\theta_b$, recompute $E[WTP]$ for each $b$ $\rightarrow$ empirical distribution of $E[WTP]$
    1. Cost: High ($B$ re-optimizations)
    2. Assumptions: Distribution-free (non-parametric)
-2. Krinsky & Robb (1986, 1990): draw $\theta^{(k)} \sim N(\hat\theta, \hat V)$, recompute E[WTP] for each $k$ $\rightarrow$ empirical distribution of $E[WTP]$
+2. Krinsky & Robb (1986, 1990): draw $\theta^{(k)} \sim N(\hat\theta, \hat V)$, recompute $E[WTP]$ for each $k$ $\rightarrow$ empirical distribution of $E[WTP]$
    1. Cost: Low (no re-optimization)
    2. Assumptions: Asymptotic normality of $\hat\theta$ (parametric)
 
-K&R is dramatically cheaper but relies on normality, which can fail for scale parameters near zero. 
+K&R is much cheaper but relies on normality, which can fail for scale parameters near zero. 
 
 ## Bootstrap CI for E[WTP]
 
@@ -565,6 +647,7 @@ println("K&R 95% CI - E[WTP train stop]: [$(round(quantile(WTP_train_KR, 0.025)*
 ## Side-by-side WTP comparison
 
 ```{julia}
+#| code-fold: true
 wtp_compare = DataFrame(
     WTP_for      = ["Bus stop", "Train stop", "Bus stop", "Train stop"],
     Method       = ["Bootstrap", "Bootstrap", "Krinsky & Robb", "Krinsky & Robb"],
@@ -577,7 +660,7 @@ wtp_compare = DataFrame(
 println(wtp_compare)
 ```
 
-**Interpretation:** Bootstrap intervals are distribution-free: they resample the data and re-estimate, so they naturally account for any non-normality in $\hat\theta$. K&R is ~$B$ times cheaper (no re-optimization) but relies on asymptotic normality. For the scale parameters ($s_p$, $s_{sb}$, $s_{st}$), normality may be a poor approximation when $N$ is moderate, making bootstrap the safer (but more expensive) choice.
+**Interpretation:** Bootstrap intervals are distribution-free: they resample the data and re-estimate, so they naturally account for any non-normality in $\hat\theta$ including from simulation error. K&R is ~$B$ times cheaper (no re-optimization) but relies on asymptotic normality. For the scale parameters ($s_p$, $s_{sb}$, $s_{st}$), normality may be a poor approximation when $N$ is moderate, making bootstrap the safer (but more expensive) choice.
 
 
 # 6. Welfare: compensating variation
@@ -593,7 +676,7 @@ X_b_nr  = hcat(ones_nr, Matrix{Float64}(df_nr[:, [:price_bus, :stops_bus, :densi
 # Counterfactual train: price = 1.1 × bus price, 10 stops
 X_t_nr       = copy(X_b_nr)
 X_t_nr[:, 2] = 1.1 .* df_nr.price_bus   # price column
-X_t_nr[:, 3] = 10.0 .* ones_nr          # stops column
+X_t_nr[:, 3] = 10.0 .* ones_nr;        # stops column
 ```
 
 ## Welfare formula under mixed logit
@@ -607,6 +690,7 @@ Inner expectation over $(\eta_p, \eta_{sb}, \eta_{st})$ by MC ($R$ draws); outer
 Note: we use the **train stops** random coefficient for $V_{it}$ in the counterfactual, since the new train system would have train-stop-specific valuation.
 
 ```{julia}
+#| code-fold: true
 function compute_mean_ΔCS(θ, X_b_c, X_t_c, η_p_d, η_sb_d, η_st_d)
     # Unpack parameters
     R_c  = length(η_p_d); N_c  = size(X_b_c, 1)
@@ -642,7 +726,7 @@ function compute_mean_ΔCS(θ, X_b_c, X_t_c, η_p_d, η_sb_d, η_st_d)
 
     ΔCS_i ./= R_c
     return mean(ΔCS_i), ΔCS_i
-end
+end;
 
 mean_ΔCS, ΔCS_i = compute_mean_ΔCS(θ_hat, X_b_nr, X_t_nr, η_p_R, η_sb_R, η_st_R)
 println("Mean ΔCS per commuter: $(round(mean_ΔCS*100, digits=2)) \$/year")
@@ -654,17 +738,13 @@ println("Aggregate (2M commuters): $(round(mean_ΔCS*100*2e6/1e6, digits=1)) mil
 A key message of mixed logit: we now have a *distribution* of welfare gains instead of mean gains
 
 ```{julia}
+#| code-fold: true
 histogram(ΔCS_i .* 100,
     xlabel = "ΔCS per commuter (\$/year)", ylabel = "Count", label = "",
     title  = "Distribution of welfare gains from introducing trains")
 vline!([mean_ΔCS*100], label="Mean", linewidth=2, color=:red)
 ```
 
-## Comparisons with Multinomial Logit (MNL)
-
-- When heterogeneity is moderate ($s_p$, $s_{sb}$, $s_{st}$ not too large), the *mean* WTP from mixed logit is close to the MNL value. But now we know something MNL cannot tell us: how much that mean hides underlying heterogeneity
-- K&R intervals tend to align with MNL delta-method intervals when $\hat\theta$ is approximately normal. But they diverge when scale parameters are imprecisely estimated
-- Mixed logit gives a **distribution** of WTP and $\Delta$ CS, so not a point estimate. The $\Delta$ CS histogram above quantifies who benefits more and who benefits less from the new rail system
 
 # Takeaways
 
@@ -680,12 +760,16 @@ vline!([mean_ΔCS*100], label="Mean", linewidth=2, color=:red)
    - *Bootstrap*: distribution-free, robust for scale parameters near zero, but slow ($B$ re-optimizations)
    - *Krinsky & Robb*: cheap (no re-optimization), relies on asymptotic normality, widely used for reporting WTP in demand studies
 
+## Key lessons
+
 4. Mixed logit unlocks welfare heterogeneity. The $\Delta$ CS distribution is the economically meaningful output. Some commuters gain more than others
    - Policy analysis that ignores this distribution can miss important equity considerations
 
 5. More parameters, more structure. Going from 11 (MNL restricted) to 14 (mixed logit) parameters adds interpretable content: separate heterogeneity in bus-stop and train-stop valuations, plus heterogeneity in the price sensitivity. 
    - But each extra parameter comes with an identification cost
    - Also, always check that scale parameters don't collapse to zero
+
+**Finally, a warning: we had to simplify A LOT** here to make it run in a reasonable time for demonstration purposes. In real research, you would want to use much larger $S$ and $R$ for better accuracy, which can make estimation and inference much more computationally intensive.
 
 ## The End {background-color="orange"}
 
