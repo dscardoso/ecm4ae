@@ -96,19 +96,7 @@ d_b = Vector{Float64}(df_r.d_ib)
 d_t = Vector{Float64}(df_r.d_it)
 ```
 
-## Recall the model
-
-Parameter vector $\theta$ (**14 elements**):
-
-| Index | Symbol                                                                           | Meaning                                          |
-| :---- | :------------------------------------------------------------------------------- | :----------------------------------------------- |
-| 1–4   | $\beta_{b,0},\,\beta_{b,\text{den}},\,\beta_{b,\text{hh}},\,\beta_{b,\text{ho}}$ | Bus fixed: intercept, density, hhsize, homeown   |
-| 5–8   | $\beta_{t,0},\,\beta_{t,\text{den}},\,\beta_{t,\text{hh}},\,\beta_{t,\text{ho}}$ | Train fixed: intercept, density, hhsize, homeown |
-| 9–10  | $b_p,\,s_p$                                                                      | Log-normal price: location, scale                |
-| 11–12 | $b_{sb},\,s_{sb}$                                                                | Normal bus stops: mean, std dev                  |
-| 13–14 | $b_{st},\,s_{st}$                                                                | Normal train stops: mean, std dev                |
-
-Compare to 8.3b's restricted model (11 parameters): we have the same 8 alternative-specific fixed coefficients plus 6 random-coefficient parameters: location and scale for each of the three random coefficients.
+## Recall the model: specification
 
 Utility for individual $i$, draw $s$:
 
@@ -122,14 +110,34 @@ $$
 
 where $\beta_{i,p}^{(s)} = -\exp(b_p + s_p \eta_{i,p}^{(s)})$, $\beta_{i,sb}^{(s)} = b_{sb} + s_{sb} \eta_{i,sb}^{(s)}$, $\beta_{i,st}^{(s)} = b_{st} + s_{st} \eta_{i,st}^{(s)}$.
 
+## Recall the model: parameter values
+
+Parameter vector $\theta$ (**14 elements**):
+
+| Index | Symbol                                                                           | Meaning                                          |
+| :---- | :------------------------------------------------------------------------------- | :----------------------------------------------- |
+| 1–4   | $\beta_{b,0},\,\beta_{b,\text{den}},\,\beta_{b,\text{hh}},\,\beta_{b,\text{ho}}$ | Bus fixed: intercept, density, hhsize, homeown   |
+| 5–8   | $\beta_{t,0},\,\beta_{t,\text{den}},\,\beta_{t,\text{hh}},\,\beta_{t,\text{ho}}$ | Train fixed: intercept, density, hhsize, homeown |
+| 9–10  | $b_p,\,s_p$                                                                      | Log-normal price: location, scale                |
+| 11–12 | $b_{sb},\,s_{sb}$                                                                | Normal bus stops: mean, std dev                  |
+| 13–14 | $b_{st},\,s_{st}$                                                                | Normal train stops: mean, std dev                |
+
+Compare to 8.3b's restricted model (11 parameters): we have the same 8 alternative-specific fixed coefficients plus 6 random-coefficient parameters: location and scale for each of the three random coefficients.
+
+
 
 # 2. Maximum Simulated Likelihood
 
-## PSimulation draws
+## Simulation draws
 
-As it will soon become clear, we will push the boundaries of computation resource in this exercise, so we need to squeeze every bit of efficiency we can get. We will run quasi-Monte Carlo integration with [Halton sequences](https://en.wikipedia.org/wiki/Halton_sequence) using the [QuasiMonteCarlo](https://github.com/SciML/QuasiMonteCarlo.jl) package. This sequence has better convergence properties for numerical integration, meaning they require fewer draws for the same accuracy compared to default pseudo-random generator in Julia ([Xoshiro256](https://en.wikipedia.org/wiki/Xorshift#xoshiro))
+- As it will soon become clear, we will push the boundaries of computation resource in this exercise, so we need to squeeze every bit of efficiency we can get. 
+- We will run quasi-Monte Carlo integration with [Halton sequences](https://en.wikipedia.org/wiki/Halton_sequence) using the [QuasiMonteCarlo](https://github.com/SciML/QuasiMonteCarlo.jl) package. This sequence has better convergence properties for numerical integration, meaning they require fewer draws for the same accuracy compared to default pseudo-random generator in Julia ([Xoshiro256](https://en.wikipedia.org/wiki/Xorshift#xoshiro))
 
-Let's illustrate how Halton draws make more efficient use of draws compared to pseudo-random numbers. The left panel shows pseudo-random draws in the unit square, which can have clusters and gaps. The right panel shows Halton draws, which are more evenly spread out, leading to better coverage of the integration space and faster convergence of the simulated likelihood.
+- Let's illustrate how Halton draws make more efficient use of draws compared to pseudo-random numbers. 
+
+## Pseudo-random vs. Halton draws
+
+The left panel shows pseudo-random draws in the unit square, which can have clusters and gaps. The right panel shows Halton draws, which are more evenly spread out, leading to better coverage of the integration space and faster convergence of the simulated likelihood.
 
 ```{julia}
 #| code-fold: true
