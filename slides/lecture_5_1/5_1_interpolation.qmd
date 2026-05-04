@@ -1,0 +1,1230 @@
+---
+title: "ACE 592 - Lecture 5.1"
+subtitle: "Function approximation: Interpolation"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_5_1_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_5_1_notes.html
+    toc: false
+    number-sections: true
+    # axe:
+    #   output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  **Function approximation**
+    1.  **Interpolation**
+    2.  Functional equations
+6.  Structural estimation
+
+## Agenda {background-color="orange"}
+
+- Today, we will cover function approximation techniques, which are used to estimate unknown functions from data
+- These are useful for when we need to evaluate functions at points where we don't have data
+
+
+## Main references {background-color="orange"}
+
+-   Miranda & Fackler (2002), Ch. 6
+-   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell) 
+
+
+## Why bother?
+
+Much of the work we do uses closed-form functions
+- They're practical and easy to manipulate
+
+But these functions are only a subset of all possible functions
+
+. . . 
+
+In many relevant problems, we don't have the functional form either because
+
+1. We have limited data/information about the function
+  - This is called an **interpolation problem**
+2. The function is actually the answer to the problem we're trying to solve
+  - This is called a **functional equation problem**
+
+
+
+## Problem types: Interpolation
+
+There is a real-valued function $f$ which is analytically intractable
+
+- Could be that $f$ indeed has no admissible closed-form expression
+- Or that there might be a closed-form expression but we just don't know what it is
+
+In any case, we will instead work with a *computationally tractable* function $\hat{f}$
+
+. . . 
+
+- We have available values $y_i = f(x_i)$ at points $x_i, \; i=1\dots n$
+- We are interested in calculating $f(x)$ for some $x$ at which we don't know $y$
+
+$\rightarrow$ Then, we'll use $\hat{f}(x) \approx f(x)$
+
+
+## Problem types: Functional equations
+
+In these problems, our solution is not a value but a function
+
+Formally, we look for $f$ such that $Tf = 0$, where $T$ is an operator that maps a vector space of functions into itself
+
+- We can write an equivalent functional fixed-point equation $f = Tf$
+
+. . . 
+
+Functional equations are hard because they impose an infinite number conditions, i.e., the value of $f$ at an infinite number of points
+
+- Solutions with closed-form expressions are an exception!
+
+Problems like this arise frequently in dynamic optimization and strategic interaction/game theory
+
+
+# Interpolation
+
+## Interpolation
+
+We want to approximate $f$ with a tractable **approximant** $\hat{f}$
+
+There are two key choices we have to make to establish $\hat{f}$
+
+1. Basis functions
+
+2. Interpolation scheme
+
+## Basis functions
+
+The first step is to choose family of functions to perform our approximation
+
+For practicality, we form a linear combination of $n$ *linearly independent* **basis functions** $\phi_1, \phi_2, \dots, \phi_n$ to define
+
+$$
+\hat{f}(x) = \sum^n_{j=1} c_j \phi_j(x)
+$$
+
+where $c_j$ values are **basis coefficients** to be determined
+
+- $n$ give the **degree of interpolation**
+
+## Interpolation scheme
+
+In the second step, we must choose the criteria to determine the basis coefficients
+
+There are $n$ coefficients $\Rightarrow$ we need $n$ conditions
+
+- These conditions are based on known properties of $f$
+
+. . . 
+
+The simplest and most used way is to make $\hat{f}(x_i) = f(x_i)$ for a set of **interpolation nodes** indexed by $i$
+
+
+## Interpolation scheme
+
+$n$ interpolation nodes form $n$ **interpolation conditions**
+
+$$
+\sum^n_{j=1} c_j \phi_j(x_i) = f(x_i), \; i=1,2,\dots,n
+$$
+forming a $n\times n$ linear system which we know how to solve. Or, in matrix notation,
+
+$$
+\Phi c = y
+$$
+where $y_i = f(x_i)$ and $\Phi_{ij} = \phi_j(x_i)$ 
+
+
+## Interpolation is a special case
+
+The fact that we have $n$ nodes and $n$ basis functions makes interpolation a special case of general **curve fitting problem**
+
+
+What's an example of problems with $n$ nodes and $k < n$ basis functions?
+
+. . . 
+
+Let's say we have $n>2$ pairs $(x_i, y_i)$ and we are interested in approximating $y = f(x) \equiv E[Y|X]$
+
+We choose *monomial basis* with degree $k=2$, so $\phi_1(x) = 1$ and $\phi_2(x) = x$
+
+$$
+E[Y|X] \approx c_1 + c_2x
+$$
+
+
+## Interpolation is a special case
+
+$$
+E[Y|X] \approx c_1 + c_2x
+$$
+
+With more nodes than basis functions, we can't guarantee to satisfy the interpolation conditions at all nodes
+
+But we can choose criteria to get as close as possible $\rightarrow$ minimize errors or residuals $e_i = f(x_i) - \sum^n_{j=1} c_j \phi_j(x_i)$
+
+$$
+e_i = y_i - (c_1 + c_2x)
+$$
+
+. . . 
+
+Minimize the sum of squared errors $\Rightarrow$ OLS
+
+So interpolation is like OLS but with the same number of parameters and data points
+
+
+
+## Interpolation scheme
+
+We need not limit ourselves to using information about $f(x_i)$ only
+
+Depending on our problem, we might be interested in an $\hat{f}$ that also approximates derivatives of $f$ at specific points
+
+To interpolate with first derivatives, we have $n_1$ nodes $x_i$ and $n_2$ derivative nodes $x^\prime_i$ forming $n = n_1 + n_2$ conditions  
+
+$$
+\begin{align*}
+  \sum^n_{j=1} c_j \phi_j(x_i) & = f(x_i), \; i=1,2,\dots,n_1 \\
+  \sum^n_{j=1} c_j \phi^\prime_j(x^\prime_i) & = f^\prime(x^\prime_i), \; i=1,2,\dots,n_2
+\end{align*}
+$$
+
+
+## Interpolation scheme
+
+Note that the nodes for function at level and for derivatives don't have to be the same
+
+This approach can be easily generalized to higher-order derivatives and even antiderivates: all we need is for the resultimg matrix $\Phi$ to be nonsingular
+
+
+
+
+## Interpolation methods
+
+There are two broad categories of interpolation methods
+
+**1 - Spectral methods**: These methods use basis functions that are nonzero over the entire approximation domain (except for a limited number of points)
+
+- Basis functions are "global": they are evaluated at any point of the domain
+- Ex: Polynomial interpolation 
+
+. . . 
+
+**2 - Finite element methods**: Basis functions are nonzero only over subsets if the approximation domain
+
+- Basis functions are "local": some basis functions are evaluated and "contribute" to points at a particular subset but not others
+- Ex: Spline (i.e., piecewise) interpolation
+
+
+
+## Interpolation methods
+
+![](figures/poly_vs_spline.png)
+
+
+# Spectral methods
+
+
+
+
+## Spectral methods
+
+When using spectral methods we virtually always use polynomials. Why?
+
+. . . 
+
+The Stone-Weierstrass Theorem states (for one dimension)
+
+*Suppose $f$ is a continuous real-valued function defined on the interval $[a,b]$.  
+For every $\epsilon > 0, \,\, \exists$ a polynomial $p(x)$ such that for all $x \in [a,b]$ we have $||f(x) - p(x)||_{sup} \leq \epsilon$*
+
+. . . 
+
+What does the SW theorem say in words?
+
+
+
+## Spectral methods
+
+For any continuous function $f(x)$, we can approximate it arbitrarily well with some polynomial $p(x)$, as long as $f(x)$ is continuous
+
+. . . 
+
+This means the function can even have kinks
+
+. . . 
+
+Unfortunately we do not have infinite computational power so solving kinked problems with spectral methods is not advised
+
+. . . 
+
+- Note that the SW theorem *does not* say what kind of polynomial can approximate $f$ arbitrarily well, just that some polynomial exists
+
+
+
+
+## Basis choice
+
+What would be your first choice of basis for polynomial interpolation?
+
+. . . 
+
+Logical choice: the monomial basis: $1, x, x^2,...$
+
+. . . 
+
+It is simple, and SW tells us that we can uniformly approximate any continuous function on a closed interval using them
+
+
+
+## Polynomial interpolation in Julia
+
+You've done a lot of programming so far! By now, you can
+
+- Write a function that takes $n$ pairs $(y_i, x_i)$ and a value $x_0$
+- Solve the linear system to get basis coefficients for monomial basis polynomials
+- Then, use that to calculate $\hat{f}(x_0)$
+
+. . . 
+
+But I'll leave that as an exercise for you. Let's jump straight into a package that can do that for you: `Polynomials.jl`
+
+
+## Monomial basis interpolation in Julia
+
+Let's approximate `sin(x)` with monomial base. First, let's plot it from $0$ to $2\pi$
+
+```{julia}
+#| code-fold: true
+using Plots
+gr();
+f(x) = sin(x);
+plot(f, 0, 2pi, line = 4, grid = false, legend = false)
+```
+
+
+
+## Monomial basis interpolation in Julia
+
+Let's write a function that will interpolate it for us with any $n$
+
+```{julia}
+using Polynomials;
+function interpolate_monomial(f, lower, upper, n)
+    # Construct a grid with n nodes
+    xs = range(lower, upper, length = n)
+    # Get our y = f(x) at the nodes
+    ys = f.(xs)
+    # Use Polynomials.fit to generate our ̂f hat
+    # (with n nodes, n-1 is the highest-order polynomial)
+    f_hat = Polynomials.fit(xs, ys, n-1) 
+end;
+```
+
+
+## Monomial basis interpolation in Julia
+
+Let's see what it gives us with different $n$
+
+```{julia}
+f_hat_4 = interpolate_monomial(f, 0, 2pi, 4)
+f_hat_5 = interpolate_monomial(f, 0, 2pi, 5)
+f_hat_10 = interpolate_monomial(f, 0, 2pi, 10)
+println("Coefficients for n = 4: ", f_hat_4.coeffs)
+println("Coefficients for n = 5: ", f_hat_5.coeffs)
+println("Coefficients for n = 10: ", f_hat_10.coeffs)
+```
+
+## Monomial basis interpolation in Julia
+
+```{julia}
+#| code-fold: true
+plot(f, 0, 2pi, line = 4, grid = false, label = "sin(x)",
+           xlabel = "x", ylabel = "sin(x)")
+```
+
+
+
+## Monomial basis interpolation in Julia
+
+```{julia}
+#| code-fold: true
+plot!(f_hat_4, 0, 2pi, color = :green, linewidth = 4.0, linestyle = :dashdot, label = "Approximation n = 4")
+```
+
+
+
+
+## Monomial basis interpolation in Julia
+
+```{julia}
+#| code-fold: true
+plot!(f_hat_5, 0, 2pi, color = :red, linewidth = 4.0, linestyle = :dash, label = "Approximation n = 5")
+```
+
+
+
+
+## Monomial basis interpolation in Julia
+
+```{julia}
+#| code-fold: true
+plot!(f_hat_10, 0, 2pi, color = :purple, linewidth = 4.0, linestyle = :dot, label = "Approximation n = 10")
+```
+
+
+
+## Monomial basis interpolation in Julia
+
+Cool! We just wrote some code that exploits Stone-Weierstrauss and allows us to (potentially) approximate any continuous function arbitrarily well as `n` goes to infinity
+
+. . . 
+
+Turns out we never use the monomial basis though!
+
+**Why?**
+
+. . . 
+
+Let's try approximating **Runge's function**: `f(x) = 1/(1 + 25x^2)`
+
+
+
+## Runge's function
+
+```{julia}
+runge(x) = 1 ./ (1 .+ 25x.^2);
+runge_hat_5 = interpolate_monomial(runge, -1.0, 1.0, 5);
+runge_hat_10 = interpolate_monomial(runge, -1.0, 1.0, 10);
+```
+
+## Runge's function
+
+```{julia}
+#| code-fold: true
+plot(runge, -1, 1, line = 4, grid = false,
+           label = "1/(1 + 25x^2)",
+           legendfont = font(7), legend = :topright, ylims = (-.5, 1),
+           xlabel = "x", ylabel = "f(x) = 1/(1 + 25x^2)")
+```
+
+
+
+## Runge's function
+
+```{julia}
+#| code-fold: true
+plot!(runge_hat_5, -1, 1, color = :red, linewidth = 4.0, linestyle = :dash,
+    label = "Approximation n = 5")
+```
+
+
+## Runge's function
+
+```{julia}
+#| code-fold: true
+plot!(runge_hat_10, -1, 1, color = :purple, linewidth = 4.0, linestyle = :dot, label = "Approximation n = 10")
+```
+
+
+
+## Maybe we can just crank up n?
+
+```{julia}
+#| code-fold: true
+plot(runge, -1, 1, line = 4, grid = false,
+           label = "1/(1 + 25x^2)", legend = :top, ylims = (-2, 10),
+           ylabel = "f(x) = 1/(1 + 25x^2)", xlabel = "x")
+```
+
+
+
+## Maybe we can just crank up n?
+
+```{julia}
+#| code-fold: true
+runge_hat_20 = interpolate_monomial(runge, -1.0, 1.0, 20);
+plot!(runge_hat_20, -1, 1, color = :red, linewidth = 4.0, linestyle = :dash,
+    label = "Approximation n = 20")
+```
+
+
+
+## Monomials are not good
+
+*What's the deal?* The matrix of monomials, $\Phi$, is often ill-conditioned, especially as the degree of the monomials increases
+
+- The first 6 monomials can induce a condition number of $10^{10}$, a substantial loss of precision
+- Monomials can vary dramatically in size, which leads to scaling/truncation errors
+  - $x^{11}$ goes from $10^{-4}$ to about $90$ when moving $x$ from $0.5$ to $1.5$
+
+. . . 
+
+Ideally we want an **orthogonal basis**
+
+- When we add another element of the basis, it has sufficiently different behavior than the elements before it so it can capture features of the unknown function that the previous elements couldn't
+
+
+
+## The Chebyshev basis
+
+Most frequently used is the **Chebyshev basis**
+
+It has nice approximation properties:
+
+1. They are easy to compute
+
+2. They are orthogonal
+
+3. They are bounded between $[-1,1]$
+
+
+
+## The Chebyshev basis
+
+Chebyshev polynomials are often selected because they minimize the oscillations that occur when approximating functions like Runge's function
+
+The Chebyshev polynomial closely approximates the *minimax polynomial*: the polynomial, given degree $d$, that minimizes any approximation error to the true function
+
+
+
+## The Chebyshev basis
+
+Chebyshev polynomials are defined by a recurrence relation,
+
+$$
+\begin{gather}
+	T_0(x) = 1 \\
+	T_1(x) = x  \\
+	T_{n+1} = 2xT_n(x) - T_{n-1}(x)
+\end{gather}
+$$
+
+and are defined on the domain $[-1,1]$. In practice this is easy to expand to any interval $[a,b]$
+
+Chebyshev polynomials look similar to monomials but have better properties that are visually distinctive
+
+
+## The Chebyshev basis
+
+This is what the monomial basis functions look like up to degree 10
+
+**Monomials  clump together**
+
+![](figures/monomials_span.png)
+
+
+
+## The Chebyshev basis
+
+And these are the **Chebyshev basis** functions up to degree 10
+
+**Chebyshev polynomials span the space**
+
+![](figures/Chebyshev_span.png)
+
+
+## Chebyshev polynomials rule
+
+Chebyshev polynomials are nice for approximation because they are **orthogonal** and span the polynomial vector space
+
+This means that you can form any polynomial of degree equal to less than the Chebyshev polynomial you are using
+
+It also guarantees that $\Phi$ has full rank and is invertible
+
+- The condition number is $\sqrt{2}$, which is pretty close to the ideal $1$
+
+They also have easy derivatives and integrals (see Miranda and Fackler Ch. 6.2 for the expression)
+
+
+## Chebyshev polynomials rule
+
+Chebyshev polynomial of order $n$ have $n$ zeros given by
+
+$$
+x_k = cos\left(\frac{2k-1}{2n}\pi \right), \; k=1,...,n
+$$
+
+which tend to cluster quadratically towards the edges of the domain
+
+You can think about this as projecting sequentially finer uniform grids from a hemicircle onto the x-axis
+
+
+
+## Chebyshev interpolation in Julia
+
+We can also use `Polynomials.fit` and fit Chebyshev polynomials for us. We just need to add `ChebyshevT` as the first argument to let the method know we want Chebyshev polynomials
+
+```{julia}
+f(x) = sin(x);
+# Construct a grid with n nodes
+xs = range(-1, 1, length = 7);
+# Get our y = f(x) at the nodes
+ys = f.(xs);
+# Use Polynomials.fit to generate our ̂f hat
+# (if we omit the degree, it does n-1 by default)
+f_hat = Polynomials.fit(ChebyshevT, xs, ys) 
+```
+
+
+
+## [Your turn!]{.blue}
+
+Step 1: Write a function `interpolate_cheb(f, lower, upper, n)` that approximates any function `f` between `lower` and `upper` bounds with degree `n`
+
+- Remember that Chebyshev polynomials have domain $[-1, 1]$, so, before we fit, we need to transform $x$
+
+$$
+z(x) = \frac{2(x-l)}{u-l} -1
+$$
+
+Step 2: Use your function to approximate `f(x) = log(1 + x^2)/(1 + x)` between $0$ and $8$ with $n$ being 3, 7 and 10
+
+- You'll need to transform $x$, so that you'll call `f_hat(z(x))`
+
+Step 3: Plot `f(x)` and overlay it with the 3 approximations
+
+
+
+## [Chebyshev interpolation in Julia]{.blue}
+
+```{julia}
+#| code-fold: true
+# First, we write a function to help with the transformation
+cheb_z(x, lower, upper) = 2*(x - lower)/(upper - lower) - 1;
+
+function interpolate_cheb(f, lower, upper, n)
+    xs = range(lower, upper, length = n)
+    ys = f.(xs)
+    # But we need z ∈ [-1, 1]
+    zs = cheb_z.(xs, lower, upper)
+    # Use Polynomials.fit to generate our ̂f hat with ChebyshevT
+    cheb_f_hat = Polynomials.fit(ChebyshevT, zs, ys, n-1)
+    # Create another function that transforms the input
+    transf_f_hat(x) = cheb_f_hat(cheb_z(x, lower, upper))
+    return transf_f_hat
+end;
+```
+
+
+
+## [Chebyshev interpolation in Julia]{.blue}
+
+```{julia}
+#| code-fold: true
+f(x) = log(1 + x^2)/(1 + x);
+f_hat_3  = interpolate_cheb(f, 0, 8, 3);
+f_hat_7 = interpolate_cheb(f, 0, 8, 7);
+f_hat_10 = interpolate_cheb(f, 0, 8, 10);
+```
+
+
+
+
+## [Chebyshev interpolation in Julia]{.blue}
+
+```{julia}
+#| code-fold: true
+Plots.plot(f, 0, 8, line = 4, grid = false, label = "f(x)",
+           xlabel = "x", ylabel = "f(x)", legend=:bottomright)
+```
+
+
+
+## [Chebyshev interpolation in Julia]{.blue}
+
+```{julia}
+#| code-fold: true
+plot!(f_hat_3, 0, 8, color = :green, linewidth = 4.0, linestyle = :dashdot, label = "Approximation n = 3")
+```
+
+
+
+
+## [Chebyshev interpolation in Julia]{.blue}
+
+```{julia}
+#| code-fold: true
+plot!(f_hat_7, 0, 8, color = :red, linewidth = 4.0, linestyle = :dash, label = "Approximation n = 7")
+```
+
+
+
+
+## [Chebyshev interpolation in Julia]{.blue}
+
+```{julia}
+#| code-fold: true
+plot!(f_hat_10, 0, 8, color = :purple, linewidth = 4.0, linestyle = :dot, label = "Approximation n = 10")
+```
+
+
+
+## Chebyshev interpolation in Julia
+
+While `Polynomials` is has a nice unified approach to handle polynomials in general, it requires additional work to use Chebyshev polynomials (e.g., we had to transform `x` to use a different domain)
+
+. . . 
+
+Instead, we can use specific packages for Chebyshev polynomials that will do that for us, such as `ChebyshevApprox.jl`
+
+
+
+## Chebyshev interpolation in Julia
+
+If we have the basis coefficients, we can build a Chebyshev polynomial of order 5 with a custom domain $[0, 10]$
+
+```{julia}
+using ChebyshevApprox;
+n = 5;
+w = [0.1, 0.2, 0.0, 0.1, -0.1]; # Basis coefficients
+# Note that this package uses domain in the reverse order
+domain = [10.0, 0.0];
+```
+
+. . . 
+
+Then, we can evaluate it, say, at `x=3.0`  like this (this function is a bit dumb and `x` needs to be passed as the single element of a vector)
+
+```{julia}
+chebyshev_evaluate(w, [3.0], n, domain)
+```
+
+
+
+
+## Chebyshev interpolation in Julia
+
+If we have a set of nodes $x_i$ and values $y_i$, we can fit the polynomial and get the basis coefficients
+
+```{julia}
+f(x) = log(1 + x^2)/(1 + x);
+xs = collect(range(0.0, 10.0, length = n));
+ys = f.(xs);
+coefs = chebyshev_weights(ys, xs, n, domain)
+```
+
+
+
+## Chebyshev interpolation in Julia
+
+We can then use the fitted `coefs` to create a `ChebPoly` as before. Or we can evaluate a Chebyshev polynomial at `x` directly without having to define it first
+
+```{julia}
+yhat = chebyshev_evaluate(coefs, [1.0], n, domain)
+```
+
+
+
+## Chebyshev interpolation in Julia
+
+It might be useful to use a wrapper function
+
+```{julia}
+function f_hat_cheb(x)
+    chebyshev_evaluate(coefs, [x], n, domain)
+end;
+f_hat_cheb(1.0)
+```
+
+You can find more about additional options and methods for derivatives in the [package documentation](https://github.com/RJDennis/ChebyshevApprox.jl)
+
+
+
+## Two important theorems
+
+There are two important theorems to know about Chebyshev polynomials
+
+**Chebyshev interpolation theorem:** *If $f(x) \in \mathbb{C}[a,b]$, if $\{\phi_i(x), i=0,...\}$ is a system of polynomials (where $\phi_i(x)$ is of exact degree i) orthogonal with respect to $w(x)$ on $[a,b]$ and if $p_j = \sum_{i=0}^j \theta_i \phi_i(x)$ interpolates $f(x)$ in the zeros of $\phi_{n+1}(x)$, then:
+$$
+\lim_{j\rightarrow\infty} \left(|| f-p_j||_2 \right)^2 = \lim_{j\rightarrow\infty}\int_a^b w(x) \left(f(x) - p_j \right)^2 dx = 0
+$$
+
+What does this say?
+
+
+## Two important theorems
+
+If we have an approximation set of basis functions that are exact at the roots of the $n^{th}$ order polynomials, then as $n$ goes to infinity the approximation error becomes arbitrarily small and converges at a quadratic rate
+
+This holds for any type of polynomial, but if they are Chebyshev then convergence is uniform
+
+Unfortunately we can't store an infinite number of polynomials in our computer, we would like to know how big our error is after truncating our sequence of polynomials
+
+
+
+## Two important theorems
+
+**Chebyshev truncation theorem:** The error in approximating $f$ is bounded by the sum of all the neglected coefficients
+
+. . . 
+
+Since Chebyshev polynomials satisfy Stone-Weierstrauss, an infinite sequence of them can perfectly approximate any continuous function
+
+Since Chebyshev polynomials are bounded between $[-1,1]$, the sum of the omitted terms is bounded by the sum of the magnitude of the coefficients
+
+. . . 
+
+So the error in the approximation is bounded, too!
+
+
+
+## Two important theorems
+
+We often also have that Chebyshev approximations geometrically converge which give us the following convenient property:
+
+$$
+|f(x) - f^j(x|C)| \sim O(c_j)
+$$
+
+The truncation error by stopping at polynomial $j$ is of the same order as the magnitude of the coefficient $c_j$ on the last polynomial
+
+Thus in many situations we can simply check the size of the last polynomial to gauge how accurate our approximation is
+
+
+
+## Boyd's moral principle
+
+Chebyshev polynomials are the most widely used basis
+
+This is not purely theoretical but also from practical experience
+
+
+## Boyd's moral principle
+
+John P. Boyd^[Professor at U of Michigan and author of the book "Chebyshev and Fourier Spectral Methods."] summarizes decades of experience with function approximation with his moral principle:
+
+- When in doubt, use Chebyshev polynomials unless the solution is spatially periodic, in which case an ordinary fourier series is better
+- Unless you are sure another set of basis functions is better, use Chebyshev polynomials
+- Unless you are really, really sure another set of basis functions is better, use Chebyshev polynomials
+
+
+## Grid point selection
+
+We construct the basis function approximant by evaluating the function on a predefined grid in the domain of $f$
+
+. . . 
+
+If we have precisely $n$ nodes, $x_i$, we then have
+
+$$
+\sum_{j=1}^n c_j \phi_j(x_i) = f(x_i) \,\, \forall i=1,2,\dots,n
+$$
+
+
+## Grid point selection
+
+We can write this problem more compactly as
+$$
+\Phi c = y
+$$
+
+where
+
+- $y$ is the column vector of $f(x_i)$
+- $c$ is the column vector of coefficients $c_j$
+- $\Phi$ is an $n\times n$ matrix of the $n$ basis functions evaluated at the $n$ points
+
+. . . 
+
+If we recover a set of values at our interpolation nodes, we can then simply invert $\Phi$ and right multiply it by $y$ to recover our coefficients ( $c = \Phi^{-1}y$ ) 
+
+. . . 
+
+**But how do we select our set of nodes $x_i$?**
+
+
+
+## Chebyshev strikes again
+
+A good selection of points are called *Chebyshev nodes*
+
+. . . 
+
+These are simply the roots of the Chebyshev polynomials above on the domain $[-1,1]$. They are given by
+
+$$
+x_k = cos\left(\frac{2k-1}{2n}\pi\right),\,\, k = 1,\dots,n
+$$
+
+for some Chebyshev polynomial of degree $n$
+
+
+
+## Chebyshev strikes again
+
+$$
+x_k = cos\left(\frac{2k-1}{2n}\pi\right),\,\, k = 1,\dots,n
+$$
+
+Mathematically, these also help reduce error in our approximation
+
+We can gain intuition by looking at a graph of where Chebyshev nodes are located
+
+
+
+## Chebyshev node function
+
+The location of the nodes in the default domain $[-1, 1]$ is easy enough, so we can calculate it ourselves
+
+```{julia}
+cheb_nodes(n) = cos.(pi * (2*(1:n) .- 1)./(2n))
+```
+
+
+
+## Chebyshev node locations
+
+```{julia}
+#| code-fold: true
+plot(cheb_nodes(3), zeros(3, 1), label = "3 Nodes", ylims = (-.01, .01),
+    seriestype = :scatter, xlabel = "Chebyshev Nodes", ylabel = "", grid = false, markersize = 5)
+```
+
+
+
+## Chebyshev node locations
+
+```{julia}
+#| code-fold: true
+plot!(cheb_nodes(6), zeros(6, 1), label = "6 Nodes", ylims = (-.01, .01),
+    seriestype = :scatter, markershape = :diamond,
+    markersize = 5)
+```
+
+
+
+## Chebyshev node locations
+
+```{julia}
+#| code-fold: true
+plot!(cheb_nodes(11), zeros(11, 1), label = "11 Nodes",
+    seriestype = :scatter, markershape = :xcross,
+    markersize = 5)
+```
+
+
+
+## Chebyshev node locations
+
+We can also rely on `ChebyshevApprox` to calculate the nodes for us using a custom domain
+
+```{julia}
+domain = [10.0, 0.0];
+chebyshev_nodes(3, domain)
+chebyshev_nodes(5, domain)
+```
+
+
+
+## Chebyshev node locations
+
+```{julia}
+#| code-fold: true
+plot(chebyshev_nodes(11, [10.0, 0.0]), zeros(11, 1),
+    label = "11 Nodes, custom domain", ylims = (-.01, .01),
+    seriestype = :scatter, xlabel = "Chebyshev Nodes", ylabel = "", grid = false, markersize = 5)
+```
+
+
+
+
+## Chebyshev node locations
+
+The nodes are heavily focused near the end points, why is that?
+
+. . . 
+
+- Imagine areas of our approximant near the center of our domain but not at a node
+- These areas benefit from having multiple nodes on both the left and right
+
+
+
+## Chebyshev node locations
+
+This provides more information for these off-node areas and allows them to be better approximated because we know whats happening nearby in several different directions
+
+- If we moved to an area closer to the edge of the domain, there may be only one node to the left or right of it providing information on what the value of our approximant should be
+- Therefore, it's best to put more nodes in these areas to compensate for this informational deficit and get good approximation quality near the edges of our domain
+
+
+
+## Multi-dimensional approximation
+
+Thus far we have displayed the Chebyshev basis in only one dimension
+
+We approximate functions of some arbitrary dimension $N$ by taking the tensor product of vectors of the one-dimensional Chebyshev polynomials
+
+. . . 
+
+If we wanted to approximate a two dimensional function with a degree 3 polynomial, implying 3 grid points for each dimension, we could do the following:
+
+1. Construct a vector of polynomials $[\phi_{1,1}, \, \phi_{1,2}, \, \phi_{1,3}]$ for dimension 1
+2. Construct a vector of polynomials $[\phi_{2,1}, \, \phi_{2,2}, \, \phi_{2,3}]$ for dimension 2
+
+
+
+## Multi-dimensional approximation
+
+3. Form the 2D grid with a tensor product. This is just the product of every possibly polynomial pair which results in
+
+$$
+[\phi_{1,1}\phi_{2,1} ,\, \phi_{1,1}\phi_{2,2}, \, \phi_{1,1}\phi_{2,3}, \\ \phi_{1,2}\phi_{2,1}, \, \phi_{1,2}\phi_{2,2}, \, \phi_{1,2}\phi_{2,3}, \\ \phi_{1,3}\phi_{2,1}, \, \phi_{1,3}\phi_{2,2}, \, \phi_{1,3}\phi_{2,3}]
+$$
+
+. . . 
+
+- For example, if we have a monomial basis of degree 2 along both dimensions, our terms for $\hat{f}(x,y)$ would be
+
+$$
+1, x, x^2, y, xy, x^2y, y^2, xy^2, x^2y^2
+$$
+
+. . . 
+
+4. Solve for the 9 coefficients on these two dimensional polynomials
+
+
+
+## Multi-dimensional approximation
+
+Note that The computational complexity here grows exponentially: $\text{total # points} = (\text{points per  state})^{\text{# states}}$
+
+. . . 
+
+Exponential complexity is costly, often called the **Curse of dimensionality**
+
+- There are a methods to mitigate this problem using, for example, sparse and adaptative grids (e.g., [Smolyak grids](https://robertdkirkby.github.io/IntroToChebyshevSmolyak.html))
+
+
+
+## Multi-dimensional approximation in Julia
+ 
+Three packages that can do multi-dimensional Chebyshev are `ChebyshevApprox`, `CompEcon` and `ApproxFun`
+
+- `ChebyshevApprox` also supports higher-dimensional polynomials (you will need to define `order` and `domain` in vectors/matrices)
+- `CompEcon` is a package that replicates in Julia (as closes as possible) the functions from Miranda and Fackler's package for Matlab
+- `ApproxFun` is a powerful package targeting functional equations. It requires a bit of effort to get used to its syntax. But once you get it, you can use for interpolation, function transforms, differential equations, and more
+
+
+# Finite element methods
+
+
+## Finite element methods
+
+An alternative to pseudo-spectral methods is the class of **finite element methods**
+
+. . . 
+
+Finite element methods use basis functions that are non-zero over *subintervals* of the domain of our grid
+
+- For example, we can use **splines** (piecewise polynomials) over segments of our domains
+- These piecewuse polynomials are spliced together at pre-specified breakpoints, which are called **knots**
+
+
+
+## Finite element methods
+
+The higher the order the polynomial we use, the higher the order of derivatives that we can preserve continuity at the knots
+
+. . . 
+
+- For example, a linear spline yields an approximant that is continuous, but its first derivatives are discontinuous step functions unless the underlying value function happened to be precisely linear
+
+. . . 
+
+- If we have a quadratic spline, we can also preserve the first derivative's continuity at the knots, but the second derivative will be a discontinuous step function
+
+
+
+## Finite element methods
+
+As we increase the order of the spline polynomial, we have increasing numbers of coefficients we need to determine
+
+. . . 
+
+To determine these additional coefficients using the same number of points, we require additional conditions that must be satisfied
+
+- These conditions ensure continuity of higher order derivatives at the knots as the degree of the spline grows
+
+
+
+## Finite element methods
+
+
+- With linear splines, each segment of our value function approximant is defined by a linear function
+- For each of these linear components, we need to solve for 1 coefficient and 1 intercept term
+- Each end of a linear segment must equal the function value at the knots
+
+
+
+## Finite element methods
+
+- We have two conditions and two unknowns for each segment: this is a simple set of linear equations that we can solve
+- In numerical models we typically don't use linear splines because we often care about the quality of approximation of higher order derivatives $\rightarrow$ cubic splines are more common
+
+
+
+## Cubic splines
+
+Suppose we wish to approximate using a cubic spline on $N+1$ knots
+
+We need $N$ cubic polynomials $\Rightarrow 4N$ coefficients to determine
+
+. . . 
+
+1. We make the approximant equal to the function's value ( $\hat{f}(x_i)=y_i$) all of the nodes $\rightarrow N+1$ equations 
+2. We make the approximant continuous at all interior knots $\rightarrow N-1$ equations 
+   - This means that the value of the left cubic polynomial equals the value of the right cubic polynomial at each interior knot
+
+
+
+
+## Cubic splines
+
+
+3. We make the first and second derivatives continuous at all interior knots $\rightarrow 2(N-1)$ equations
+   - This means that the value of the derivatives of the left cubic polynomial equals the value of the derivatives of the right cubic polynomial at each interior knot
+
+
+. . . 
+
+Conditions 1, 2, and  3 combined give us a total of $4N-2$ equations for $4N$ coefficients. We need two more conditions to solve the problem
+
+
+Common solutions are 
+
+- Set the second derivative at the end points to be zero
+- Set approximant's first or second derivative to match that of the function at the end points
+
+
+
+
+## Splines can potentially handle lots of curvature
+
+If the derivative is of interest for optimization (or to recover some variable of economic meaning),
+then we may need to have these derivatives preserved well at the knots
+
+One large benefit of splines is that they can handle kinks or areas of high curvature. **How?**
+
+. . . 
+
+- By having the modeler place many knots in a concentrated region
+
+. . . 
+
+If the knots are stacked on top of one another, this actually allows for a *kink* to be explicitly represented in the value function approximant, but the economist must know precisely where the kink is
+
+
+## Splines in Julia
+
+There are a few good packages for splines in Julia: `Interpolations`, `GridInterpolations`, `Dierckx`. We'll see a simple example with `Interpolations` to interpolate `sin(x)` again
+
+
+```{julia}
+using Interpolations;
+f(x) = sin(x);
+num_knots = 5;
+# Assemble a grid for knots (x) and calculate y for each knot
+xs = range(0, 2pi, length = num_knots);
+ys = f.(xs)
+```
+
+
+
+
+## Splines in Julia
+
+We start with linear interpolation using the `LinearInterpolation(x, y)` method
+
+```{julia}
+ys_linear_spline = Interpolations.LinearInterpolation(xs, ys);
+```
+
+This returns a composite object with all the information about the interpolation. We want to make it into a function so we can evaluate it anywhere in the domain
+
+```{julia}
+f_linear_spline(x) = ys_linear_spline(x)
+```
+
+
+
+## Splines in Julia
+
+Now, we follow similar steps using `CubicInterpolation(x,y)`
+
+```{julia}
+ys_cubic_spline = Interpolations.CubicSplineInterpolation(xs, ys);
+f_cubic_spline(x) = ys_cubic_spline(x)
+```
+
+
+
+
+## Splines in Julia
+
+Let's plot the results
+
+```{julia}
+#| code-fold: true
+plot(f, 0, 2pi, line = 4, grid = false, alpha = 0.7, label="Sin(x)")
+```
+
+
+
+
+## Splines in Julia
+
+```{julia}
+#| code-fold: true
+plot!(xs, f_linear_spline, color = :green, linewidth = 4.0, linestyle = :dashdot, label="Linear spline")
+```
+
+
+
+## Splines in Julia
+
+```{julia}
+#| code-fold: true
+plot!(f_cubic_spline, 0, 2pi, color = :red, linewidth = 4.0, linestyle = :dash, label="Cubic spline")
+```
+
+
+
+
+## Choosing an interpolation method
+
+A few rules of thumb from Miranda and Fackler
+
+1. Chebychev node polynomial interpolation dominates evenly spaced node polynomial interpolation.
+2. Cubic spline interpolation dominates linear spline interpolation, except where the approximant exhibits a profound discontinuity.
+3. Chebychev polynomial interpolation dominates cubic spline interpolation if the approximant is smooth; otherwise, cubic or even linear spline interpolation may be preferred.
+
