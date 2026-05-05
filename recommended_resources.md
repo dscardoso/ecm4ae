@@ -143,6 +143,18 @@ Econometrics:
 - [Ipopt Documentation](https://coin-or.github.io/Ipopt/index.html)
 
 
+## Unit 5: Functional Approximation
+
+### Readings
+
+- [MF02] Chapter 6
+
+### Technical references
+
+- [Polynomials.jl documentation and tutorials](https://juliamath.github.io/Polynomials.jl/stable/)
+- [Interpolations.jl documentation and tutorials](https://juliamath.github.io/Interpolations.jl/latest/)
+- [ChebyshevApprox.jl documentation and tutorials](https://github.com/RJDennis/ChebyshevApprox.jl)
+
 
 ## Unit 6: Introduction to Structural Estimation
 

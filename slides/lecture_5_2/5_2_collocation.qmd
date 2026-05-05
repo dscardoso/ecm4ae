@@ -1,0 +1,700 @@
+---
+title: "ACE 592 - Lecture 5.2"
+subtitle: "Function Approximation: Functional equations"
+author: "Diego S. Cardoso"
+institute: "University of Illinois Urbana-Champaign"
+execute:
+  echo: true
+  cache: true
+editor:
+  render-on-save: false  
+format:
+  revealjs: 
+    output-file: ACE592_5_2_slides.html
+    theme: [white, ./../ace_592_style.css]
+    slide-number: c
+    show-slide-number: all
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-copy: hover
+    fig-width: 8
+    fig-height: 4
+    chalkboard:
+      theme: whiteboard
+      chalk-effect: 0.1
+  html:
+    output-file: ACE592_5_2_notes.html
+    toc: false
+    number-sections: true
+    # axe:
+    #   output: document # Accessibility check
+    code-fold: true
+    html-math-method: katex
+---
+
+
+## Course Roadmap {background-color="orange"}
+
+1.  [Introduction to Scientific Computing]{.gray}
+2.  [Fundamentals of numerical methods]{.gray}
+3.  [Systems of equations]{.gray}
+4.  [Optimization]{.gray}
+5.  **Function approximation**
+    1.  [Interpolation]{.gray}
+    2.  **Functional equations**
+7.  Structural estimation
+
+## Agenda {background-color="orange"}
+
+- Today, we will cover the collocation method, which builds on function approximation methods to solve functional equations
+- Instead of looking for a value between nodes, we will try to find a function that satisfies the functional equation at the nodes
+  
+
+
+## Main references {background-color="orange"}
+
+-   Miranda & Fackler (2002), Ch. 6
+-   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell) 
+
+# Functional equations
+
+## Problem type: Functional equations
+
+In these problems, our solution is not a value but a function
+
+Formally, we look for $f$ such that $Tf = 0$, where $T$ is an operator that maps a vector space of functions into itself
+
+- We can write an equivalent functional fixed-point equation $f = Tf$
+
+. . . 
+
+Functional equations are hard because they impose an infinite number conditions, i.e., the value of $f$ at an infinite number of points
+- Solutions with closed-form expressions are an exception!
+
+Problems like this arise frequently in dynamic optimization and strategic interaction/game theory
+
+
+## Functional equations general definition
+
+In a classic formulation of functional equations, we look for a function $f$ such that
+
+$$
+g\left(x, f(x) \right) = 0, \; \forall x \in [a, b]
+$$
+
+. . . 
+
+Examples 
+
+- Differential equations
+   - $g(x, f(x)) \equiv f^\prime(x) + f(x) + 2 = 0$
+- Bellman equations
+  - $g(x, V(x)) \equiv V(x) - \left\{\max_z u(x) + \beta V(\phi(x)) \right\} = 0$
+- Monopolist supply $S(p)$ with marginal cost $MC$ and facing demand $D(p)$ 
+  - $g(p, S(p)) \equiv p + \frac{S(p)}{D^\prime(p)} - MC(S(p)) = 0$
+
+
+
+
+## Numerically solving functional equations
+
+Problems with functional equations are typically quite hard to solve and only admit closed-form solutions in special cases
+
+We can use numerical function approximation tools to make the problem tractable!
+
+**Key idea**. *Instead of looking for $f$ in an infinite-dimensional function space, we look for its approximant $\hat{f}$ in a finite-dimensional space*
+
+
+## Numerically solving functional equations
+
+Once again, we use approximants with a linear combination of basis functions
+
+$$
+f(x) \approx \hat{f} = \sum^{n}_{j=1} \phi_j(x) c_j = \phi(x)c
+$$
+
+So the conditions on the original functional equation becomes
+
+$$
+g(x, \phi(x)c) \approx 0, \; \forall x \in [a, b]
+$$
+
+where $g(x, \phi(x)c)$ can be regarded as a *residual*, which we want to make as close to zero as possible for a good approximation
+
+
+
+## Collocation method
+
+The general approach to numerically solve problems of this form is called the **Collocation method**
+
+Instead of solving an infinite-dimensional problem, we look for a *finite vector of basis coefficients* $c$ such that the residual is $0$ at $n$ nodes
+
+$$
+g(x_i, \phi(x_i)c) = 0, \; \forall i = 1, 2, \dots, n
+$$
+
+**This is a n-dimensional (nonlinear) rootfinding problem!** We can use the methods from Unit 3 to solve it
+
+## Collocation method
+
+How do we assess the quality of our approximation?
+
+The common approach is to evaluate the residual $g(x, \phi(x)c)$ over a fine grid (not Chebyshev nodes) and look for the highest absolute value
+
+- If the largest residual is above some tolerance level we defined, we can repeat the process with more nodes and basis functions to improve accuracy
+
+
+## Collocation method in practice
+
+We will cover the collocation method in practice with two examples:
+
+1. Solving a static Cournot oligopoly model
+2. Solving a dynamic intertemporal utility maximization problem
+
+# Collocation example 1: Cournot oligopoly
+
+## Cournot oligopoly: Setup
+
+*This example is based on the one in Miranda & Fackler (2002), Ch. 6.8*
+
+Standard profit maximization:
+$$
+\max_q qp(q) - MC(q)
+$$
+
+In a **competitive market** (price-takers), $p$ is unaffected by $q$, so the FOC simplifies to $p - MC(q) = 0$
+
+. . .
+
+In an **oligopoly**, a firm's output influences price, so the FOC becomes:
+$$
+p + q\frac{dp}{dq} - MC(q) = 0
+$$
+
+## Cournot oligopoly: Supply function
+
+Using the Inverse Function Theorem, we can rewrite the FOC as
+$$
+p + \frac{q}{D^\prime(p)} - MC(q) = 0
+$$
+
+. . .
+
+We want to characterize the firm's **effective supply function** $S(p)$, the optimal supply for any given $p$
+
+$S(p)$ satisfies the **functional equation**:
+
+$$
+g(p, S(p)) \equiv p + \frac{S(p)}{D^\prime(p)} - MC(S(p)) = 0
+$$
+
+## Cournot oligopoly: Analytical solution
+
+For simple functional forms, we can solve analytically
+
+With $MC(q) = c$ and $D(p) = p^{-\eta}$:
+
+$$
+p - \frac{S(p)}{\eta p^{-\eta-1}} - c = 0 \implies S(p) = \eta(p-c)p^{-\eta-1}
+$$
+
+. . .
+
+With $m$ identical firms, equilibrium satisfies $mS(p) = D(p)$, which yields:
+$$
+p = \left(\frac{1}{1 - \frac{1}{\eta m}}\right)c
+$$
+
+As $m \rightarrow \infty$, we approach perfect competition: $p = c$
+
+## When simple functional forms are not available
+
+More realistic cost functions may not yield tractable solutions
+
+Suppose $MC(q) = \alpha q^{1/2} + q^2$. The FOC becomes:
+$$
+p - \frac{p^{\eta+1}}{\eta}S(p) - \alpha [S(p)]^{1/2} - [S(p)]^2 = 0
+$$
+
+There is no closed-form solution for $S(p)$!
+
+. . .
+
+**Solution**: Use the **collocation method** to numerically find $\hat{S}(p)$ over $p \in [a, b]$
+
+## Setting up the collocation problem
+
+We look for $\hat{S}(p) = \phi(p)c$ (a Chebyshev polynomial approximant) such that
+$$
+g(p_i, \hat{S}(p_i)) \equiv p_i - \frac{p_i^{\eta+1}}{\eta}\hat{S}(p_i) - \alpha [\hat{S}(p_i)]^{1/2} - [\hat{S}(p_i)]^2 = 0
+$$
+
+at $n$ Chebyshev nodes $p_1, \dots, p_n$
+
+. . .
+
+This is a **rootfinding problem**: find a **vector** $c$ such that $g(c) = 0$
+
+- We'll use $\alpha = 1$, $\eta = 1.5$, domain $p \in [0.1, 3]$, and $n = 25$ nodes
+
+## Implementation: Packages and parameters
+
+```{julia}
+using ChebyshevApprox, NLsolve, Plots
+α = 1.0
+η = 1.5
+a = 0.1
+b = 3.0
+n = 25;
+```
+
+## Implementation: Evaluating the polynomial
+
+We need a function to evaluate $\hat{f}(x) = \sum_{j=1}^n c_j \phi_j(x)$ at any $x \in [a, b]$
+
+```{julia}
+function eval_chebpoly(c, n, a, b, x)
+    domain = [b, a]  # upper bound first (ChebyshevApprox convention)
+    y = similar(x)
+    for i in 1:length(x)
+        y[i] = chebyshev_evaluate(c, [x[i]], n - 1, domain)
+    end
+    return y
+end;
+```
+
+## Implementation: Nodes and residual function
+
+Define the Chebyshev nodes and the residual function $g(c)$ that we want to find a root of
+
+```{julia}
+# Chebyshev nodes
+nodes = ChebyshevApprox.nodes(n, :chebyshev_nodes, [b, a]).points
+# The function to calculate the residual at the nodes given a vector of coefficients c
+function resid(c, ps)
+    S_hat = eval_chebpoly(c, n, a, b, ps)
+    ps - ps.^(η+1) ./ η .* S_hat - α .* sqrt.(S_hat) - S_hat.^2
+end
+
+g(c) = resid(c, nodes);
+```
+
+## A problem with unconstrained polynomials
+
+When we attempt to solve $g(c) = 0$ with Newton's method:
+
+```{julia}
+#| eval: false
+c0 = zeros(n); c0[2] = 1.0
+solution = NLsolve.nlsolve(g, c0, method=:newton)
+```
+
+```
+DomainError with -0.998...:
+sqrt will only return a complex result if called with a
+complex argument. Try sqrt(Complex(x)).
+```
+
+. . .
+
+Newton's method took a step where $\hat{S}(p_i) < 0$, but $\sqrt{\hat{S}}$ requires $\hat{S} \geq 0$
+
+The polynomial $\hat{S}: [a,b] \rightarrow \mathbb{R}$ does **not** automatically respect the economic constraint $S \geq 0$
+
+## Fix 1: Truncation
+
+The simplest fix — clip $\hat{S}$ at zero if it goes negative:
+
+```{julia}
+function resid_truncate_S(c, ps)
+    S_hat = eval_chebpoly(c, n, a, b, ps)
+    S_hat = max.(S_hat, zeros(length(S_hat)))
+    ps - ps.^(η+1) ./ η .* S_hat - α .* sqrt.(S_hat) - S_hat.^2
+end
+g_truncate_S(c) = resid_truncate_S(c, nodes)
+c0 = zeros(n)
+solution_trunc = NLsolve.nlsolve(g_truncate_S, c0, method=:newton)
+```
+
+Solved it! But truncation introduces a **kink**, which can cause convergence issues with other initial guesses
+
+## Fix 2: Log transformation
+
+A smoother approach: approximate $\log(S(p))$ instead of $S(p)$ directly: $\hat{S}_i = \exp(\hat{\log S(p_i)}) > 0$
+
+```{julia}
+function resid_log_S(c, ps)
+    log_S_hat = eval_chebpoly(c, n, a, b, ps)
+    S_hat = exp.(log_S_hat)
+    ps - ps.^(η+1) ./ η .* S_hat - α .* sqrt.(S_hat) - S_hat.^2
+end
+g_log_S(c) = resid_log_S(c, nodes)
+c0 = zeros(n)
+solution_log = NLsolve.nlsolve(g_log_S, c0, method=:newton)
+```
+
+
+Also solves it! But cannot represent $S = 0$ (corner solutions), and `exp` can amplify approximation errors
+
+## Comparing approximation quality
+
+Evaluate residuals on a fine grid of 500 points
+
+```{julia}
+c_trunc = solution_trunc.zero
+c_log   = solution_log.zero
+ps_grid = range(a, b, length = 500)
+
+resids_trunc = resid_truncate_S(c_trunc, ps_grid)
+resids_log   = resid_log_S(c_log, ps_grid)
+
+println("Max |residual| truncation: ", maximum(abs.(resids_trunc)))
+println("Max |residual| log:        ", maximum(abs.(resids_log)))
+```
+
+Both well within tolerance; if not, we repeat with more nodes
+
+## Residual plots
+
+```{julia}
+#| code-fold: true
+plot(ps_grid, resids_trunc, color=:red, label="Truncated", xlabel="p", ylabel="Residual")
+plot!(ps_grid, resids_log, color=:blue, label="Log")
+```
+
+## Supply curves with $m$ firms
+
+With the approximated $\hat{S}(p)$, equilibrium for $m$ firms satisfies $m\hat{S}(p) = D(p)$
+
+```{julia}
+#| code-fold: true
+S_hat = max.(0.0, eval_chebpoly(c_trunc, n, a, b, collect(ps_grid)))
+ds    = collect(ps_grid) .^ (-η)
+plot(ds,           ps_grid, lw=1, xlabel="Quantity (Q)", ylabel="Price (p)")
+plot!(S_hat,       ps_grid, lw=1, label="m = 1")
+plot!(S_hat .* 2,  ps_grid, lw=1, label="m = 2")
+plot!(S_hat .* 5,  ps_grid, lw=1, label="m = 5")
+plot!(S_hat .* 10, ps_grid, lw=1, label="m = 10")
+plot!(S_hat .* 20, ps_grid, lw=1, label="m = 20")
+```
+
+As $m \uparrow$, equilibrium price approaches the competitive level
+
+
+# Collocation example 2: Dynamic optimization
+
+## Cake-eating problem: Setup
+
+A canonical infinite-horizon consumption vs. savings problem: eat the cake today or save it for tomorrow?
+
+An agent starts with a cake of size $W_0$ and decides how much to eat each period:
+
+- Consumption: $x_t \in [0, W_t]$
+- Transition: $W_{t+1} = W_t - x_t$
+- For simplicity, the cake neither grows nor depreciates
+
+. . .
+
+The agent maximizes lifetime utility:
+$$
+\max_{\{x_t\}_{t=0}^\infty} \sum_{t=0}^\infty \beta^t u(x_t)
+$$
+
+with CRRA utility $u(x) = \frac{x^{1-\sigma}}{1-\sigma}$, RRA $\sigma = 1.5$ and $\beta = 0.95$
+
+## Quick review: From sequence to recursion
+
+The **sequence problem** above has infinitely many choice variables, one per period
+
+**Key insight (Bellman, 1957)**: any tail of an optimal plan is itself optimal
+
+This **principle of optimality** lets us rewrite the problem **recursively** in terms of a value function $V(W)$, the maximized lifetime utility starting from state $W$:
+
+$$
+V(W) = \max_{0 \leq x \leq W} \left\{u(x) + \beta\, V(W - x)\right\}
+$$
+
+This is a functional equation for $V$, which we will solve using the collocation method
+
+## Bellman equation as a functional equation
+
+We can express the Bellman equation in fixed-point form $V = TV$, where $T$ is the **Bellman operator**:
+
+$$
+(TV)(W) \equiv \max_{0 \leq x \leq W} \left\{u(x) + \beta\, V(W - x)\right\}
+$$
+
+Equivalently, define the **Bellman residual**:
+$$
+g(W, V(W)) \equiv V(W) - \max_{0 \leq x \leq W} \left\{u(x) + \beta\, V(W - x)\right\} = 0
+$$
+
+The goal is to find $V$ such that $g(W, V(W)) = 0$ for all $W$ in the domain
+
+## An analytical benchmark
+
+CRRA cake-eating admits a closed-form solution we can use to validate our numerical method
+
+Guess $V(W) = A \cdot \frac{W^{1-\sigma}}{1-\sigma}$ and verify with the FOC $u'(x) = \beta V'(W - x)$
+
+. . .
+
+This yields a **constant savings rate** policy:
+$$
+x^*(W) = \left(1 - \beta^{1/\sigma}\right) W, \qquad A = \left(1 - \beta^{1/\sigma}\right)^{-\sigma}
+$$
+
+For $\sigma = 1.5$, $\beta = 0.95$: $x^*(W) \approx 0.0336\, W$, i.e., eat about 3.4% of the cake each period
+
+## Why solve this numerically?
+
+The closed form depends on a lucky combination of CRRA utility and a deterministic linear cake transition
+
+But our luck ends as soon as we add realistic features:
+
+- Stochastic returns or shocks to the cake
+- Borrowing or short-selling constraints
+- Non-CRRA preferences (habits, reference dependence)
+- Multiple state variables
+
+The collocation steps we build here generalizes for these cases, and all we'd need to change are the the residual functions
+
+## Collocation setup
+
+Approximate the value function with Chebyshev polynomials:
+
+$$
+V(W) \approx \hat V(W; c) = \sum_{j=1}^n c_j\, \phi_j(W) = \phi(W) c
+$$
+
+At each Chebyshev node $W_i \in [\underline W, \overline W]$, the Bellman residual is:
+
+$$
+g_i(c) = \phi(W_i) c - \max_{0 \leq x \leq W_i} \left\{u(x) + \beta\, \phi(W_i - x)\, c\right\}
+$$
+
+We seek $c \in \mathbb{R}^n$ such that $g_i(c) = 0$ for $i = 1, \dots, n$
+
+## Nested structure of the problem
+
+The collocation problem has **two nested layers**:
+
+1. **Outer problem**: find coefficients $c$ that make all $n$ residuals zero
+2. **Inner problem**: at each node $W_i$, optimize over consumption $x$ given the current approximant $\hat{V}$
+
+## Solution strategy
+
+Two common solution strategies:
+
+- **Function iteration** (a.k.a. fitted value iteration): iterate $c^{(k+1)}$ as the basis-coefficient projection of $T\hat V(\cdot; c^{(k)})$
+  - Robust, but only linear convergence
+- **Newton on the residual system** $g(c) = 0$
+  - Quadratic convergence near the root, but more sensitive to the initial guess
+
+We will use function iteration, which mirrors classical Bellman value iteration idea
+
+## Implementation roadmap
+
+Function iteration on coefficients:
+
+1. Choose domain $[\underline W, \overline W]$, number of nodes $n$, and Chebyshev basis
+2. Initialize coefficients $c^{(0)}$
+3. **Repeat** until $\|c^{(k+1)} - c^{(k)}\| < \text{tol}$:
+    a. For each node $W_i$, solve the inner problem
+       $$V_i = \max_{0 \leq x \leq W_i} u(x) + \beta\, \hat V(W_i - x; c^{(k)})$$
+    b. Update coefficients $c^{(k+1)}$ by interpolating the new node values
+4. Validate against the analytical benchmark
+
+We must keep $W$ bounded away from zero, since $u'(x) \to \infty$ as $x \to 0$ under CRRA
+
+## Implementation: Packages and parameters
+
+```{julia}
+using ChebyshevApprox, Optim, Plots
+σ = 1.5 # Relative risk aversion
+β = 0.95 # Discount factor
+W_min = 0.01 # Lower bound of W for Chebyshev approximation
+W_max = 5.0 # Upper bound of W for Chebyshev approximation
+n = 15; # Number of Chebyshev nodes
+```
+
+## Implementation: Utility and analytical benchmark
+
+```{julia}
+u(x) = x^(1 - σ) / (1 - σ)
+x_star(W) = (1 - β^(1/σ)) * W
+A = (1 - β^(1/σ))^(-σ)
+V_star(W) = A * W^(1 - σ) / (1 - σ);
+```
+
+## Implementation: Evaluating the value function approximant
+
+At each iteration we evaluate $\hat V(W; c) = \phi(W) c$ at arbitrary points
+
+```{julia}
+# ChebyshevApprox convention: domain = [upper, lower]
+domain = [W_max, W_min]
+nodes = ChebyshevApprox.nodes(n, :chebyshev_nodes, domain).points
+
+function V_hat(c_coef, W)
+    chebyshev_evaluate(c_coef, [W], n-1, domain)
+end;
+```
+
+## Implementation: Inner optimization
+
+At each node $W_i$, find consumption that maximizes the Bellman RHS, given current coefficients
+
+```{julia}
+function bellman_rhs(c_coef, Wi)
+    # Note that Optim requires the solution to be a vector, even if it's a scalar
+    obj(x) = -(u(x[1]) + β * V_hat(c_coef, Wi - x[1]))
+    # Use box constrained optimization to enforce 0 ≤ x ≤ Wi and midpoint as initial guess
+    res = Optim.optimize(obj, [W_min], [Wi], [(Wi+W_min)/2], Fminbox(BFGS()))
+    x_opt = res.minimizer[1]
+    V_val = -res.minimum
+    return V_val, x_opt
+end
+```
+
+## Implementation: One Bellman update on coefficients
+
+Given $c^{(k)}$, evaluate the Bellman RHS at every node and refit the polynomial
+
+```{julia}
+function bellman_update(c_coef)
+    # Initialize vectors
+    V_vals = zeros(n); pol_vals = zeros(n)
+    # Solve the inner problem at each node
+    for i in 1:n
+        V_vals[i], pol_vals[i] = bellman_rhs(c_coef, nodes[i])
+    end
+    # Recalculate Chebyshev coefficients
+    new_coef = chebyshev_weights(V_vals, nodes, n-1, domain)
+    return new_coef, V_vals, pol_vals
+end
+```
+
+## Implementation: The outer iteration
+
+```{julia}
+function solve_collocation(; tol = 1e-6, maxit = 10000)
+    # Warm-start assuming all consumption at initial period
+    V_init = u.(nodes)
+    c_coef = chebyshev_weights(V_init, nodes, n-1, domain)
+    # To avoid infinite looping
+    for iter in 1:maxit
+        new_coef, V_vals, pol_vals = bellman_update(c_coef)
+        diff = maximum(abs.(new_coef - c_coef))
+        if diff < tol
+            println("Converged in $iter iterations (Infty norm = $(round(diff, sigdigits=3)))")
+            return new_coef, V_vals, pol_vals
+        end
+        c_coef = new_coef
+    end
+    println("Did not converge in $maxit iterations")
+    return c_coef, zeros(n), zeros(n)
+end;
+```
+
+## Solution: Run the collocation method
+
+```{julia}
+c_coef_sol, V_node, pol_node = solve_collocation()
+```
+
+## Solution: Simulation
+
+Let's simulate three sample trajectories of consumption for different initial cake sizes. First, we need a function to simulate the trajectory given the coefficients of the value function approximant  
+
+```{julia}
+function simulate_trajectory(c_coef, W0, T)
+    W_traj = zeros(T); x_traj = zeros(T)
+    W_traj[1] = W0
+    for t in 1:T-1
+        x_traj[t] = bellman_rhs(c_coef, W_traj[t])[2]
+        W_traj[t+1] = W_traj[t] - x_traj[t]
+    end
+    x_traj[T] = bellman_rhs(c_coef, W_traj[T])[2]
+    return W_traj, x_traj
+end
+```
+
+## Solution: Simulate trajectories
+
+Plot consumption trajectories for the first 30 periods for $W_0 = 2.0$, $3.0$, and $4.0$
+
+```{julia}
+#| code-fold: true
+T = 30
+W0s = [2.0, 3.0, 4.0]
+trajectories = [simulate_trajectory(c_coef_sol, W0, T) for W0 in W0s]
+plot(1:T, trajectories[1][2], label="x(t) for W0=2.0", xlabel="Time (t)",
+      ylabel="Consumption (x)", ylim=(0, 0.2))
+plot!(1:T, trajectories[2][2], label="x(t) for W0=3.0")
+plot!(1:T, trajectories[3][2], label="x(t) for W0=4.0")
+```
+
+
+## Solution: Simulate trajectories
+
+Next, plot cake left (stock)
+
+```{julia}
+#| code-fold: true
+plot(1:T, trajectories[1][1], label="W(t) for W0=2.0", xlabel="Time (t)",
+      ylabel="Cake left (W)", ylim=(0, 5.0))
+plot!(1:T, trajectories[2][1], label="W(t) for W0=3.0")
+plot!(1:T, trajectories[3][1], label="W(t) for W0=4.0")
+```
+
+## Validation: Value function vs analytical
+
+```{julia}
+#| code-fold: true
+W_grid = range(W_min, W_max, length = 200)
+V_num = [V_hat(c_coef_sol, W) for W in W_grid]
+V_ana = V_star.(W_grid)
+plot(W_grid, V_ana, linewidth=2, label="Analytical V", xlabel="W", ylabel="V(W)")
+plot!(W_grid, V_num, linewidth=2, linestyle=:dash, label="Numerical V")
+# Overlay Chebyshev nodes on horizontal axis
+scatter!(nodes, zeros(n), color=:red, label="Chebyshev nodes", markersize=4)
+```
+
+
+## Validation: Policy function vs analytical
+
+```{julia}
+#| code-fold: true
+pol_num = [bellman_rhs(c_coef_sol, W)[2] for W in W_grid]
+pol_ana = x_star.(W_grid)
+p2 = plot(W_grid, pol_ana, linewidth=2, label="Analytical x*", xlabel="W", ylabel="x(W)")
+plot!(p2, W_grid, pol_num, linewidth=2, linestyle=:dash, label="Numerical x*")
+```
+
+## Validation: Bellman residuals on a fine grid
+
+The true measure of approximation quality. If the maximum residual is above tolerance, increase $n$ and rerun
+
+```{julia}
+#| code-fold: true
+function bellman_resid(c_coef, W)
+    V_rhs = bellman_rhs(c_coef, W)[1]
+    V_hat(c_coef, W) - V_rhs
+end
+
+resids = [bellman_resid(c_coef_sol, W) for W in W_grid];
+plot(W_grid, resids, linewidth=2, label="Bellman residual", xlabel="W", ylabel="Residual")
+# Overlay Chebyshev nodes on horizontal axis
+scatter!(nodes, zeros(n), color=:red, label="Chebyshev nodes", markersize=4)
+```
+
+## Wrap-up
+
+- Functional equations impose infinitely many conditions on an unknown function
+- The collocation method reduces this to a finite-dimensional problem by:
+    1. Approximating $f$ with a finite basis $\hat f = \phi c$
+    2. Imposing the conditions only at $n$ well-chosen nodes
+- Solution quality is judged by residuals on a fine grid, not at the nodes
+- The same recipe scales up to richer dynamic problems (stochastic shocks, multiple state variables, constraints); only the residual function changes
+
