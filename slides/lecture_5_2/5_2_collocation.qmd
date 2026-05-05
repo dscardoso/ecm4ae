@@ -53,7 +53,7 @@ format:
 
 ## Main references {background-color="orange"}
 
--   Miranda & Fackler (2002), Ch. 6
+-   Miranda & Fackler (2002), Ch. 6 and 9.2
 -   Lecture notes for Ivan Rudik's *Dynamic Optimization* (Cornell) 
 
 # Functional equations
@@ -370,7 +370,7 @@ With the approximated $\hat{S}(p)$, equilibrium for $m$ firms satisfies $m\hat{S
 #| code-fold: true
 S_hat = max.(0.0, eval_chebpoly(c_trunc, n, a, b, collect(ps_grid)))
 ds    = collect(ps_grid) .^ (-η)
-plot(ds,           ps_grid, lw=1, xlabel="Quantity (Q)", ylabel="Price (p)")
+plot(ds,           ps_grid, lw=1, label="Demand", xlabel="Quantity (Q)", ylabel="Price (p)")
 plot!(S_hat,       ps_grid, lw=1, label="m = 1")
 plot!(S_hat .* 2,  ps_grid, lw=1, label="m = 2")
 plot!(S_hat .* 5,  ps_grid, lw=1, label="m = 5")
@@ -499,7 +499,7 @@ Function iteration on coefficients:
 
 1. Choose domain $[\underline W, \overline W]$, number of nodes $n$, and Chebyshev basis
 2. Initialize coefficients $c^{(0)}$
-3. **Repeat** until $\|c^{(k+1)} - c^{(k)}\| < \text{tol}$:
+3. **Repeat** until $\|\hat{V}(c^{(k+1)}) - \hat{V}(c^{(k)})\| < \text{f_tol}$:
     a. For each node $W_i$, solve the inner problem
        $$V_i = \max_{0 \leq x \leq W_i} u(x) + \beta\, \hat V(W_i - x; c^{(k)})$$
     b. Update coefficients $c^{(k+1)}$ by interpolating the new node values
@@ -578,19 +578,21 @@ end
 ## Implementation: The outer iteration
 
 ```{julia}
-function solve_collocation(; tol = 1e-6, maxit = 10000)
+function solve_collocation(; f_tol = 1e-3, maxit = 10000)
     # Warm-start assuming all consumption at initial period
-    V_init = u.(nodes)
-    c_coef = chebyshev_weights(V_init, nodes, n-1, domain)
+    V_vals = u.(nodes)
+    c_coef = chebyshev_weights(V_vals, nodes, n-1, domain)
     # To avoid infinite looping
     for iter in 1:maxit
-        new_coef, V_vals, pol_vals = bellman_update(c_coef)
-        diff = maximum(abs.(new_coef - c_coef))
-        if diff < tol
-            println("Converged in $iter iterations (Infty norm = $(round(diff, sigdigits=3)))")
-            return new_coef, V_vals, pol_vals
+        new_coef, new_V_vals, pol_vals = bellman_update(c_coef)
+        # Note we are checking convergence on the value function, not the coefficients
+        diff = maximum(abs.(new_V_vals - V_vals))
+        if diff < f_tol
+            println("Converged in $iter iterations (V infty norm = $(round(diff, sigdigits=3)))")
+            return new_coef, new_V_vals, pol_vals
         end
         c_coef = new_coef
+        V_vals = new_V_vals
     end
     println("Did not converge in $maxit iterations")
     return c_coef, zeros(n), zeros(n)
@@ -654,7 +656,8 @@ Here, the extreme curvature of $u$ near zero makes it hard to get a good approxi
 
 ```{julia}
 #| code-fold: true
-W_grid = range(W_min, W_max, length = 200)
+# Assemble a grid combining the Chebyshev nodes and a fine grid for plotting
+W_grid = sort(vcat(nodes, range(W_min*4, W_max, length = 200)))
 V_num = [V_hat(c_coef_sol, W) for W in W_grid]
 V_ana = V_star.(W_grid)
 plot(W_grid, V_ana, linewidth=2, label="Analytical V", xlabel="W", ylabel="V(W)")

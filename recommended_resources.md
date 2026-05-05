@@ -147,7 +147,7 @@ Econometrics:
 
 ### Readings
 
-- [MF02] Chapter 6
+- [MF02] Chapter 6 and 9.2
 
 ### Technical references
 
