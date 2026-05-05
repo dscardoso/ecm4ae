@@ -650,6 +650,8 @@ plot!(1:T, trajectories[3][1], label="W(t) for W0=4.0")
 
 ## Validation: Value function vs analytical
 
+Here, the extreme curvature of $u$ near zero makes it hard to get a good approximation close to $W = 0$
+
 ```{julia}
 #| code-fold: true
 W_grid = range(W_min, W_max, length = 200)
@@ -663,6 +665,8 @@ scatter!(nodes, zeros(n), color=:red, label="Chebyshev nodes", markersize=4)
 
 
 ## Validation: Policy function vs analytical
+
+As a result, the policy function ends up with significant error almost everywhere
 
 ```{julia}
 #| code-fold: true
